@@ -1,67 +1,329 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>SOFT ENG WEBSITE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10283f">
+    <title>ISOMS | Integrated School Organization Management System</title>
     <style>
-        header {
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .hero {
             position: relative;
-            min-height: 60vh;
-            padding: 2rem;
+            isolation: isolate;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            color: white;
+            min-height: min(760px, 100svh);
+            padding: 28px clamp(24px, 7vw, 104px) 76px;
+            overflow: hidden;
+            color: var(--hero-text);
+            background-color: #10283f;
             background-image:
-                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-                url('images/123.png');
-            background-size: contain;
-            background-position: center top;
+                linear-gradient(90deg, var(--overlay-left) 0%, var(--overlay-middle) 48%, var(--overlay-right) 100%),
+                linear-gradient(0deg, var(--overlay-bottom), transparent 48%),
+                url("images/123.png");
+            background-position: center, center, center 48%;
+            background-size: cover;
         }
 
-        .overlay-image {
-            position: absolute;
-            width: 1030px;
-            height: auto;
-            top: 53%;
-            left: 65%;
-            transform: translate(-50%, -50%);
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center top;
-
+        .hero[data-theme="black"] {
+            --hero-text: #fff;
+            --campus-text: rgba(255, 255, 255, 0.84);
+            --body-copy: rgba(255, 255, 255, 0.84);
+            --accent: #c9e875;
+            --overlay-left: rgba(8, 26, 44, 0.9);
+            --overlay-middle: rgba(8, 26, 44, 0.74);
+            --overlay-right: rgba(8, 26, 44, 0.28);
+            --overlay-bottom: rgba(8, 26, 44, 0.35);
         }
 
-        .username {
-            color: #0ec526;
-            position: absolute;
-            font-weight: bold;
-            font-size: 5rem;
-            top: 2rem;
-            left: 10%;
-            transform: translateX(-50%);
+        .hero[data-theme="white"] {
+            --hero-text: #162b3b;
+            --campus-text: #263b4b;
+            --body-copy: #344a59;
+            --accent: #486a16;
+            --overlay-left: rgba(255, 255, 255, 0.94);
+            --overlay-middle: rgba(255, 255, 255, 0.78);
+            --overlay-right: rgba(255, 255, 255, 0.32);
+            --overlay-bottom: rgba(255, 255, 255, 0.28);
+            background-color: #e9eef0;
+        }
+
+        .topbar {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            width: min(100%, 1280px);
+            margin: 0 auto;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            place-items: center;
+            border: 1px solid color-mix(in srgb, var(--hero-text) 50%, transparent);
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--hero-text) 12%, transparent);
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        .campus-label {
             margin: 0;
-
+            color: var(--campus-text);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-align: right;
+            text-transform: uppercase;
         }
 
-        .text {
-            color: #c0e70f;
-            font-weight: light;
-            position: absolute;
-            font-weight: bold;
-            top: 7rem;
-            left: 12.7%;
-            transform: translateX(-50%);
+        .topbar-details {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            gap: 3px;
+            padding: 4px;
+            border: 1px solid color-mix(in srgb, var(--hero-text) 30%, transparent);
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--hero-text) 10%, transparent);
+        }
+
+        .theme-option {
+            padding: 8px 12px;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--hero-text);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: background-color 160ms ease, color 160ms ease;
+        }
+
+        .hero[data-theme="black"] .theme-option[data-theme-choice="black"][aria-pressed="true"] {
+            background: #111;
+            color: #fff;
+        }
+
+        .hero[data-theme="white"] .theme-option[data-theme-choice="white"][aria-pressed="true"] {
+            background: #fff;
+            color: #162b3b;
+        }
+
+        .theme-option:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            width: min(100%, 1280px);
+            margin: auto auto 0;
+            padding-top: 96px;
+            transform: translateX(-48px);
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 20px;
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            width: 34px;
+            height: 2px;
+            background: currentColor;
+            content: "";
+        }
+
+        h1 {
+            max-width: 760px;
             margin: 0;
+            font-size: clamp(2.7rem, 6.3vw, 5.6rem);
+            font-weight: 750;
+            letter-spacing: -0.055em;
+            line-height: 1.03;
+            text-wrap: balance;
+        }
 
+        h1 span {
+            color: var(--accent);
+        }
 
+        .description {
+            max-width: 550px;
+            margin: 24px 0 0;
+            color: var(--body-copy);
+            font-size: clamp(1rem, 1.5vw, 1.18rem);
+            line-height: 1.7;
+        }
+
+        .presenter {
+            position: absolute;
+            z-index: 0;
+            right: clamp(12px, 7vw, 100px);
+            bottom: 0;
+            width: 1200px;
+            max-height: 98%;
+            object-fit: contain;
+            object-position: bottom;
+            filter: drop-shadow(0 20px 44px rgba(0, 0, 0, 0.22));
+        }
+
+        @media (max-width: 700px) {
+            .hero {
+                min-height: max(720px, 100svh);
+                padding: 22px 24px 48px;
+                background-image:
+                    linear-gradient(90deg, var(--overlay-left), var(--overlay-middle)),
+                    linear-gradient(0deg, var(--overlay-bottom), transparent 70%),
+                    url("images/123.png");
+                background-position: center, center, 57% center;
+            }
+
+            .brand-mark {
+                width: 42px;
+                height: 42px;
+            }
+
+            .campus-label {
+                max-width: 150px;
+                font-size: 0.62rem;
+                line-height: 1.5;
+            }
+
+            .topbar-details {
+                gap: 10px;
+            }
+
+            .theme-option {
+                padding: 7px 9px;
+                font-size: 0.68rem;
+            }
+
+            .hero-content {
+                padding-top: 80px;
+                padding-bottom: 190px;
+                transform: translateX(-8px);
+            }
+
+            .presenter {
+                right: -28px;
+                width: min(85vw, 440px);
+                max-height: 58%;
+                opacity: 0.9;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .hero {
+                padding-right: 18px;
+                padding-left: 18px;
+            }
+
+            .brand {
+                gap: 8px;
+            }
+
+            .brand-name {
+                font-size: 0.9rem;
+            }
+
+            .campus-label {
+                max-width: 120px;
+                font-size: 0.55rem;
+            }
+
+            .topbar-details {
+                gap: 6px;
+            }
+
+            .theme-option {
+                padding: 7px;
+                font-size: 0.62rem;
+            }
         }
     </style>
 </head>
 
-<header>
-    <p class="username">ISOMS</p>
-    <p class="text">Integrated School Organization Management System</p>
-    <img class="overlay-image" src="images/girl (1).png">
-</header>
+<body>
+    <header class="hero" data-theme="black">
+        <div class="topbar">
+            <a class="brand" href="#" aria-label="ISOMS home">
+                <span class="brand-mark" aria-hidden="true">I</span>
+                <span class="brand-name">ISOMS</span>
+            </a>
+            <div class="topbar-details">
+                <p class="campus-label">University of Pangasinan<br>PHINMA Education</p>
+                <div class="theme-toggle" role="group" aria-label="Choose header theme">
+                    <button class="theme-option" type="button" data-theme-choice="black" aria-pressed="true">Black</button>
+                    <button class="theme-option" type="button" data-theme-choice="white" aria-pressed="false">White</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <p class="eyebrow">Connected campus, brighter future</p>
+            <h1>Integrated School <span>Organization</span> Management System</h1>
+            <p class="description">A simpler way for your school community to stay informed, organized, and connected.</p>
+        </div>
+
+        <img class="presenter" src="images/girl (1).png" alt="Presenter welcoming the school community">
+    </header>
+    <script>
+        const hero = document.querySelector(".hero");
+        const themeOptions = document.querySelectorAll("[data-theme-choice]");
+
+        themeOptions.forEach((option) => {
+            option.addEventListener("click", () => {
+                const theme = option.dataset.themeChoice;
+                hero.dataset.theme = theme;
+                themeOptions.forEach((themeOption) => {
+                    themeOption.setAttribute("aria-pressed", String(themeOption === option));
+                });
+            });
+        });
+    </script>
+</body>
+
 </html>
