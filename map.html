@@ -382,6 +382,469 @@
                 font-size: 0.65rem;
             }
         }
+
+        body {
+            background: #0d1b29;
+            color: #f4f7fb;
+        }
+
+        .map-header {
+            min-height: 34px;
+            padding: 8px clamp(18px, 4vw, 48px);
+            background: #241f20;
+            color: #a9aaad;
+        }
+
+        .map-brand {
+            color: inherit;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+
+        .map-back {
+            color: #cbd4df;
+            font-size: 0.72rem;
+        }
+
+        .map-main {
+            width: min(100% - 48px, 1440px);
+            padding: clamp(32px, 5vw, 58px) 0 70px;
+        }
+
+        .map-kicker {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 12px;
+            color: #ffbc00;
+            font-size: 0.7rem;
+            letter-spacing: 0;
+        }
+
+        .map-kicker::before {
+            display: grid;
+            width: 21px;
+            height: 21px;
+            place-items: center;
+            border-radius: 50%;
+            background: #ffbc00;
+            color: #152539;
+            content: "⌖";
+            font-size: 0.85rem;
+        }
+
+        h1 {
+            max-width: none;
+            color: #f7f8fb;
+            font-size: clamp(2rem, 4vw, 3rem);
+            letter-spacing: -0.035em;
+        }
+
+        .map-intro {
+            max-width: 650px;
+            margin-top: 10px;
+            color: #c1cbd8;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .map-notice {
+            margin-top: 14px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #8f9cad;
+            font-size: 0.75rem;
+        }
+
+        .map-panel {
+            grid-template-columns: minmax(0, 1.55fr) minmax(310px, 1fr);
+            gap: 18px;
+            margin-top: 26px;
+            align-items: stretch;
+        }
+
+        .floor-panel,
+        .location-panel {
+            overflow: hidden;
+            border: 1px solid #263c54;
+            border-radius: 14px;
+            background: #14273b;
+            box-shadow: none;
+        }
+
+        .floor-heading {
+            min-height: 40px;
+            padding: 10px 14px;
+            border: 0;
+            background: #0c1a28;
+        }
+
+        .floor-heading h2,
+        .location-panel h2 {
+            color: #f3f6fa;
+            font-size: 0.76rem;
+        }
+
+        .floor-switcher {
+            gap: 3px;
+            padding: 3px;
+            background: #1d3148;
+        }
+
+        .floor-button {
+            padding: 7px 9px;
+            color: #c8d2df;
+            font-size: 0.66rem;
+        }
+
+        .floor-button[aria-pressed="true"] {
+            background: #ffbc00;
+            color: #14273b;
+        }
+
+        .tour-viewer {
+            position: relative;
+            height: clamp(300px, 35vw, 450px);
+            overflow: hidden;
+            background: #091521;
+            isolation: isolate;
+        }
+
+        .tour-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 48%;
+            transition: transform 220ms ease;
+        }
+
+        .tour-viewer::after {
+            position: absolute;
+            z-index: 1;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(7, 16, 26, 0.68), transparent 28%, transparent 66%, rgba(7, 16, 26, 0.75));
+            content: "";
+            pointer-events: none;
+        }
+
+        .viewer-caption {
+            position: absolute;
+            z-index: 2;
+            top: 13px;
+            left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .viewer-caption::before {
+            color: #ffbc00;
+            content: "⌖";
+            font-size: 0.95rem;
+        }
+
+        .viewer-status {
+            position: absolute;
+            z-index: 2;
+            right: auto;
+            bottom: 54px;
+            left: 14px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .viewer-status strong {
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .viewer-status span {
+            display: block;
+            margin-top: 4px;
+            color: #d4dce5;
+            font-size: 0.68rem;
+        }
+
+        .viewer-controls {
+            position: absolute;
+            z-index: 3;
+            right: 12px;
+            bottom: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .viewer-control {
+            min-width: 34px;
+            min-height: 32px;
+            padding: 7px 9px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 7px;
+            background: rgba(18, 44, 68, 0.9);
+            color: #e9f0f8;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.65rem;
+        }
+
+        .viewer-control:hover {
+            background: #ffbc00;
+            color: #152539;
+        }
+
+        .viewer-arrow,
+        .viewer-play {
+            position: absolute;
+            z-index: 3;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            background: rgba(11, 28, 44, 0.7);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .viewer-arrow {
+            top: 50%;
+            width: 36px;
+            height: 36px;
+            transform: translateY(-50%);
+        }
+
+        .viewer-arrow--previous {
+            left: 14px;
+        }
+
+        .viewer-arrow--next {
+            right: 14px;
+        }
+
+        .viewer-play {
+            top: 50%;
+            left: 50%;
+            width: 48px;
+            height: 48px;
+            border-color: #ffbc00;
+            background: rgba(255, 188, 0, 0.95);
+            color: #152539;
+            font-size: 1.1rem;
+            transform: translate(-50%, -50%);
+        }
+
+        .viewer-arrow:hover,
+        .viewer-play:hover {
+            background: #fff;
+            color: #152539;
+        }
+
+        .hotspot-layer {
+            position: absolute;
+            z-index: 2;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .map-hotspot {
+            position: absolute;
+            display: grid;
+            width: 28px;
+            height: 28px;
+            place-items: center;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: #ffbc00;
+            color: #152539;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 900;
+            pointer-events: auto;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+        }
+
+        .map-hotspot[aria-pressed="true"] {
+            background: #fff;
+            color: #174d2a;
+            transform: scale(1.12);
+        }
+
+        .location-panel {
+            padding: 14px;
+        }
+
+        .location-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .location-count {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #1e3b59;
+            color: #cbd9e8;
+            font-size: 0.62rem;
+        }
+
+        .location-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .location-card {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            gap: 10px;
+            padding: 9px;
+            border: 1px solid #2a4058;
+            border-radius: 9px;
+            background: #15253b;
+            color: #f1f5f9;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 160ms ease, background-color 160ms ease;
+        }
+
+        .location-card:hover,
+        .location-card[aria-pressed="true"] {
+            border-color: #ffbc00;
+            background: #1a3049;
+        }
+
+        .location-card-icon {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            place-items: center;
+            border-radius: 8px;
+            background: #23466b;
+            color: #9bd7ff;
+            font-size: 0.9rem;
+        }
+
+        .location-card-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .location-card-copy strong,
+        .location-card-copy small {
+            display: block;
+        }
+
+        .location-card-copy strong {
+            font-size: 0.7rem;
+        }
+
+        .location-card-copy small {
+            margin-top: 3px;
+            color: #a2afbf;
+            font-size: 0.6rem;
+        }
+
+        .location-card-arrow {
+            color: #ffbc00;
+            font-size: 1.05rem;
+        }
+
+        .location-panel .location-hint {
+            margin-top: 12px;
+            color: #91a0b1;
+            font-size: 0.66rem;
+        }
+
+        .location-panel #location-title,
+        .location-panel #location-description,
+        .location-panel .location-icon {
+            display: none;
+        }
+
+        .floor-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 13px;
+            color: #a9b6c4;
+            font-size: 0.65rem;
+        }
+
+        .floor-link {
+            padding: 6px 9px;
+            border: 1px solid #29425c;
+            border-radius: 999px;
+            background: #19314c;
+            color: #e9f0f8;
+            cursor: pointer;
+            font: inherit;
+            font-size: inherit;
+        }
+
+        .floor-link[aria-pressed="true"] {
+            border-color: #ffbc00;
+            background: #ffbc00;
+            color: #152539;
+        }
+
+        .tour-footnote {
+            margin: 9px 0 0;
+            color: #8292a4;
+            font-size: 0.62rem;
+        }
+
+        .viewer-control:focus-visible,
+        .viewer-arrow:focus-visible,
+        .viewer-play:focus-visible,
+        .map-hotspot:focus-visible,
+        .location-card:focus-visible,
+        .floor-link:focus-visible {
+            outline: 2px solid #ffbc00;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 760px) {
+            .map-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .tour-viewer {
+                height: min(68vw, 390px);
+                min-height: 280px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .map-main {
+                width: min(100% - 32px, 1440px);
+            }
+
+            .floor-heading {
+                gap: 8px;
+            }
+
+            .floor-switcher {
+                border-radius: 12px;
+            }
+
+            .floor-button {
+                padding: 7px;
+                font-size: 0.6rem;
+            }
+        }
     </style>
 </head>
 
@@ -392,152 +855,226 @@
     </header>
 
     <main class="map-main">
-        <p class="map-kicker">Inside Upang</p>
-        <h1>Explore the campus building</h1>
-        <p class="map-intro">Choose a floor, then select a space on the map to learn more about it.</p>
-        <aside class="map-notice">
-            This is an interactive sample layout, not an official University of Pangasinan floor plan. Room locations and descriptions are illustrative.
-        </aside>
+        <p class="map-kicker">Explore our campus</p>
+        <h1>Step inside PHINMA UPANG — virtually.</h1>
+        <p class="map-intro">Navigate through key campus locations and discover our facilities, right from your browser.</p>
+        <p class="map-notice">Photo preview for exploration. Add 360° photos later to enable a true walk-through experience.</p>
 
         <div class="map-panel">
-            <section class="floor-panel" aria-labelledby="floor-title">
+            <section class="floor-panel" aria-label="Campus photo explorer">
                 <div class="floor-heading">
-                    <h2 id="floor-title">Building map</h2>
+                    <h2 id="viewer-caption">PHINMA UPANG — Student Center, Ground Floor</h2>
                     <div class="floor-switcher" role="group" aria-label="Choose a floor">
-                        <button class="floor-button" type="button" data-floor-choice="ground" aria-pressed="true">Ground floor</button>
-                        <button class="floor-button" type="button" data-floor-choice="second" aria-pressed="false">2nd floor</button>
-                        <button class="floor-button" type="button" data-floor-choice="third" aria-pressed="false">3rd floor</button>
-                        <button class="floor-button" type="button" data-floor-choice="fourth" aria-pressed="false">4th floor</button>
+                        <button class="floor-button" type="button" data-floor-choice="ground" aria-pressed="true">Ground</button>
+                        <button class="floor-button" type="button" data-floor-choice="second" aria-pressed="false">2nd</button>
+                        <button class="floor-button" type="button" data-floor-choice="third" aria-pressed="false">3rd</button>
+                        <button class="floor-button" type="button" data-floor-choice="fourth" aria-pressed="false">4th</button>
                     </div>
                 </div>
-
-                <div class="floor-map" data-floor-map="ground" aria-label="Illustrative ground floor map">
-                    <button class="room ground-entry" type="button" data-location="main-entrance" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">↕</span>Main entrance
-                    </button>
-                    <button class="room ground-admissions" type="button" data-location="admissions" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">✦</span>Admissions
-                    </button>
-                    <button class="room ground-lobby" type="button" data-location="lobby" aria-pressed="true">
-                        <span class="room-icon" aria-hidden="true">⌂</span>Lobby
-                    </button>
-                    <button class="room ground-services" type="button" data-location="student-services" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">▣</span>Student services
-                    </button>
-                    <div class="corridor ground-corridor" aria-hidden="true">Main hallway</div>
-                    <button class="room ground-library" type="button" data-location="library" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">▤</span>Library
-                    </button>
-                    <button class="room ground-help" type="button" data-location="help-desk" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">?</span>Information desk
-                    </button>
-                    <button class="room ground-cafeteria" type="button" data-location="cafeteria" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">◇</span>Cafeteria
-                    </button>
-                    <button class="room ground-lounge" type="button" data-location="lounge" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">◷</span>Student lounge
-                    </button>
+                <div class="tour-viewer" id="tour-viewer">
+                    <img class="tour-image" id="tour-image" src="images/123.png" alt="Campus building at the University of Pangasinan">
+                    <div class="hotspot-layer" id="hotspot-layer" aria-label="Interactive campus locations"></div>
+                    <div class="viewer-caption" id="photo-caption">PHINMA UPANG College Urdaneta — Student Center, Ground Floor</div>
+                    <button class="viewer-arrow viewer-arrow--previous" type="button" data-tour-direction="-1" aria-label="Previous location">‹</button>
+                    <button class="viewer-arrow viewer-arrow--next" type="button" data-tour-direction="1" aria-label="Next location">›</button>
+                    <button class="viewer-play" type="button" id="tour-preview" aria-label="Show tour preview">▶</button>
+                    <div class="viewer-status">
+                        <div>
+                            <strong id="viewer-location-title">Main Entrance</strong>
+                            <span id="viewer-location-floor">Ground Floor · Campus Building</span>
+                        </div>
+                    </div>
+                    <div class="viewer-controls" role="group" aria-label="Photo viewer controls">
+                        <button class="viewer-control" type="button" data-zoom="in">＋ Zoom in</button>
+                        <button class="viewer-control" type="button" data-zoom="out">－ Zoom out</button>
+                        <button class="viewer-control" type="button" id="fullscreen-button">⛶ Full screen</button>
+                    </div>
                 </div>
-
-                <div class="floor-map" data-floor-map="second" aria-label="Illustrative second floor map" hidden>
-                    <button class="room second-csdl" type="button" data-location="csdl" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">▣</span>CSDL
-                    </button>
-                    <button class="room second-guidance" type="button" data-location="guidance-office" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">✦</span>Guidance office
-                    </button>
-                    <div class="corridor second-corridor" aria-hidden="true">Main hallway</div>
-                </div>
-
-                <div class="floor-map" data-floor-map="third" aria-label="Illustrative third floor map" hidden>
-                    <button class="room third-maclab" type="button" data-location="maclab" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">⌘</span>MacLab
-                    </button>
-                    <button class="room third-comlab" type="button" data-location="comlab" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">⌘</span>ComLab
-                    </button>
-                    <div class="corridor third-corridor" aria-hidden="true">Main hallway</div>
-                </div>
-
-                <div class="floor-map" data-floor-map="fourth" aria-label="Illustrative fourth floor map" hidden>
-                    <button class="room fourth-college" type="button" data-location="college-faculty" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">▣</span>College faculty
-                    </button>
-                    <button class="room fourth-shs" type="button" data-location="shs-faculty" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">▣</span>SHS faculty
-                    </button>
-                    <button class="room fourth-chemlab" type="button" data-location="chemlab" aria-pressed="false">
-                        <span class="room-icon" aria-hidden="true">⚗</span>ChemLab
-                    </button>
-                    <div class="corridor fourth-corridor" aria-hidden="true">Main hallway</div>
+                <div class="floor-links" aria-label="Choose a floor">
+                    <span>Explore floors:</span>
+                    <button class="floor-link" type="button" data-floor-choice="ground" aria-pressed="true">Ground</button>
+                    <button class="floor-link" type="button" data-floor-choice="second" aria-pressed="false">2nd floor</button>
+                    <button class="floor-link" type="button" data-floor-choice="third" aria-pressed="false">3rd floor</button>
+                    <button class="floor-link" type="button" data-floor-choice="fourth" aria-pressed="false">4th floor</button>
                 </div>
             </section>
 
-            <aside class="location-panel" aria-live="polite" aria-labelledby="location-title">
-                <span class="location-icon" id="location-icon" aria-hidden="true">⌂</span>
-                <h2 id="location-title">Lobby</h2>
-                <p id="location-description">A central place to orient yourself, meet classmates, and find your way around the building.</p>
-                <span class="location-hint">Select any marked room on the map to see its details.</span>
+            <aside class="location-panel" aria-label="Campus locations">
+                <div class="location-panel-header">
+                    <h2>Campus Locations</h2>
+                    <span class="location-count" id="location-count">0 spots</span>
+                </div>
+                <div class="location-list" id="location-list" aria-live="polite"></div>
+                <p class="location-hint">Choose a location to view it in the campus photo.</p>
             </aside>
         </div>
     </main>
 
     <script>
         const floorButtons = document.querySelectorAll("[data-floor-choice]");
-        const floorMaps = document.querySelectorAll("[data-floor-map]");
-        const rooms = document.querySelectorAll("[data-location]");
-        const locationTitle = document.querySelector("#location-title");
-        const locationDescription = document.querySelector("#location-description");
-        const locationIcon = document.querySelector("#location-icon");
+        const locationList = document.querySelector("#location-list");
+        const locationCount = document.querySelector("#location-count");
+        const viewer = document.querySelector("#tour-viewer");
+        const viewerImage = document.querySelector("#tour-image");
+        const viewerCaption = document.querySelector("#viewer-caption");
+        const photoCaption = document.querySelector("#photo-caption");
+        const viewerTitle = document.querySelector("#viewer-location-title");
+        const viewerFloor = document.querySelector("#viewer-location-floor");
+        const hotspotLayer = document.querySelector("#hotspot-layer");
+        const floorNames = {
+            ground: "Ground Floor",
+            second: "2nd Floor",
+            third: "3rd Floor",
+            fourth: "4th Floor"
+        };
+        const locations = {
+            ground: [
+                { id: "main-entrance", name: "Main Entrance", detail: "Ground Floor · Student Center", icon: "⌂", x: 50, y: 52 },
+                { id: "lobby", name: "Student Center Lobby", detail: "Ground Floor · Student Center", icon: "▣", x: 61, y: 41 },
+                { id: "admissions", name: "Admissions", detail: "Ground Floor · Student Center", icon: "✦", x: 42, y: 39 },
+                { id: "student-services", name: "Student Services", detail: "Ground Floor · Student Center", icon: "♧", x: 56, y: 61 },
+                { id: "library", name: "Library & Learning Hub", detail: "Ground Floor · Main Building", icon: "▤", x: 36, y: 31 },
+                { id: "help-desk", name: "Information Desk", detail: "Ground Floor · Student Center", icon: "?", x: 48, y: 46 },
+                { id: "cafeteria", name: "Cafeteria", detail: "Ground Floor · Main Building", icon: "◇", x: 67, y: 58 },
+                { id: "lounge", name: "Student Lounge", detail: "Ground Floor · Main Building", icon: "◷", x: 31, y: 55 }
+            ],
+            second: [
+                { id: "csdl", name: "CSDL", detail: "2nd Floor · Student Center", icon: "▣", x: 43, y: 38 },
+                { id: "guidance-office", name: "Guidance Office", detail: "2nd Floor · Student Center", icon: "✦", x: 59, y: 42 }
+            ],
+            third: [
+                { id: "maclab", name: "MacLab", detail: "3rd Floor · Main Building", icon: "⌘", x: 43, y: 34 },
+                { id: "comlab", name: "ComLab", detail: "3rd Floor · Main Building", icon: "⌘", x: 59, y: 34 }
+            ],
+            fourth: [
+                { id: "college-faculty", name: "College Faculty", detail: "4th Floor · Faculty Wing", icon: "▣", x: 39, y: 27 },
+                { id: "shs-faculty", name: "SHS Faculty", detail: "4th Floor · Faculty Wing", icon: "▣", x: 52, y: 27 },
+                { id: "chemlab", name: "ChemLab", detail: "4th Floor · Science Wing", icon: "⚗", x: 65, y: 27 }
+            ]
+        };
 
-        const locationDetails = {
-            "main-entrance": ["Main entrance", "The illustrative primary entrance and starting point for finding your way through the building.", "↕"],
-            admissions: ["Admissions", "A sample service area for admissions questions and enrollment guidance.", "✦"],
-            lobby: ["Lobby", "A central place to orient yourself, meet classmates, and find your way around the building.", "⌂"],
-            "student-services": ["Student services", "A sample service point for student support, records, and general campus assistance.", "▣"],
-            library: ["Library", "A quiet place for reading, research, and independent study.", "▤"],
-            "help-desk": ["Information desk", "A sample help point for directions and general campus questions.", "?"],
-            cafeteria: ["Cafeteria", "A shared space to grab a meal and spend time with classmates.", "◇"],
-            lounge: ["Student lounge", "A casual area to relax, meet friends, or work between classes.", "◷"],
-            csdl: ["CSDL", "The CSDL location on the second floor. Exact room details and placement can be updated to match the building.", "▣"],
-            "guidance-office": ["Guidance office", "A student support office on the second floor for guidance and assistance.", "✦"],
-            maclab: ["MacLab", "The MacLab location on the third floor. Exact room details and placement can be updated to match the building.", "⌘"],
-            comlab: ["ComLab", "The ComLab location on the third floor. Exact room details and placement can be updated to match the building.", "⌘"],
-            "college-faculty": ["College faculty", "College faculty offices are located on the fourth floor.", "▣"],
-            "shs-faculty": ["SHS faculty", "SHS faculty offices are located on the fourth floor.", "▣"],
-            chemlab: ["ChemLab", "The Chemistry Laboratory is located on the fourth floor. Follow posted campus safety guidance when visiting.", "⚗"]
+        let activeFloor = "ground";
+        let activeLocationIndex = 0;
+        let zoomLevel = 1;
+
+        const activeLocations = () => locations[activeFloor];
+
+        const selectLocation = (index) => {
+            const floorLocations = activeLocations();
+            activeLocationIndex = (index + floorLocations.length) % floorLocations.length;
+            const selected = floorLocations[activeLocationIndex];
+
+            viewerTitle.textContent = selected.name;
+            viewerFloor.textContent = selected.detail;
+            viewerCaption.textContent = `PHINMA UPANG — ${selected.name}, ${floorNames[activeFloor]}`;
+            photoCaption.textContent = `PHINMA UPANG College Urdaneta — ${selected.name}, ${floorNames[activeFloor]}`;
+
+            locationList.querySelectorAll(".location-card").forEach((card, cardIndex) => {
+                card.setAttribute("aria-pressed", String(cardIndex === activeLocationIndex));
+            });
+
+            hotspotLayer.querySelectorAll(".map-hotspot").forEach((hotspot, hotspotIndex) => {
+                hotspot.setAttribute("aria-pressed", String(hotspotIndex === activeLocationIndex));
+            });
+        };
+
+        const renderLocations = () => {
+            locationList.replaceChildren();
+            hotspotLayer.replaceChildren();
+            const floorLocations = activeLocations();
+            locationCount.textContent = `${floorLocations.length} ${floorLocations.length === 1 ? "spot" : "spots"}`;
+
+            floorLocations.forEach((location, index) => {
+                const card = document.createElement("button");
+                card.className = "location-card";
+                card.type = "button";
+                card.setAttribute("aria-pressed", "false");
+                const icon = document.createElement("span");
+                icon.className = "location-card-icon";
+                icon.setAttribute("aria-hidden", "true");
+                icon.textContent = location.icon;
+
+                const copy = document.createElement("span");
+                copy.className = "location-card-copy";
+                const name = document.createElement("strong");
+                name.textContent = location.name;
+                const detail = document.createElement("small");
+                detail.textContent = location.detail;
+                copy.append(name, detail);
+
+                const arrow = document.createElement("span");
+                arrow.className = "location-card-arrow";
+                arrow.setAttribute("aria-hidden", "true");
+                arrow.textContent = "›";
+                card.append(icon, copy, arrow);
+                card.addEventListener("click", () => selectLocation(index));
+                locationList.append(card);
+
+                const hotspot = document.createElement("button");
+                hotspot.className = "map-hotspot";
+                hotspot.type = "button";
+                hotspot.style.left = `${location.x}%`;
+                hotspot.style.top = `${location.y}%`;
+                hotspot.setAttribute("aria-label", `Explore ${location.name}`);
+                hotspot.setAttribute("aria-pressed", "false");
+                hotspot.textContent = "•";
+                hotspot.addEventListener("click", () => selectLocation(index));
+                hotspotLayer.append(hotspot);
+            });
+
+            selectLocation(0);
         };
 
         floorButtons.forEach((button) => {
             button.addEventListener("click", () => {
-                const selectedFloor = button.dataset.floorChoice;
-
+                activeFloor = button.dataset.floorChoice;
                 floorButtons.forEach((floorButton) => {
-                    floorButton.setAttribute("aria-pressed", String(floorButton === button));
+                    floorButton.setAttribute("aria-pressed", String(floorButton.dataset.floorChoice === activeFloor));
                 });
-
-                floorMaps.forEach((map) => {
-                    map.hidden = map.dataset.floorMap !== selectedFloor;
-                });
-
-                const firstRoom = document.querySelector(`[data-floor-map="${selectedFloor}"] [data-location]`);
-                firstRoom.click();
+                renderLocations();
             });
         });
 
-        rooms.forEach((room) => {
-            room.addEventListener("click", () => {
-                const [title, description, icon] = locationDetails[room.dataset.location];
-
-                rooms.forEach((roomButton) => {
-                    roomButton.setAttribute("aria-pressed", String(roomButton === room));
-                });
-
-                locationTitle.textContent = title;
-                locationDescription.textContent = description;
-                locationIcon.textContent = icon;
+        document.querySelectorAll("[data-tour-direction]").forEach((button) => {
+            button.addEventListener("click", () => {
+                selectLocation(activeLocationIndex + Number(button.dataset.tourDirection));
             });
         });
+
+        document.querySelectorAll("[data-zoom]").forEach((button) => {
+            button.addEventListener("click", () => {
+                zoomLevel = Math.max(1, Math.min(2.5, zoomLevel + (button.dataset.zoom === "in" ? 0.25 : -0.25)));
+                viewerImage.style.transform = `scale(${zoomLevel})`;
+            });
+        });
+
+        document.querySelector("#fullscreen-button").addEventListener("click", () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                viewer.requestFullscreen();
+            }
+        });
+
+        let tourTimer = null;
+        const tourButton = document.querySelector("#tour-preview");
+        tourButton.addEventListener("click", () => {
+            if (tourTimer) {
+                window.clearInterval(tourTimer);
+                tourTimer = null;
+                tourButton.textContent = "▶";
+                tourButton.setAttribute("aria-label", "Start guided location preview");
+                return;
+            }
+
+            tourButton.textContent = "Ⅱ";
+            tourButton.setAttribute("aria-label", "Pause guided location preview");
+            tourTimer = window.setInterval(() => {
+                selectLocation(activeLocationIndex + 1);
+            }, 3000);
+        });
+
+        renderLocations();
     </script>
 </body>
 
