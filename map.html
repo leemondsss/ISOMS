@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <title>Inside Upang | Campus Explorer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f7ef;
+            color: #173d27;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .map-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px clamp(24px, 7vw, 104px);
+            background: rgba(23, 77, 42, 0.94);
+            color: #fff;
+        }
+
+        .map-brand {
+            color: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-decoration: none;
+        }
+
+        .map-back {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 160ms ease;
+        }
+
+        .map-back:hover,
+        .map-back:focus-visible {
+            color: #FFBC00;
+        }
+
+        .map-main {
+            width: min(100% - 48px, 1180px);
+            margin: 0 auto;
+            padding: clamp(44px, 8vw, 88px) 0;
+        }
+
+        .map-kicker {
+            margin: 0 0 12px;
+            color: #1f6b3a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            max-width: 720px;
+            margin: 0;
+            color: #173d27;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            letter-spacing: -0.05em;
+            line-height: 1.06;
+        }
+
+        .map-intro {
+            max-width: 650px;
+            margin: 16px 0 0;
+            color: #526257;
+            line-height: 1.65;
+        }
+
+        .map-notice {
+            margin-top: 24px;
+            padding: 14px 16px;
+            border: 1px solid #ead899;
+            border-radius: 12px;
+            background: #fff9e8;
+            color: #584919;
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+
+        .map-panel {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(230px, 0.8fr);
+            gap: 24px;
+            margin-top: 32px;
+            align-items: start;
+        }
+
+        .floor-panel,
+        .location-panel {
+            border: 1px solid #e5eadf;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 10px 24px rgba(23, 77, 42, 0.07);
+        }
+
+        .floor-panel {
+            overflow: hidden;
+        }
+
+        .floor-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 20px 22px;
+            border-bottom: 1px solid #edf0e9;
+        }
+
+        .floor-heading h2,
+        .location-panel h2 {
+            margin: 0;
+            color: #173d27;
+            font-size: 1.05rem;
+        }
+
+        .floor-switcher {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 4px;
+            border-radius: 999px;
+            background: #f1f4ed;
+        }
+
+        .floor-button {
+            padding: 9px 13px;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: #34503b;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .floor-button[aria-pressed="true"] {
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .floor-button:focus-visible,
+        .room:focus-visible,
+        .map-back:focus-visible {
+            outline: 3px solid #FFBC00;
+            outline-offset: 3px;
+        }
+
+        .floor-map {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            grid-template-rows: repeat(5, minmax(86px, auto));
+            gap: 10px;
+            min-height: 500px;
+            padding: 20px;
+            background-color: #fafbf8;
+            background-image: linear-gradient(#eef1e9 1px, transparent 1px), linear-gradient(90deg, #eef1e9 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .room,
+        .corridor {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .room {
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid #dce6d8;
+            background: #fff;
+            color: #174d2a;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.83rem;
+            font-weight: 800;
+            line-height: 1.35;
+            transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+        }
+
+        .room:hover {
+            transform: translateY(-2px);
+            border-color: #1f6b3a;
+        }
+
+        .room[aria-pressed="true"] {
+            border-color: #174d2a;
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .room-icon {
+            color: #b38a00;
+            font-size: 1.15rem;
+        }
+
+        .room[aria-pressed="true"] .room-icon {
+            color: #FFBC00;
+        }
+
+        .corridor {
+            background: #e9eee4;
+            color: #647265;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .ground-entry {
+            grid-area: 1 / 3 / 2 / 5;
+        }
+
+        .ground-admissions {
+            grid-area: 2 / 1 / 3 / 3;
+        }
+
+        .ground-lobby {
+            grid-area: 2 / 3 / 3 / 5;
+        }
+
+        .ground-services {
+            grid-area: 2 / 5 / 3 / 7;
+        }
+
+        .ground-corridor {
+            grid-area: 3 / 1 / 4 / 7;
+        }
+
+        .ground-library {
+            grid-area: 4 / 1 / 5 / 4;
+        }
+
+        .ground-help {
+            grid-area: 4 / 4 / 5 / 7;
+        }
+
+        .ground-cafeteria {
+            grid-area: 5 / 1 / 6 / 4;
+        }
+
+        .ground-lounge {
+            grid-area: 5 / 4 / 6 / 7;
+        }
+
+        .second-csdl {
+            grid-area: 1 / 1 / 3 / 4;
+        }
+
+        .second-guidance {
+            grid-area: 1 / 4 / 3 / 7;
+        }
+
+        .second-corridor {
+            grid-area: 3 / 1 / 4 / 7;
+        }
+
+        .third-maclab {
+            grid-area: 1 / 1 / 3 / 4;
+        }
+
+        .third-comlab {
+            grid-area: 1 / 4 / 3 / 7;
+        }
+
+        .third-corridor {
+            grid-area: 3 / 1 / 4 / 7;
+        }
+
+        .fourth-college {
+            grid-area: 1 / 1 / 3 / 3;
+        }
+
+        .fourth-shs {
+            grid-area: 1 / 3 / 3 / 5;
+        }
+
+        .fourth-chemlab {
+            grid-area: 1 / 5 / 3 / 7;
+        }
+
+        .fourth-corridor {
+            grid-area: 3 / 1 / 4 / 7;
+        }
+
+        .location-panel {
+            padding: 22px;
+        }
+
+        .location-icon {
+            display: grid;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 18px;
+            place-items: center;
+            border-radius: 15px;
+            background: #fff2c4;
+            color: #174d2a;
+            font-size: 1.25rem;
+        }
+
+        .location-panel p {
+            margin: 12px 0 0;
+            color: #526257;
+            font-size: 0.9rem;
+            line-height: 1.65;
+        }
+
+        .location-hint {
+            display: block;
+            margin-top: 22px;
+            color: #6c786d;
+            font-size: 0.76rem;
+            line-height: 1.5;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 760px) {
+            .map-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .floor-map {
+                grid-template-rows: repeat(5, minmax(76px, auto));
+                gap: 7px;
+                min-height: 420px;
+                padding: 12px;
+            }
+
+            .room {
+                padding: 8px;
+                font-size: 0.72rem;
+            }
+
+            .floor-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .map-main {
+                width: min(100% - 32px, 1180px);
+            }
+
+            .map-header {
+                padding-right: 16px;
+                padding-left: 16px;
+            }
+
+            .floor-map {
+                grid-template-rows: repeat(5, minmax(70px, auto));
+                gap: 5px;
+                padding: 8px;
+            }
+
+            .room {
+                gap: 4px;
+                padding: 5px;
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="map-header">
+        <a class="map-brand" href="index.html">ISOMS</a>
+        <a class="map-back" href="index.html">← Back to home</a>
+    </header>
+
+    <main class="map-main">
+        <p class="map-kicker">Inside Upang</p>
+        <h1>Explore the campus building</h1>
+        <p class="map-intro">Choose a floor, then select a space on the map to learn more about it.</p>
+        <aside class="map-notice">
+            This is an interactive sample layout, not an official University of Pangasinan floor plan. Room locations and descriptions are illustrative.
+        </aside>
+
+        <div class="map-panel">
+            <section class="floor-panel" aria-labelledby="floor-title">
+                <div class="floor-heading">
+                    <h2 id="floor-title">Building map</h2>
+                    <div class="floor-switcher" role="group" aria-label="Choose a floor">
+                        <button class="floor-button" type="button" data-floor-choice="ground" aria-pressed="true">Ground floor</button>
+                        <button class="floor-button" type="button" data-floor-choice="second" aria-pressed="false">2nd floor</button>
+                        <button class="floor-button" type="button" data-floor-choice="third" aria-pressed="false">3rd floor</button>
+                        <button class="floor-button" type="button" data-floor-choice="fourth" aria-pressed="false">4th floor</button>
+                    </div>
+                </div>
+
+                <div class="floor-map" data-floor-map="ground" aria-label="Illustrative ground floor map">
+                    <button class="room ground-entry" type="button" data-location="main-entrance" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">↕</span>Main entrance
+                    </button>
+                    <button class="room ground-admissions" type="button" data-location="admissions" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">✦</span>Admissions
+                    </button>
+                    <button class="room ground-lobby" type="button" data-location="lobby" aria-pressed="true">
+                        <span class="room-icon" aria-hidden="true">⌂</span>Lobby
+                    </button>
+                    <button class="room ground-services" type="button" data-location="student-services" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">▣</span>Student services
+                    </button>
+                    <div class="corridor ground-corridor" aria-hidden="true">Main hallway</div>
+                    <button class="room ground-library" type="button" data-location="library" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">▤</span>Library
+                    </button>
+                    <button class="room ground-help" type="button" data-location="help-desk" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">?</span>Information desk
+                    </button>
+                    <button class="room ground-cafeteria" type="button" data-location="cafeteria" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">◇</span>Cafeteria
+                    </button>
+                    <button class="room ground-lounge" type="button" data-location="lounge" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">◷</span>Student lounge
+                    </button>
+                </div>
+
+                <div class="floor-map" data-floor-map="second" aria-label="Illustrative second floor map" hidden>
+                    <button class="room second-csdl" type="button" data-location="csdl" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">▣</span>CSDL
+                    </button>
+                    <button class="room second-guidance" type="button" data-location="guidance-office" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">✦</span>Guidance office
+                    </button>
+                    <div class="corridor second-corridor" aria-hidden="true">Main hallway</div>
+                </div>
+
+                <div class="floor-map" data-floor-map="third" aria-label="Illustrative third floor map" hidden>
+                    <button class="room third-maclab" type="button" data-location="maclab" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">⌘</span>MacLab
+                    </button>
+                    <button class="room third-comlab" type="button" data-location="comlab" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">⌘</span>ComLab
+                    </button>
+                    <div class="corridor third-corridor" aria-hidden="true">Main hallway</div>
+                </div>
+
+                <div class="floor-map" data-floor-map="fourth" aria-label="Illustrative fourth floor map" hidden>
+                    <button class="room fourth-college" type="button" data-location="college-faculty" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">▣</span>College faculty
+                    </button>
+                    <button class="room fourth-shs" type="button" data-location="shs-faculty" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">▣</span>SHS faculty
+                    </button>
+                    <button class="room fourth-chemlab" type="button" data-location="chemlab" aria-pressed="false">
+                        <span class="room-icon" aria-hidden="true">⚗</span>ChemLab
+                    </button>
+                    <div class="corridor fourth-corridor" aria-hidden="true">Main hallway</div>
+                </div>
+            </section>
+
+            <aside class="location-panel" aria-live="polite" aria-labelledby="location-title">
+                <span class="location-icon" id="location-icon" aria-hidden="true">⌂</span>
+                <h2 id="location-title">Lobby</h2>
+                <p id="location-description">A central place to orient yourself, meet classmates, and find your way around the building.</p>
+                <span class="location-hint">Select any marked room on the map to see its details.</span>
+            </aside>
+        </div>
+    </main>
+
+    <script>
+        const floorButtons = document.querySelectorAll("[data-floor-choice]");
+        const floorMaps = document.querySelectorAll("[data-floor-map]");
+        const rooms = document.querySelectorAll("[data-location]");
+        const locationTitle = document.querySelector("#location-title");
+        const locationDescription = document.querySelector("#location-description");
+        const locationIcon = document.querySelector("#location-icon");
+
+        const locationDetails = {
+            "main-entrance": ["Main entrance", "The illustrative primary entrance and starting point for finding your way through the building.", "↕"],
+            admissions: ["Admissions", "A sample service area for admissions questions and enrollment guidance.", "✦"],
+            lobby: ["Lobby", "A central place to orient yourself, meet classmates, and find your way around the building.", "⌂"],
+            "student-services": ["Student services", "A sample service point for student support, records, and general campus assistance.", "▣"],
+            library: ["Library", "A quiet place for reading, research, and independent study.", "▤"],
+            "help-desk": ["Information desk", "A sample help point for directions and general campus questions.", "?"],
+            cafeteria: ["Cafeteria", "A shared space to grab a meal and spend time with classmates.", "◇"],
+            lounge: ["Student lounge", "A casual area to relax, meet friends, or work between classes.", "◷"],
+            csdl: ["CSDL", "The CSDL location on the second floor. Exact room details and placement can be updated to match the building.", "▣"],
+            "guidance-office": ["Guidance office", "A student support office on the second floor for guidance and assistance.", "✦"],
+            maclab: ["MacLab", "The MacLab location on the third floor. Exact room details and placement can be updated to match the building.", "⌘"],
+            comlab: ["ComLab", "The ComLab location on the third floor. Exact room details and placement can be updated to match the building.", "⌘"],
+            "college-faculty": ["College faculty", "College faculty offices are located on the fourth floor.", "▣"],
+            "shs-faculty": ["SHS faculty", "SHS faculty offices are located on the fourth floor.", "▣"],
+            chemlab: ["ChemLab", "The Chemistry Laboratory is located on the fourth floor. Follow posted campus safety guidance when visiting.", "⚗"]
+        };
+
+        floorButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const selectedFloor = button.dataset.floorChoice;
+
+                floorButtons.forEach((floorButton) => {
+                    floorButton.setAttribute("aria-pressed", String(floorButton === button));
+                });
+
+                floorMaps.forEach((map) => {
+                    map.hidden = map.dataset.floorMap !== selectedFloor;
+                });
+
+                const firstRoom = document.querySelector(`[data-floor-map="${selectedFloor}"] [data-location]`);
+                firstRoom.click();
+            });
+        });
+
+        rooms.forEach((room) => {
+            room.addEventListener("click", () => {
+                const [title, description, icon] = locationDetails[room.dataset.location];
+
+                rooms.forEach((roomButton) => {
+                    roomButton.setAttribute("aria-pressed", String(roomButton === room));
+                });
+
+                locationTitle.textContent = title;
+                locationDescription.textContent = description;
+                locationIcon.textContent = icon;
+            });
+        });
+    </script>
+</body>
+
+</html>

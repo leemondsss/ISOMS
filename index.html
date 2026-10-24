@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#10283f">
+    <meta name="theme-color" content="#174d2a">
     <title>ISOMS | Integrated School Organization Management System</title>
     <style>
         * {
@@ -22,10 +22,10 @@
             display: flex;
             flex-direction: column;
             min-height: min(760px, 100svh);
-            padding: 28px clamp(24px, 7vw, 104px) 76px;
+            padding: 112px clamp(24px, 7vw, 104px) 76px;
             overflow: hidden;
             color: var(--hero-text);
-            background-color: #10283f;
+            background-color: #174d2a;
             background-image:
                 linear-gradient(90deg, var(--overlay-left) 0%, var(--overlay-middle) 48%, var(--overlay-right) 100%),
                 linear-gradient(0deg, var(--overlay-bottom), transparent 48%),
@@ -37,35 +37,41 @@
         .hero[data-theme="black"] {
             --hero-text: #fff;
             --campus-text: rgba(255, 255, 255, 0.84);
-            --body-copy: rgba(255, 255, 255, 0.84);
-            --accent: #c9e875;
-            --overlay-left: rgba(8, 26, 44, 0.9);
-            --overlay-middle: rgba(8, 26, 44, 0.74);
-            --overlay-right: rgba(8, 26, 44, 0.28);
-            --overlay-bottom: rgba(8, 26, 44, 0.35);
+            --body-copy: #ffffffd6;
+            --accent: #f2c94c;
+            --overlay-left: rgba(23, 77, 42, 0.94);
+            --overlay-middle: #1f6b3ac2;
+            --overlay-right: #1f6b3a47;
+            --overlay-bottom: #174d2a66;
+            background-color: #174d2a;
         }
 
         .hero[data-theme="white"] {
-            --hero-text: #162b3b;
-            --campus-text: #263b4b;
-            --body-copy: #344a59;
-            --accent: #486a16;
-            --overlay-left: rgba(255, 255, 255, 0.94);
-            --overlay-middle: rgba(255, 255, 255, 0.78);
-            --overlay-right: rgba(255, 255, 255, 0.32);
-            --overlay-bottom: rgba(255, 255, 255, 0.28);
-            background-color: #e9eef0;
+            --hero-text: #174d2a;
+            --campus-text: #263b2e;
+            --body-copy: #344a39;
+            --accent: #1f6b3a;
+            --overlay-left: rgba(255, 249, 232, 0.96);
+            --overlay-middle: rgba(255, 249, 232, 0.82);
+            --overlay-right: rgba(255, 249, 232, 0.38);
+            --overlay-bottom: rgba(255, 249, 232, 0.38);
+            background-color: #fff9e8;
         }
 
         .topbar {
-            position: relative;
-            z-index: 2;
+            position: fixed;
+            inset: 0 0 auto;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 24px;
-            width: min(100%, 1280px);
-            margin: 0 auto;
+            padding: 12px clamp(24px, 7vw, 104px);
+            background: rgba(23, 77, 42, 0.8);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 18px rgba(15, 47, 27, 0.12);
+            color: #fff;
         }
 
         .brand {
@@ -81,9 +87,9 @@
             width: 46px;
             height: 46px;
             place-items: center;
-            border: 1px solid color-mix(in srgb, var(--hero-text) 50%, transparent);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 14px;
-            background: color-mix(in srgb, var(--hero-text) 12%, transparent);
+            background: rgba(255, 255, 255, 0.12);
             font-size: 1.1rem;
             font-weight: 800;
             letter-spacing: 0.04em;
@@ -95,9 +101,49 @@
             letter-spacing: 0.14em;
         }
 
+        .site-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(12px, 1.8vw, 26px);
+            transform: translateX(250px);
+        }
+
+        .site-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 0;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-decoration: none;
+            text-transform: uppercase;
+            white-space: nowrap;
+            transition: color 160ms ease;
+        }
+
+        .site-nav a:hover,
+        .site-nav a:focus-visible {
+            color: #FFBC00;
+        }
+
+        .site-nav a:focus-visible {
+            outline: 2px solid #FFBC00;
+            outline-offset: 4px;
+        }
+
+        .site-nav-chevron {
+            width: 7px;
+            height: 7px;
+            border-right: 1px solid currentColor;
+            border-bottom: 1px solid currentColor;
+            transform: translateY(-2px) rotate(45deg);
+        }
+
         .campus-label {
             margin: 0;
-            color: var(--campus-text);
+            color: rgba(255, 255, 255, 0.84);
             font-size: 0.76rem;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -115,9 +161,9 @@
             display: inline-flex;
             gap: 3px;
             padding: 4px;
-            border: 1px solid color-mix(in srgb, var(--hero-text) 30%, transparent);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 999px;
-            background: color-mix(in srgb, var(--hero-text) 10%, transparent);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .theme-option {
@@ -125,7 +171,7 @@
             border: 0;
             border-radius: 999px;
             background: transparent;
-            color: var(--hero-text);
+            color: #fff;
             cursor: pointer;
             font: inherit;
             font-size: 0.75rem;
@@ -133,19 +179,44 @@
             transition: background-color 160ms ease, color 160ms ease;
         }
 
-        .hero[data-theme="black"] .theme-option[data-theme-choice="black"][aria-pressed="true"] {
-            background: #111;
+        .topbar[data-theme="black"] .theme-option[data-theme-choice="black"][aria-pressed="true"] {
+            background: #10361f;
             color: #fff;
         }
 
-        .hero[data-theme="white"] .theme-option[data-theme-choice="white"][aria-pressed="true"] {
-            background: #fff;
-            color: #162b3b;
+        .topbar[data-theme="white"] .theme-option[data-theme-choice="white"][aria-pressed="true"] {
+            background: #f2c94c;
+            color: #174d2a;
         }
 
         .theme-option:focus-visible {
-            outline: 2px solid var(--accent);
+            outline: 2px solid #f2c94c;
             outline-offset: 3px;
+        }
+
+        @media (max-width: 1100px) {
+            .topbar {
+                flex-wrap: wrap;
+                row-gap: 4px;
+            }
+
+            .site-nav {
+                order: 3;
+                width: 100%;
+                justify-content: flex-start;
+                gap: clamp(18px, 4vw, 32px);
+                overflow-x: auto;
+                transform: none;
+                scrollbar-width: none;
+            }
+
+            .site-nav::-webkit-scrollbar {
+                display: none;
+            }
+
+            .topbar-details {
+                margin-left: auto;
+            }
         }
 
         .hero-content {
@@ -210,10 +281,438 @@
             filter: drop-shadow(0 20px 44px rgba(0, 0, 0, 0.22));
         }
 
+        .student-voice {
+            position: absolute;
+            right: clamp(320px, calc(7vw + 1px), 690px);
+            bottom: 5px;
+            z-index: 2;
+            width: min(250px, calc(100% - 48px));
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 14px;
+            background: rgba(16, 54, 31, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
+
+        .student-voice-label {
+            margin: 0 0 8px;
+            color: #f2c94c;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .student-voice blockquote {
+            margin: 0;
+            font-size: 0.88rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .student-voice figcaption {
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.74);
+            font-size: 0.68rem;
+        }
+
+        .steps-section {
+            padding: clamp(64px, 9vw, 104px) clamp(24px, 7vw, 104px);
+            background: #fff9e8;
+            color: #174d2a;
+        }
+
+        .steps-inner {
+            width: min(100%, 1440px);
+            margin: 0 auto;
+            transform: translateX(-48px);
+        }
+
+        .steps-kicker {
+            margin: 0 0 12px;
+            color: #1f6b3a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .steps-title {
+            max-width: 620px;
+            margin: 0;
+            color: #173d27;
+            font-size: clamp(2rem, 4.4vw, 3rem);
+            font-weight: 750;
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+            text-wrap: balance;
+        }
+
+        .steps-intro {
+            max-width: 600px;
+            margin: 14px 0 0;
+            color: #526257;
+            font-size: 0.98rem;
+            line-height: 1.65;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            margin-top: 36px;
+        }
+
+        .step-card {
+            min-height: 204px;
+            padding: 22px 22px 24px;
+            border: 1px solid #e5eadf;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 10px 24px rgba(23, 77, 42, 0.06);
+        }
+
+        .step-number {
+            display: grid;
+            width: 38px;
+            height: 38px;
+            place-items: center;
+            border-radius: 50%;
+            background: #f2c94c;
+            color: #173d27;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .step-card h3 {
+            margin: 16px 0 8px;
+            color: #174d2a;
+            font-size: 1.12rem;
+            letter-spacing: -0.02em;
+        }
+
+        .step-card p {
+            margin: 0;
+            color: #526257;
+            font-size: 0.92rem;
+            line-height: 1.65;
+        }
+
+        .organizations-section {
+            padding: clamp(64px, 9vw, 104px) clamp(24px, 7vw, 104px);
+            background: #f5f7ef;
+            color: #173d27;
+        }
+
+        .organizations-inner {
+            width: min(100%, 1440px);
+            margin: 0 auto;
+            transform: translateX(-48px);
+        }
+
+        .organizations-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 32px;
+        }
+
+        .organizations-kicker {
+            margin: 0 0 12px;
+            color: #1f6b3a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .organizations-title {
+            max-width: 640px;
+            margin: 0;
+            color: #173d27;
+            font-size: clamp(2rem, 4.4vw, 3rem);
+            font-weight: 750;
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+            text-wrap: balance;
+        }
+
+        .organizations-intro {
+            max-width: 620px;
+            margin: 14px 0 0;
+            color: #526257;
+            font-size: 0.98rem;
+            line-height: 1.65;
+        }
+
+        .organizations-cta {
+            flex: 0 0 auto;
+            padding: 13px 18px;
+            border: 0;
+            border-radius: 8px;
+            background: #f2c94c;
+            color: #173d27;
+            font: inherit;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: background-color 160ms ease, transform 160ms ease;
+        }
+
+        .organizations-cta:hover {
+            transform: translateY(-2px);
+            background: #e8bb34;
+        }
+
+        .organizations-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        .organization-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .organization-filter {
+            padding: 10px 15px;
+            border: 1px solid #e2e8dc;
+            border-radius: 999px;
+            background: #fff;
+            color: #34503b;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.76rem;
+            font-weight: 700;
+            transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+        }
+
+        .organization-filter[aria-pressed="true"] {
+            border-color: #174d2a;
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .organization-filter:focus-visible,
+        .organization-link:focus-visible,
+        .organizations-cta:focus-visible {
+            outline: 3px solid #f2c94c;
+            outline-offset: 3px;
+        }
+
+        .organizations-count {
+            margin: 0;
+            color: #526257;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .organizations-grid {
+            display: flex;
+            gap: 22px;
+            overflow-x: auto;
+            padding: 34px 2px 12px;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+
+        .organizations-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .organization-card {
+            flex: 0 0 calc((100% - 44px) / 3);
+            overflow: hidden;
+            border: 1px solid #e5eadf;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 10px 24px rgba(23, 77, 42, 0.07);
+            transition: transform 180ms ease, box-shadow 180ms ease;
+            scroll-snap-align: start;
+        }
+
+        .organization-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(23, 77, 42, 0.12);
+        }
+
+        .organization-art {
+            position: relative;
+            display: flex;
+            min-height: 176px;
+            align-items: flex-end;
+            overflow: hidden;
+            padding: 20px 22px;
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .organization-art::before,
+        .organization-art::after {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 50%;
+            content: "";
+        }
+
+        .organization-art::before {
+            top: -74px;
+            right: -24px;
+            width: 240px;
+            height: 240px;
+        }
+
+        .organization-art::after {
+            top: -34px;
+            right: 16px;
+            width: 160px;
+            height: 160px;
+        }
+
+        .organization-art--leadership {
+            background: linear-gradient(135deg, #174d2a, #32814a);
+        }
+
+        .organization-art--academic {
+            background: linear-gradient(135deg, #273d34, #727c42);
+        }
+
+        .organization-art--interest {
+            background: linear-gradient(135deg, #24443b, #31766d);
+        }
+
+        .organization-art-mark {
+            position: absolute;
+            z-index: 1;
+            top: 18px;
+            left: 20px;
+            display: grid;
+            width: 44px;
+            height: 44px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.62);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.13);
+            color: #f2c94c;
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0.03em;
+        }
+
+        .organization-art-label {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .organization-card-content {
+            padding: 20px 22px 18px;
+        }
+
+        .organization-card h3 {
+            margin: 0;
+            color: #173d27;
+            font-size: 1.08rem;
+            letter-spacing: -0.02em;
+        }
+
+        .organization-card-description {
+            min-height: 66px;
+            margin: 10px 0 18px;
+            color: #526257;
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .organization-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .organization-tag {
+            color: #1f6b3a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .organization-link {
+            padding: 9px 14px;
+            border: 1px solid #1f6b3a;
+            border-radius: 999px;
+            color: #174d2a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: background-color 160ms ease, color 160ms ease;
+        }
+
+        .organization-link:hover {
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .organization-card[hidden] {
+            display: none;
+        }
+
+        .organization-carousel-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .organization-carousel-button {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 1px solid #1f6b3a;
+            border-radius: 50%;
+            background: #fff;
+            color: #174d2a;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 160ms ease, color 160ms ease, opacity 160ms ease;
+        }
+
+        .organization-carousel-button:hover:not(:disabled) {
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .organization-carousel-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+
         @media (max-width: 700px) {
+            .steps-section {
+                padding-right: 24px;
+                padding-left: 24px;
+            }
+
+            .steps-inner {
+                transform: translateX(-8px);
+            }
+
             .hero {
                 min-height: max(720px, 100svh);
-                padding: 22px 24px 48px;
+                padding: 96px 24px 48px;
                 background-image:
                     linear-gradient(90deg, var(--overlay-left), var(--overlay-middle)),
                     linear-gradient(0deg, var(--overlay-bottom), transparent 70%),
@@ -224,6 +723,11 @@
             .brand-mark {
                 width: 42px;
                 height: 42px;
+            }
+
+            .topbar {
+                gap: 10px;
+                padding: 10px 18px;
             }
 
             .campus-label {
@@ -253,6 +757,65 @@
                 max-height: 58%;
                 opacity: 0.9;
             }
+
+            .student-voice {
+                right: 18%;
+                bottom: 62px;
+                width: min(230px, calc(100% - 36px));
+                padding: 13px;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                margin-top: 28px;
+            }
+
+            .step-card {
+                min-height: auto;
+            }
+
+            .organizations-section {
+                padding-right: 24px;
+                padding-left: 24px;
+            }
+
+            .organizations-inner {
+                transform: translateX(-8px);
+            }
+
+            .organizations-heading,
+            .organizations-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .organizations-cta {
+                align-self: flex-start;
+            }
+
+            .organizations-grid {
+                gap: 16px;
+                padding-top: 26px;
+            }
+
+            .organization-card {
+                flex-basis: 100%;
+            }
+
+            .organization-carousel-controls {
+                margin-top: 10px;
+            }
+
+            .organization-card-description {
+                min-height: auto;
+            }
+
+
+
+            .organizations-grid {
+                gap: 16px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -261,25 +824,50 @@
                 padding-left: 18px;
             }
 
+            .topbar {
+                padding-right: 18px;
+                padding-left: 18px;
+            }
+
+            .steps-section {
+                gap: 6px;
+                padding-right: 18px;
+                padding-left: 18px;
+            }
+
+            .organizations-section {
+                padding-right: 18px;
+                padding-left: 18px;
+            }
+
+            .organizations-inner {
+                transform: translateX(-8px);
+            }
+
             .brand {
-                gap: 8px;
-            }
-
-            .brand-name {
-                font-size: 0.9rem;
-            }
-
-            .campus-label {
-                max-width: 120px;
-                font-size: 0.55rem;
-            }
-
-            .topbar-details {
                 gap: 6px;
             }
 
+            .brand-mark {
+                width: 36px;
+                height: 36px;
+            }
+
+            .brand-name {
+                font-size: 0.78rem;
+            }
+
+            .campus-label {
+                max-width: 72px;
+                font-size: 0.48rem;
+            }
+
+            .topbar-details {
+                gap: 4px;
+            }
+
             .theme-option {
-                padding: 7px;
+                padding: 7px 6px;
                 font-size: 0.62rem;
             }
         }
@@ -287,21 +875,29 @@
 </head>
 
 <body>
-    <header class="hero" data-theme="black">
-        <div class="topbar">
-            <a class="brand" href="#" aria-label="ISOMS home">
-                <span class="brand-mark" aria-hidden="true">I</span>
-                <span class="brand-name">ISOMS</span>
-            </a>
-            <div class="topbar-details">
-                <p class="campus-label">University of Pangasinan<br>PHINMA Education</p>
-                <div class="theme-toggle" role="group" aria-label="Choose header theme">
-                    <button class="theme-option" type="button" data-theme-choice="black" aria-pressed="true">Black</button>
-                    <button class="theme-option" type="button" data-theme-choice="white" aria-pressed="false">White</button>
-                </div>
+    <nav class="topbar" data-theme="black" aria-label="Site header">
+        <a class="brand" href="#" aria-label="ISOMS home">
+            <span class="brand-mark" aria-hidden="true">I</span>
+            <span class="brand-name">ISOMS</span>
+        </a>
+        <div class="site-nav" role="navigation" aria-label="Main navigation">
+            <a href="#home">Home <span class="site-nav-chevron" aria-hidden="true"></span></a>
+            <a href="#organizations">Scholarship <span class="site-nav-chevron" aria-hidden="true"></span></a>
+            <a href="#organizations">Advisers <span class="site-nav-chevron" aria-hidden="true"></span></a>
+            <a href="#organizations">Alumni <span class="site-nav-chevron" aria-hidden="true"></span></a>
+            <a href="#steps-title">Events <span class="site-nav-chevron" aria-hidden="true"></span></a>
+            <a href="map.html" target="_blank" rel="noopener noreferrer">Inside Upang <span class="site-nav-chevron" aria-hidden="true"></span></a>
+        </div>
+        <div class="topbar-details">
+            <p class="campus-label">University of Pangasinan<br>PHINMA Education</p>
+            <div class="theme-toggle" role="group" aria-label="Choose header theme">
+                <button class="theme-option" type="button" data-theme-choice="black" aria-pressed="true">Black</button>
+                <button class="theme-option" type="button" data-theme-choice="white" aria-pressed="false">White</button>
             </div>
         </div>
+    </nav>
 
+    <header class="hero" id="home" data-theme="black">
         <div class="hero-content">
             <p class="eyebrow">Connected campus, brighter future</p>
             <h1>Integrated School <span>Organization</span> Management System</h1>
@@ -309,20 +905,219 @@
         </div>
 
         <img class="presenter" src="images/girl (1).png" alt="Presenter welcoming the school community">
+        <figure class="student-voice">
+            <p class="student-voice-label">Student Voice</p>
+            <blockquote>“Leadership is not about standing above others; it is about standing with them, listening to their voices, and working together to create a better school community.”</blockquote>
+            <figcaption>— Erica Mae F., SSC President</figcaption>
+        </figure>
     </header>
+
+    <main>
+        <section class="steps-section" aria-labelledby="steps-title">
+            <div class="steps-inner">
+                <p class="steps-kicker">How it works</p>
+                <h2 class="steps-title" id="steps-title">A simple path to getting involved</h2>
+                <p class="steps-intro">Find your place, connect with your campus community, and take part in the organizations you care about.</p>
+
+                <div class="steps-grid">
+                    <article class="step-card">
+                        <span class="step-number" aria-hidden="true">1</span>
+                        <h3>Explore organizations</h3>
+                        <p>Browse student councils, clubs, and campus groups to find the ones that match your interests.</p>
+                    </article>
+                    <article class="step-card">
+                        <span class="step-number" aria-hidden="true">2</span>
+                        <h3>Meet the community</h3>
+                        <p>Discover upcoming events, meet members, and learn what each organization is all about.</p>
+                    </article>
+                    <article class="step-card">
+                        <span class="step-number" aria-hidden="true">3</span>
+                        <h3>Start contributing</h3>
+                        <p>Join activities, share your ideas, and help make your campus community stronger.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="organizations-section" id="organizations" aria-labelledby="organizations-title">
+            <div class="organizations-inner">
+                <div class="organizations-heading">
+                    <div>
+                        <p class="organizations-kicker">Explore organizations</p>
+                        <h2 class="organizations-title" id="organizations-title">Find your people. Make your mark.</h2>
+                        <p class="organizations-intro">Discover campus groups where you can build skills, share ideas, and make student life better.</p>
+                    </div>
+                    <a class="organizations-cta" href="#organization-cards">EXPLORE THE DIRECTORY <span aria-hidden="true">→</span></a>
+                </div>
+
+                <div class="organizations-toolbar">
+                    <div class="organization-filters" role="group" aria-label="Filter organizations">
+                        <button class="organization-filter" type="button" data-organization-filter="all" aria-pressed="true">All groups</button>
+                        <button class="organization-filter" type="button" data-organization-filter="leadership" aria-pressed="false">Leadership</button>
+                        <button class="organization-filter" type="button" data-organization-filter="academic" aria-pressed="false">Academic</button>
+                        <button class="organization-filter" type="button" data-organization-filter="interest" aria-pressed="false">Special interest</button>
+                    </div>
+                    <p class="organizations-count">6 featured groups <span aria-hidden="true">·</span> One campus community</p>
+                </div>
+
+                <div class="organizations-grid" id="organization-cards" role="region" aria-label="Featured student organizations" tabindex="0">
+                    <article class="organization-card" data-organization-category="leadership">
+                        <div class="organization-art organization-art--leadership">
+                            <span class="organization-art-mark" aria-hidden="true">SSC</span>
+                            <p class="organization-art-label">Lead with purpose</p>
+                        </div>
+                        <div class="organization-card-content">
+                            <h3>Supreme Student Council</h3>
+                            <p class="organization-card-description">Represent student voices, champion campus initiatives, and help shape a more connected school community.</p>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag">Leadership</span>
+                                <a class="organization-link" href="#organizations">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="organization-card" data-organization-category="academic">
+                        <div class="organization-art organization-art--academic">
+                            <span class="organization-art-mark" aria-hidden="true">SSLG</span>
+                            <p class="organization-art-label">Grow together</p>
+                        </div>
+                        <div class="organization-card-content">
+                            <h3>Supreme Secondary Learner Government</h3>
+                            <p class="organization-card-description">Work with fellow learners to plan meaningful activities and bring your ideas to the wider school community.</p>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag">Academic</span>
+                                <a class="organization-link" href="#organizations">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="organization-card" data-organization-category="interest">
+                        <div class="organization-art organization-art--interest">
+                            <span class="organization-art-mark" aria-hidden="true">RSO</span>
+                            <p class="organization-art-label">Find your community</p>
+                        </div>
+                        <div class="organization-card-content">
+                            <h3>Recognized Student Organizations</h3>
+                            <p class="organization-card-description">Connect through shared interests, develop new skills, and turn your passion into campus activities.</p>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag">Special interest</span>
+                                <a class="organization-link" href="#organizations">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="organization-card" data-organization-category="interest">
+                        <div class="organization-art organization-art--leadership">
+                            <span class="organization-art-mark" aria-hidden="true">UVC</span>
+                            <p class="organization-art-label">Make an impact</p>
+                        </div>
+                        <div class="organization-card-content">
+                            <h3>UVC</h3>
+                            <p class="organization-card-description">Connect with fellow members, take part in campus activities, and contribute your ideas to the community.</p>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag">Special interest</span>
+                                <a class="organization-link" href="#organizations">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="organization-card" data-organization-category="interest">
+                        <div class="organization-art organization-art--academic">
+                            <span class="organization-art-mark" aria-hidden="true">TNT</span>
+                            <p class="organization-art-label">Ideas into action</p>
+                        </div>
+                        <div class="organization-card-content">
+                            <h3>TNT</h3>
+                            <p class="organization-card-description">Meet students with shared interests and work together on activities that bring energy to campus life.</p>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag">Special interest</span>
+                                <a class="organization-link" href="#organizations">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="organization-card" data-organization-category="interest">
+                        <div class="organization-art organization-art--interest">
+                            <span class="organization-art-mark" aria-hidden="true">DG</span>
+                            <p class="organization-art-label">Together, we grow</p>
+                        </div>
+                        <div class="organization-card-content">
+                            <h3>DANGAT</h3>
+                            <p class="organization-card-description">Build connections, share your perspectives, and get involved in opportunities across the school community.</p>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag">Special interest</span>
+                                <a class="organization-link" href="#organizations">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="organization-carousel-controls" role="group" aria-label="Organization carousel controls">
+                    <button class="organization-carousel-button" type="button" data-carousel-direction="left" aria-label="Previous organizations" disabled>←</button>
+                    <button class="organization-carousel-button" type="button" data-carousel-direction="right" aria-label="Next organizations">→</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <script>
         const hero = document.querySelector(".hero");
+        const topbar = document.querySelector(".topbar");
         const themeOptions = document.querySelectorAll("[data-theme-choice]");
 
         themeOptions.forEach((option) => {
             option.addEventListener("click", () => {
                 const theme = option.dataset.themeChoice;
                 hero.dataset.theme = theme;
+                topbar.dataset.theme = theme;
                 themeOptions.forEach((themeOption) => {
                     themeOption.setAttribute("aria-pressed", String(themeOption === option));
                 });
             });
         });
+
+        const organizationFilters = document.querySelectorAll("[data-organization-filter]");
+        const organizationCards = document.querySelectorAll("[data-organization-category]");
+        const organizationCarousel = document.querySelector("#organization-cards");
+        const carouselButtons = document.querySelectorAll("[data-carousel-direction]");
+
+        const updateCarouselButtons = () => {
+            carouselButtons.forEach((button) => {
+                button.disabled = button.dataset.carouselDirection === "left"
+                    ? organizationCarousel.scrollLeft <= 0
+                    : organizationCarousel.scrollLeft + organizationCarousel.clientWidth >= organizationCarousel.scrollWidth - 1;
+            });
+        };
+
+        carouselButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const direction = button.dataset.carouselDirection === "left" ? -1 : 1;
+                organizationCarousel.scrollBy({
+                    left: direction * organizationCarousel.clientWidth,
+                    behavior: "smooth"
+                });
+            });
+        });
+
+        organizationCarousel.addEventListener("scroll", updateCarouselButtons);
+        window.addEventListener("resize", updateCarouselButtons);
+
+        organizationFilters.forEach((filter) => {
+            filter.addEventListener("click", () => {
+                const category = filter.dataset.organizationFilter;
+
+                organizationFilters.forEach((organizationFilter) => {
+                    organizationFilter.setAttribute("aria-pressed", String(organizationFilter === filter));
+                });
+
+                organizationCards.forEach((card) => {
+                    card.hidden = category !== "all" && card.dataset.organizationCategory !== category;
+                });
+                organizationCarousel.scrollTo({ left: 0, behavior: "smooth" });
+                updateCarouselButtons();
+            });
+        });
+
+        updateCarouselButtons();
     </script>
 </body>
 
