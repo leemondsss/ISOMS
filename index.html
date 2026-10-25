@@ -133,6 +133,19 @@
             outline-offset: 4px;
         }
 
+        .site-nav .login-link {
+            padding: 9px 14px;
+            border: 1px solid rgba(242, 201, 76, 0.8);
+            border-radius: 999px;
+            color: #f2c94c;
+        }
+
+        .site-nav .login-link:hover,
+        .site-nav .login-link:focus-visible {
+            background: #f2c94c;
+            color: #174d2a;
+        }
+
         .site-nav-chevron {
             width: 7px;
             height: 7px;
@@ -143,7 +156,11 @@
 
         .campus-label {
             margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
             color: rgba(255, 255, 255, 0.84);
+            cursor: pointer;
             font-size: 0.76rem;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -152,18 +169,47 @@
         }
 
         .topbar-details {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 18px;
         }
 
+        .topbar-details::after {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 100%;
+            height: 10px;
+            content: "";
+        }
+
         .theme-toggle {
-            display: inline-flex;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            z-index: 1;
+            display: flex;
             gap: 3px;
             padding: 4px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(23, 77, 42, 0.96);
+            box-shadow: 0 8px 20px rgba(15, 47, 27, 0.24);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-4px);
+            transition: opacity 160ms ease, transform 160ms ease, visibility 160ms ease;
+            visibility: hidden;
+        }
+
+        .topbar-details:hover .theme-toggle,
+        .topbar-details:focus-within .theme-toggle,
+        .topbar-details[data-menu-open="true"] .theme-toggle {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            visibility: visible;
         }
 
         .theme-option {
@@ -371,6 +417,12 @@
             border-radius: 18px;
             background: #fff;
             box-shadow: 0 10px 24px rgba(23, 77, 42, 0.06);
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .step-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 16px 32px rgba(23, 77, 42, 0.14);
         }
 
         .step-number {
@@ -397,6 +449,16 @@
             color: #526257;
             font-size: 0.92rem;
             line-height: 1.65;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .step-card {
+                transition: none;
+            }
+
+            .step-card:hover {
+                transform: none;
+            }
         }
 
         .organizations-section {
@@ -887,10 +949,11 @@
             <a href="#organizations">Alumni <span class="site-nav-chevron" aria-hidden="true"></span></a>
             <a href="#steps-title">Events <span class="site-nav-chevron" aria-hidden="true"></span></a>
             <a href="map.html" target="_blank" rel="noopener noreferrer">Inside Upang <span class="site-nav-chevron" aria-hidden="true"></span></a>
+            <a class="login-link" href="login.html">Log in</a>
         </div>
         <div class="topbar-details">
-            <p class="campus-label">University of Pangasinan<br>PHINMA Education</p>
-            <div class="theme-toggle" role="group" aria-label="Choose header theme">
+            <button class="campus-label" type="button" aria-expanded="false" aria-controls="theme-toggle">University of Pangasinan<br>PHINMA Education</button>
+            <div class="theme-toggle" id="theme-toggle" role="group" aria-label="Choose header theme">
                 <button class="theme-option" type="button" data-theme-choice="black" aria-pressed="true">Black</button>
                 <button class="theme-option" type="button" data-theme-choice="white" aria-pressed="false">White</button>
             </div>
@@ -1062,7 +1125,33 @@
     <script>
         const hero = document.querySelector(".hero");
         const topbar = document.querySelector(".topbar");
+        const topbarDetails = document.querySelector(".topbar-details");
+        const campusLabel = document.querySelector(".campus-label");
         const themeOptions = document.querySelectorAll("[data-theme-choice]");
+
+        const setThemeMenuOpen = (isOpen) => {
+            topbarDetails.dataset.menuOpen = String(isOpen);
+            campusLabel.setAttribute("aria-expanded", String(isOpen));
+        };
+
+        topbarDetails.addEventListener("pointerenter", () => setThemeMenuOpen(true));
+        topbarDetails.addEventListener("pointerleave", () => {
+            if (!topbarDetails.contains(document.activeElement)) {
+                setThemeMenuOpen(false);
+            }
+        });
+        topbarDetails.addEventListener("focusin", () => setThemeMenuOpen(true));
+        topbarDetails.addEventListener("focusout", (event) => {
+            if (!topbarDetails.contains(event.relatedTarget)) {
+                setThemeMenuOpen(false);
+            }
+        });
+        campusLabel.addEventListener("click", () => setThemeMenuOpen(true));
+        document.addEventListener("click", (event) => {
+            if (!topbarDetails.contains(event.target)) {
+                setThemeMenuOpen(false);
+            }
+        });
 
         themeOptions.forEach((option) => {
             option.addEventListener("click", () => {

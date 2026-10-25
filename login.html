@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <title>Organization Officer Sign In | ISOMS</title>
+    <style>
+        :root {
+            --green: #174d2a;
+            --green-dark: #10361f;
+            --gold: #f2c94c;
+            --ink: #173d27;
+            --muted: #526257;
+            --line: #e5eadf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: grid;
+            min-width: 320px;
+            min-height: 100vh;
+            grid-template-rows: auto 1fr;
+            margin: 0;
+            background: #f5f7ef;
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            min-height: 70px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px clamp(20px, 7vw, 104px);
+            background: var(--green);
+            color: #fff;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        .back-link {
+            color: #fff;
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link:hover,
+        .back-link:focus-visible {
+            color: var(--gold);
+        }
+
+        .main {
+            display: grid;
+            place-items: center;
+            padding: 48px 20px;
+        }
+
+        .login-card {
+            width: min(100%, 760px);
+            padding: clamp(26px, 5vw, 48px);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: #fff;
+            box-shadow: 0 20px 55px rgba(23, 77, 42, 0.1);
+        }
+
+        .eyebrow {
+            margin: 0 0 12px;
+            color: var(--green);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--ink);
+            font-size: clamp(2rem, 5vw, 3rem);
+            letter-spacing: -0.05em;
+            line-height: 1.05;
+        }
+
+        .intro {
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .officer-mark {
+            display: grid;
+            width: 44px;
+            height: 44px;
+            place-items: center;
+            border-radius: 13px;
+            background: #e9f1e8;
+            color: var(--green);
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .officer-title {
+            margin: 18px 0 0;
+            color: var(--ink);
+            font-size: 1.18rem;
+        }
+
+        .officer-copy {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .secure-notice {
+            margin-top: 24px;
+            padding: 16px 18px;
+            border: 1px solid #e6d79d;
+            border-radius: 12px;
+            background: #fff9e8;
+            color: #5a4a1f;
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .secure-notice strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #453813;
+        }
+
+        .provider-button {
+            display: flex;
+            min-height: 48px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 22px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--green);
+            color: #fff;
+            cursor: not-allowed;
+            font-size: 0.86rem;
+            font-weight: 800;
+            opacity: 0.68;
+        }
+
+        .setup-note {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 0.74rem;
+            line-height: 1.55;
+        }
+
+        .disclaimer {
+            margin: 22px 0 0;
+            padding-top: 16px;
+            border-top: 1px solid #edf1eb;
+            color: #758078;
+            font-size: 0.74rem;
+            line-height: 1.55;
+        }
+
+        @media (max-width: 560px) {
+            .header {
+                min-height: 62px;
+                padding: 10px 16px;
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+            }
+
+            .brand-name {
+                font-size: 0.92rem;
+            }
+
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="index.html" aria-label="ISOMS home">
+            <span class="brand-mark" aria-hidden="true">I</span>
+            <span class="brand-name">ISOMS</span>
+        </a>
+        <a class="back-link" href="index.html">← Back to home</a>
+    </header>
+
+    <main class="main">
+        <section class="login-card" aria-labelledby="login-title">
+            <p class="eyebrow">ISOMS officer access</p>
+            <h1 id="login-title">Organization Officer sign in</h1>
+            <p class="intro">Use your PHINMA Education Google Workspace account to access the organization officer portal.</p>
+
+            <div class="officer-mark" aria-hidden="true">O</div>
+            <h2 class="officer-title">Organization Officer</h2>
+            <p class="officer-copy">Sign in with your authorized PHINMA Education account to manage your organization profile, submit documents, and track review status.</p>
+
+            <aside class="secure-notice">
+                <strong>Your account security stays with PHINMA / Google</strong>
+                Your password and 2-Step Verification code should only be entered on the official PHINMA Education Google sign-in page. ISOMS should never collect or store those credentials.
+            </aside>
+
+            <button class="provider-button" type="button" disabled aria-disabled="true">
+                Continue with PHINMA Education Google account
+            </button>
+            <p class="setup-note">Secure sign-in is not connected yet. The school’s Google Workspace OAuth client and approved redirect URL must be configured before this button can authenticate users and send verified officers to the portal.</p>
+
+            <p class="disclaimer">Students can browse the homepage directly. This sign-in page is reserved for organization officers.</p>
+        </section>
+    </main>
+</body>
+</html>
