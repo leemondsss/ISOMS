@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-required-role="officer">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#174d2a">
+    <script src="access-control.js"></script>
     <title>Organization Officer Portal | ISOMS</title>
     <style>
         :root {
@@ -85,6 +86,143 @@
             display: flex;
             align-items: center;
             gap: 20px;
+        }
+
+        .username {
+            padding: 8px 11px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 999px;
+            color: #fff;
+            font-size: 0.76rem;
+            font-weight: 800;
+        }
+
+        .notification-area {
+            position: relative;
+        }
+
+        .notification-button {
+            position: relative;
+            min-height: 40px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.76rem;
+            font-weight: 800;
+        }
+
+        .notification-button:hover,
+        .notification-button:focus-visible {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-count {
+            display: inline-grid;
+            min-width: 19px;
+            height: 19px;
+            place-items: center;
+            margin-left: 5px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: var(--gold);
+            color: var(--green-dark);
+            font-size: 0.68rem;
+        }
+
+        .notification-count[hidden] {
+            display: none;
+        }
+
+        .notification-panel {
+            position: absolute;
+            z-index: 5;
+            top: calc(100% + 10px);
+            right: 0;
+            width: min(360px, calc(100vw - 32px));
+            max-height: min(460px, calc(100vh - 100px));
+            overflow-y: auto;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--ink);
+            box-shadow: 0 14px 34px rgba(16, 54, 31, 0.2);
+        }
+
+        .notification-panel[hidden] {
+            display: none;
+        }
+
+        .notification-panel-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .notification-panel-heading h2 {
+            margin: 0;
+            font-size: 0.92rem;
+        }
+
+        .mark-notifications-read {
+            padding: 5px 7px;
+            border: 0;
+            background: transparent;
+            color: var(--green);
+            cursor: pointer;
+            font-size: 0.68rem;
+            font-weight: 800;
+        }
+
+        .notification-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .notification-item {
+            padding: 11px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .notification-item[data-read="false"] {
+            border-color: #b8cfb7;
+            background: #f2f8f0;
+        }
+
+        .notification-item strong {
+            display: block;
+            font-size: 0.76rem;
+        }
+
+        .notification-item p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 0.74rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .notification-item time {
+            display: block;
+            margin-top: 7px;
+            color: #718076;
+            font-size: 0.66rem;
+        }
+
+        .notification-empty {
+            margin: 0;
+            padding: 14px 8px;
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.5;
         }
 
         .role-badge {
@@ -321,6 +459,112 @@
             grid-column: 1 / -1;
         }
 
+        .roster-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .roster-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: end;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #fcfdfb;
+        }
+
+        .roster-row--member,
+        .roster-row--executive {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .roster-field {
+            display: grid;
+            min-width: 0;
+            gap: 7px;
+        }
+
+        .roster-field label {
+            color: #354b3c;
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .roster-field input:not([type="file"]) {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #d9e2d7;
+            border-radius: 9px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 0.86rem;
+        }
+
+        .roster-file {
+            display: grid;
+            min-width: 0;
+            gap: 7px;
+        }
+
+        .roster-file-name {
+            overflow-wrap: anywhere;
+            color: var(--muted);
+            font-size: 0.7rem;
+        }
+
+        .file-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .delete-file {
+            min-height: 34px;
+            padding: 0 11px;
+            border: 1px solid #c58b7e;
+            border-radius: 8px;
+            background: #fff;
+            color: #8a3b26;
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .delete-file:hover,
+        .delete-file:focus-visible {
+            background: #fff3ef;
+        }
+
+        .roster-remove {
+            min-height: 36px;
+            justify-self: start;
+            padding: 0 12px;
+            border: 1px solid #cdd9cb;
+            border-radius: 8px;
+            background: #fff;
+            color: var(--green);
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .roster-add {
+            min-height: 40px;
+            margin-top: 12px;
+            padding: 9px 13px;
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--green);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
         .field label {
             color: #354b3c;
             font-size: 0.76rem;
@@ -433,6 +677,14 @@
             padding-top: 2px;
         }
 
+        .form-action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
         .required-note {
             margin: 0;
             color: var(--muted);
@@ -455,6 +707,22 @@
         .submit-button:hover {
             transform: translateY(-1px);
             background: var(--green-dark);
+        }
+
+        .save-button {
+            min-height: 44px;
+            padding: 0 19px;
+            border: 1px solid var(--green);
+            border-radius: 9px;
+            background: #fff;
+            color: var(--green);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .save-button:hover {
+            background: var(--green-soft);
         }
 
         .review-card {
@@ -593,7 +861,17 @@
             }
 
             .header-right {
-                gap: 10px;
+                gap: 8px;
+            }
+
+            .username {
+                padding: 7px 8px;
+                font-size: 0.68rem;
+            }
+
+            .notification-button {
+                padding: 8px;
+                font-size: 0.7rem;
             }
 
             .role-badge {
@@ -628,6 +906,12 @@
                 align-items: start;
             }
 
+            .roster-row,
+            .roster-row--member,
+            .roster-row--executive {
+                grid-template-columns: 1fr;
+            }
+
             .upload-control,
             .upload-button {
                 width: 100%;
@@ -648,7 +932,20 @@
         </a>
         <div class="header-right">
             <span class="role-badge">Organization officer</span>
-            <a class="back-link" href="index.html">← Back to home</a>
+            <span class="username" data-demo-username>@leemonds</span>
+            <div class="notification-area">
+                <button class="notification-button" id="notification-button" type="button" aria-expanded="false" aria-controls="notification-panel">
+                    Notifications <span class="notification-count" id="notification-count" hidden></span>
+                </button>
+                <section class="notification-panel" id="notification-panel" aria-labelledby="notification-heading" hidden>
+                    <div class="notification-panel-heading">
+                        <h2 id="notification-heading">Organization updates</h2>
+                        <button class="mark-notifications-read" id="mark-notifications-read" type="button">Mark all read</button>
+                    </div>
+                    <div class="notification-list" id="notification-list" aria-live="polite"></div>
+                </section>
+            </div>
+            <a class="back-link" href="login.html" data-demo-signout>Sign out</a>
         </div>
     </header>
 
@@ -660,8 +957,8 @@
                 <p class="intro-copy">Complete your organization profile, attach the required documents, and track the review status from submission to the approved directory.</p>
             </div>
             <aside class="prototype-note">
-                <strong>Prototype workspace</strong>
-                This page demonstrates the officer flow. It is not connected to a school login or submission service.
+                <strong>Officer demo workspace</strong>
+                This preview is scoped to the Supreme Student Council. It is not authentication or enforced assignment access and does not connect to a school submission service.
             </aside>
         </section>
 
@@ -695,7 +992,7 @@
                 <form class="form-card" id="organization-form">
                     <div class="card-heading">
                         <h2>Organization information</h2>
-                        <p>Enter the current details for your student organization and its designated officer.</p>
+                        <p>Enter the organization profile, leadership and membership roster, adviser details, and supporting documents.</p>
                     </div>
 
                     <div class="form-body">
@@ -706,6 +1003,14 @@
                                 <div class="field">
                                     <label for="organization-name">Organization name <span aria-hidden="true">*</span></label>
                                     <input id="organization-name" name="organizationName" type="text" autocomplete="organization" required>
+                                </div>
+                                <div class="field">
+                                    <label for="organization-level">School level <span aria-hidden="true">*</span></label>
+                                    <select id="organization-level" name="organizationLevel" required>
+                                        <option value="">Select a school level</option>
+                                        <option>Senior High School</option>
+                                        <option>College</option>
+                                    </select>
                                 </div>
                                 <div class="field">
                                     <label for="organization-category">Organization category <span aria-hidden="true">*</span></label>
@@ -720,10 +1025,6 @@
                                 <div class="field">
                                     <label for="school-year">School year <span aria-hidden="true">*</span></label>
                                     <input id="school-year" name="schoolYear" type="text" placeholder="e.g. 2026–2027" required>
-                                </div>
-                                <div class="field">
-                                    <label for="adviser-name">Organization adviser <span aria-hidden="true">*</span></label>
-                                    <input id="adviser-name" name="adviserName" type="text" required>
                                 </div>
                                 <div class="field">
                                     <label for="officer-name">Officer name <span aria-hidden="true">*</span></label>
@@ -742,15 +1043,36 @@
                                     <input id="officer-contact" name="officerContact" type="tel" autocomplete="tel">
                                 </div>
                                 <div class="field field--wide">
-                                    <label for="organization-description">Organization purpose and activities <span aria-hidden="true">*</span></label>
+                                    <label for="organization-description">Organization overview <span aria-hidden="true">*</span></label>
                                     <textarea id="organization-description" name="organizationDescription" required></textarea>
                                 </div>
                             </div>
                         </section>
 
+                        <section class="form-section" aria-labelledby="executive-heading">
+                            <h3 id="executive-heading">Executive officers</h3>
+                            <p class="section-help">Add every executive officer. Upload one PDF letter of intent (LOI) for each person listed.</p>
+                            <div class="roster-list" id="executive-roster"></div>
+                            <button class="roster-add" type="button" id="add-executive">+ Add executive officer</button>
+                        </section>
+
+                        <section class="form-section" aria-labelledby="members-heading">
+                            <h3 id="members-heading">Organization members</h3>
+                            <p class="section-help">List every member to be registered. Each member must have their own PDF letter of intent (LOI).</p>
+                            <div class="roster-list" id="member-roster"></div>
+                            <button class="roster-add" type="button" id="add-member">+ Add member</button>
+                        </section>
+
+                        <section class="form-section" aria-labelledby="advisers-heading">
+                            <h3 id="advisers-heading">Organization advisers</h3>
+                            <p class="section-help">Add the faculty adviser or advisers assigned to this organization. LOIs are not required for advisers.</p>
+                            <div class="roster-list" id="adviser-roster"></div>
+                            <button class="roster-add" type="button" id="add-adviser">+ Add adviser</button>
+                        </section>
+
                         <section class="form-section" aria-labelledby="documents-heading">
                             <h3 id="documents-heading">Required documents</h3>
-                            <p class="section-help">Attach the current files for administrator review. Accepted formats: PDF, DOC, DOCX, JPG, or PNG.</p>
+                            <p class="section-help">Attach the current files for administrator review. Accepted formats: PDF, DOC, DOCX, JPG, or PNG. Member and executive-officer LOIs must be PDF.</p>
                             <div class="document-list">
                                 <div class="document-row" data-document-row>
                                     <div>
@@ -758,7 +1080,7 @@
                                         <small data-file-name>Required document</small>
                                     </div>
                                     <div class="upload-control">
-                                        <label class="upload-button" for="document-registration">Choose file</label>
+                                        <div class="file-actions"><label class="upload-button" for="document-registration">Choose file</label><button class="delete-file" type="button" data-delete-file hidden>Delete file</button></div>
                                         <input class="file-input" id="document-registration" name="registrationDocument" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
                                     </div>
                                 </div>
@@ -768,7 +1090,7 @@
                                         <small data-file-name>Required document</small>
                                     </div>
                                     <div class="upload-control">
-                                        <label class="upload-button" for="document-endorsement">Choose file</label>
+                                        <div class="file-actions"><label class="upload-button" for="document-endorsement">Choose file</label><button class="delete-file" type="button" data-delete-file hidden>Delete file</button></div>
                                         <input class="file-input" id="document-endorsement" name="endorsementDocument" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
                                     </div>
                                 </div>
@@ -778,7 +1100,7 @@
                                         <small data-file-name>Required document</small>
                                     </div>
                                     <div class="upload-control">
-                                        <label class="upload-button" for="document-constitution">Choose file</label>
+                                        <div class="file-actions"><label class="upload-button" for="document-constitution">Choose file</label><button class="delete-file" type="button" data-delete-file hidden>Delete file</button></div>
                                         <input class="file-input" id="document-constitution" name="constitutionDocument" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
                                     </div>
                                 </div>
@@ -788,7 +1110,7 @@
                                         <small data-file-name>Required document</small>
                                     </div>
                                     <div class="upload-control">
-                                        <label class="upload-button" for="document-officers">Choose file</label>
+                                        <div class="file-actions"><label class="upload-button" for="document-officers">Choose file</label><button class="delete-file" type="button" data-delete-file hidden>Delete file</button></div>
                                         <input class="file-input" id="document-officers" name="officersDocument" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
                                     </div>
                                 </div>
@@ -799,7 +1121,10 @@
                         <div class="notice notice--success" id="form-success" role="status" aria-live="polite" data-visible="false"></div>
                         <div class="form-actions">
                             <p class="required-note">* Required fields and documents</p>
-                            <button class="submit-button" type="submit">Submit for administrator review</button>
+                            <div class="form-action-buttons">
+                                <button class="save-button" id="save-revision" type="submit" hidden>Save changes</button>
+                                <button class="submit-button" id="submit-registration" type="submit">Submit for administrator review</button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -810,37 +1135,383 @@
                         <span class="status-pill" id="submission-status" data-status="draft">Not submitted</span>
                     </div>
                     <p class="review-copy" id="review-copy">After submission, the administrator reviews the profile and documents. If details are incomplete or invalid, the organization is returned for revision. Approved organizations may then be published to the directory.</p>
-                    <p class="review-demo-warning">This prototype only changes the status shown on this page. It does not send your profile or files to an administrator.</p>
+                    <p class="review-copy" id="revision-note" hidden></p>
+                    <p class="review-demo-warning">This prototype only changes the status shown on this page. It saves roster details and selected filenames in this browser; it does not store or send the selected files to an administrator.</p>
+                    <p class="review-copy">View the <a href="organizations.html">public organization directory</a>.</p>
                 </section>
             </div>
         </div>
     </main>
 
+    <script src="demo-data.js"></script>
     <script>
         const form = document.querySelector("#organization-form");
         const statusPill = document.querySelector("#submission-status");
         const reviewCopy = document.querySelector("#review-copy");
+        const revisionNote = document.querySelector("#revision-note");
+        const notificationButton = document.querySelector("#notification-button");
+        const notificationPanel = document.querySelector("#notification-panel");
+        const notificationCount = document.querySelector("#notification-count");
+        const notificationList = document.querySelector("#notification-list");
         const successNotice = document.querySelector("#form-success");
         const errorNotice = document.querySelector("#form-error");
         const flowSteps = document.querySelectorAll(".flow-step");
+        const executiveRoster = document.querySelector("#executive-roster");
+        const memberRoster = document.querySelector("#member-roster");
+        const adviserRoster = document.querySelector("#adviser-roster");
+        let rosterRowId = 0;
+        let rosterFieldId = 0;
+        let demoState = null;
+        let assignedOrganization = null;
+
+        const createRosterField = (labelText, type, required, className = "") => {
+            const wrapper = document.createElement("div");
+            wrapper.className = `roster-field ${className}`.trim();
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.id = `roster-field-${++rosterFieldId}`;
+            input.type = type;
+            input.required = required;
+            input.autocomplete = type === "email" ? "email" : "name";
+            label.htmlFor = input.id;
+            label.textContent = `${labelText}${required ? " *" : ""}`;
+            wrapper.append(label, input);
+            return { wrapper, input };
+        };
+
+        const addRosterRow = (container, type, record = {}) => {
+            const rowId = ++rosterRowId;
+            const row = document.createElement("div");
+            row.className = `roster-row roster-row--${type}`;
+            row.dataset.rosterType = type;
+            row.dataset.originalName = record.name || "";
+
+            const nameField = createRosterField(type === "adviser" ? "Adviser name" : "Full name", "text", true);
+            nameField.input.value = record.name || "";
+            nameField.input.maxLength = 100;
+            row.append(nameField.wrapper);
+
+            if (type === "executive") {
+                const positionField = createRosterField("Position", "text", true);
+                positionField.input.value = record.role || "";
+                positionField.input.maxLength = 80;
+                row.append(positionField.wrapper);
+            } else if (type === "adviser") {
+                const emailField = createRosterField("Email (optional)", "email", false);
+                emailField.input.value = record.email || "";
+                emailField.input.maxLength = 150;
+                row.append(emailField.wrapper);
+            }
+
+            if (type !== "adviser") {
+                const fileWrapper = document.createElement("div");
+                fileWrapper.className = "roster-file";
+                const fileId = `${type}-loi-${rowId}`;
+                const label = document.createElement("label");
+                label.className = "upload-button";
+                label.htmlFor = fileId;
+                label.textContent = record.loiFilename ? "Replace LOI PDF" : "Upload LOI PDF *";
+                const fileInput = document.createElement("input");
+                fileInput.className = "file-input";
+                fileInput.id = fileId;
+                fileInput.type = "file";
+                fileInput.accept = ".pdf,application/pdf";
+                fileInput.required = !record.loiFilename;
+                fileInput.dataset.existingFilename = record.loiFilename || "";
+                fileInput.dataset.fileDeleted = "false";
+                fileInput.dataset.loiFile = "true";
+                const actions = document.createElement("div");
+                actions.className = "file-actions";
+                const deleteButton = document.createElement("button");
+                deleteButton.className = "delete-file";
+                deleteButton.type = "button";
+                deleteButton.dataset.deleteFile = "";
+                deleteButton.textContent = "Delete file";
+                deleteButton.hidden = !record.loiFilename;
+                const fileName = document.createElement("small");
+                fileName.className = "roster-file-name";
+                fileName.textContent = record.loiFilename ? `Previously selected: ${record.loiFilename} (select again)` : "PDF only; required for each person";
+                actions.append(label, deleteButton);
+                fileWrapper.append(actions, fileInput, fileName);
+                row.append(fileWrapper);
+            }
+
+            const removeButton = document.createElement("button");
+            removeButton.className = "roster-remove";
+            removeButton.type = "button";
+            removeButton.textContent = "Remove";
+            removeButton.setAttribute("aria-label", `Remove ${type}`);
+            removeButton.addEventListener("click", () => {
+                if (container.children.length <= 1) {
+                    errorNotice.textContent = `At least one ${type === "executive" ? "executive officer" : type} is required.`;
+                    errorNotice.dataset.visible = "true";
+                    return;
+                }
+                row.remove();
+                errorNotice.dataset.visible = "false";
+            });
+            row.append(removeButton);
+            container.append(row);
+            return row;
+        };
+
+        const rosterRecords = (container, type) => [...container.querySelectorAll(".roster-row")].map((row) => {
+            const fields = row.querySelectorAll(".roster-field input");
+            const record = { name: fields[0].value.trim() };
+            if (type === "executive") record.role = fields[1].value.trim();
+            if (type === "adviser") record.email = fields[1].value.trim();
+            if (type !== "adviser") {
+                const fileInput = row.querySelector("[data-loi-file]");
+                const nameChanged = row.dataset.originalName
+                    && row.dataset.originalName.toLocaleLowerCase() !== record.name.toLocaleLowerCase();
+                record.loiFilename = fileInput.files[0]?.name || (nameChanged || fileInput.dataset.fileDeleted === "true" ? "" : fileInput.dataset.existingFilename) || "";
+            }
+            return record;
+        });
+
+        const getDocument = (organization, type) => organization.documents?.find((document) => document.type === type);
+
+        const getNotifications = () => {
+            if (!assignedOrganization) return [];
+            const history = assignedOrganization.notifications || [];
+            if (assignedOrganization.notification && !history.some((item) => item.id === assignedOrganization.notification.id)) {
+                return [...history, assignedOrganization.notification];
+            }
+            return history;
+        };
+
+        const renderNotifications = () => {
+            const notifications = getNotifications().slice().sort((first, second) => new Date(second.sentAt || 0) - new Date(first.sentAt || 0));
+            const unreadCount = notifications.filter((item) => !item.read).length;
+            notificationCount.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+            notificationCount.hidden = unreadCount === 0;
+            notificationButton.setAttribute("aria-label", unreadCount ? `Notifications, ${unreadCount} unread` : "Notifications");
+            notificationList.innerHTML = notifications.length
+                ? notifications.map((item) => {
+                    const title = item.type === "revision" ? "Revision requested" : item.type === "announcement" ? "Administrator announcement" : "Administrator update";
+                    const sentAt = item.sentAt && !Number.isNaN(Date.parse(item.sentAt))
+                        ? new Date(item.sentAt).toLocaleString()
+                        : "Date unavailable";
+                    return `<article class="notification-item" data-read="${item.read ? "true" : "false"}"><strong>${title}${item.read ? "" : " · New"}</strong><p>${ISOMSDemoStore.escapeHtml(item.message || "No details provided.")}</p><time>${ISOMSDemoStore.escapeHtml(sentAt)}</time></article>`;
+                }).join("")
+                : '<p class="notification-empty">No updates yet. Administrator revisions and announcements will appear here.</p>';
+        };
+
+        notificationButton.addEventListener("click", () => {
+            const isOpening = notificationPanel.hidden;
+            notificationPanel.hidden = !isOpening;
+            notificationButton.setAttribute("aria-expanded", String(isOpening));
+        });
+
+        document.querySelector("#mark-notifications-read").addEventListener("click", () => {
+            if (!assignedOrganization) return;
+            assignedOrganization.notifications = (assignedOrganization.notifications || []).map((item) => ({ ...item, read: true }));
+            if (assignedOrganization.notification) assignedOrganization.notification.read = true;
+            try {
+                ISOMSDemoStore.save(demoState);
+                renderNotifications();
+            } catch (error) {
+                errorNotice.textContent = error.message;
+                errorNotice.dataset.visible = "true";
+            }
+        });
+
+        const loadRoster = (container, type, records) => {
+            records.forEach((record) => {
+                const documentType = type === "executive"
+                    ? `Executive officer LOI — ${record.name}`
+                    : type === "member" ? `Member LOI — ${record.name}` : "";
+                const savedDocument = documentType ? getDocument(assignedOrganization, documentType) : null;
+                addRosterRow(container, type, { ...record, loiFilename: record.loiFilename || savedDocument?.name });
+            });
+        };
+
+        const setSubmittedDocument = (id, type) => {
+            const input = document.querySelector(`#${id}`);
+            const row = input.closest("[data-document-row]");
+            const existing = getDocument(assignedOrganization, type);
+            if (!existing) return;
+
+            input.required = false;
+            input.dataset.existingFilename = existing.name;
+            input.dataset.fileDeleted = "false";
+            row.querySelector("[data-file-name]").textContent = `Previously submitted: ${existing.name} — choose a file to replace`;
+            row.querySelector(".upload-button").textContent = "Replace file";
+            row.querySelector("[data-delete-file]").hidden = false;
+        };
+
+        const deleteSelectedFile = (button) => {
+            const row = button.closest(".document-row, .roster-row");
+            const input = row.querySelector('input[type="file"]');
+            const isRosterFile = input.hasAttribute("data-loi-file");
+            input.value = "";
+            input.dataset.existingFilename = "";
+            input.dataset.fileDeleted = "true";
+            input.required = true;
+            button.hidden = true;
+            row.querySelector(".upload-button").textContent = isRosterFile ? "Upload LOI PDF *" : "Choose file";
+            if (isRosterFile) {
+                row.querySelector(".roster-file-name").textContent = "File deleted. Upload a PDF to continue.";
+            } else {
+                row.querySelector("[data-file-name]").textContent = "File deleted. Upload a replacement.";
+                row.dataset.uploaded = "false";
+            }
+            errorNotice.dataset.visible = "false";
+        };
+
+        form.addEventListener("click", (event) => {
+            const deleteButton = event.target.closest("[data-delete-file]");
+            if (deleteButton) deleteSelectedFile(deleteButton);
+        });
+
+        const setFormAvailability = () => {
+            const hasSubmission = Boolean(assignedOrganization?.submittedAt || assignedOrganization?.documents?.length);
+            const canRevise = assignedOrganization?.status === "revision";
+            const editable = !hasSubmission || canRevise;
+
+            form.querySelectorAll("input, select, textarea, button").forEach((control) => {
+                control.disabled = !editable;
+            });
+            const saveButton = document.querySelector("#save-revision");
+            const submitButton = document.querySelector("#submit-registration");
+            saveButton.hidden = !canRevise;
+            saveButton.disabled = !editable;
+            submitButton.textContent = canRevise ? "Resubmit revised information" : "Submit for administrator review";
+            if (canRevise) {
+                reviewCopy.textContent = "Your organization was returned for revision. Update the requested details or replace the affected files below, then resubmit for administrator review.";
+                revisionNote.textContent = assignedOrganization.reviewNote || "The administrator requested revisions. Review your profile and documents before resubmitting.";
+                revisionNote.hidden = false;
+            } else if (hasSubmission) {
+                reviewCopy.textContent = assignedOrganization.status === "approved"
+                    ? "This organization is approved. Editing is disabled; contact the administrator if a correction is required."
+                    : "This submission is awaiting review. Editing is paused until the administrator requests revisions.";
+                revisionNote.hidden = true;
+            }
+        };
+
+        document.querySelector("#add-executive").addEventListener("click", () => addRosterRow(executiveRoster, "executive"));
+        document.querySelector("#add-member").addEventListener("click", () => addRosterRow(memberRoster, "member"));
+        document.querySelector("#add-adviser").addEventListener("click", () => addRosterRow(adviserRoster, "adviser"));
+
+        form.addEventListener("input", (event) => {
+            const nameInput = event.target.closest(".roster-field input");
+            if (!nameInput) return;
+            const row = nameInput.closest(".roster-row");
+            const fileInput = row.querySelector("[data-loi-file]");
+            if (!fileInput || !row.dataset.originalName) return;
+            const nameChanged = row.dataset.originalName.toLocaleLowerCase() !== nameInput.value.trim().toLocaleLowerCase();
+            if (!nameChanged) return;
+            fileInput.dataset.existingFilename = "";
+            fileInput.required = !fileInput.files[0];
+            row.querySelector("[data-delete-file]").hidden = !fileInput.files[0];
+            row.querySelector(".roster-file-name").textContent = fileInput.files[0]
+                ? fileInput.files[0].name
+                : "Person changed — upload their PDF LOI";
+        });
+
+        try {
+            if (window.sessionStorage.getItem("isomsDemoRole") !== "officer") {
+                throw new Error("Choose the organization officer / representative preview from the sign-in page.");
+            }
+            const assignedOrganizationId = window.sessionStorage.getItem("isomsDemoOrganizationId");
+            demoState = ISOMSDemoStore.load();
+            assignedOrganization = demoState.organizations.find((item) => item.id === assignedOrganizationId);
+            if (!assignedOrganization) {
+                throw new Error("No organization is assigned to this officer demo role. Return to sign-in and choose the officer preview again.");
+            }
+
+            document.querySelector("#organization-name").value = assignedOrganization.name || "";
+            document.querySelector("#organization-level").value = assignedOrganization.level || "";
+            document.querySelector("#organization-category").value = assignedOrganization.category || "";
+            document.querySelector("#school-year").value = assignedOrganization.schoolYear || demoState.academicYear;
+            document.querySelector("#organization-description").value = assignedOrganization.description || "";
+            document.querySelector("#officer-name").value = assignedOrganization.representative?.name || "";
+            document.querySelector("#officer-role").value = assignedOrganization.representative?.role || "";
+            document.querySelector("#officer-email").value = assignedOrganization.representative?.email || "";
+            document.querySelector("#officer-contact").value = assignedOrganization.representative?.contact || "";
+            const organizationPeople = demoState.people.filter((person) => person.organizationId === assignedOrganization.id);
+            const executiveRecords = organizationPeople.filter((person) => person.group === "Officer");
+            const memberRecords = organizationPeople.filter((person) => person.group === "Member");
+            const adviserRecords = organizationPeople.filter((person) => person.group === "Adviser");
+            loadRoster(executiveRoster, "executive", executiveRecords.length ? executiveRecords : assignedOrganization.executiveOfficers?.length ? assignedOrganization.executiveOfficers : [{ name: "", role: "" }]);
+            loadRoster(memberRoster, "member", memberRecords.length ? memberRecords : assignedOrganization.members?.length ? assignedOrganization.members : [{ name: "" }]);
+            loadRoster(adviserRoster, "adviser", adviserRecords.length ? adviserRecords : assignedOrganization.advisers?.length ? assignedOrganization.advisers : [{ name: assignedOrganization.adviser === "Name to be confirmed" ? "" : assignedOrganization.adviser }]);
+            [
+                ["document-registration", "Organization registration form"],
+                ["document-endorsement", "Adviser endorsement"],
+                ["document-constitution", "Constitution or organization guidelines"],
+                ["document-officers", "Current list of officers"]
+            ].forEach(([id, type]) => setSubmittedDocument(id, type));
+            const statusLabels = { approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" };
+            statusPill.textContent = statusLabels[assignedOrganization.status] || "Not submitted";
+            statusPill.dataset.status = assignedOrganization.status || "draft";
+            setFormAvailability();
+            renderNotifications();
+        } catch (error) {
+            errorNotice.textContent = error.message;
+            errorNotice.dataset.visible = "true";
+            form.querySelector("[type='submit']").disabled = true;
+        }
+
+        window.addEventListener("storage", (event) => {
+            if (event.key !== "isoms-demo-workspace-v1" || !assignedOrganization) return;
+            try {
+                demoState = ISOMSDemoStore.load();
+                assignedOrganization = demoState.organizations.find((item) => item.id === assignedOrganization.id);
+                if (!assignedOrganization) return;
+                const statusLabels = { approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" };
+                statusPill.textContent = statusLabels[assignedOrganization.status] || "Not submitted";
+                statusPill.dataset.status = assignedOrganization.status || "draft";
+                setFormAvailability();
+                renderNotifications();
+            } catch (error) {
+                errorNotice.textContent = error.message;
+                errorNotice.dataset.visible = "true";
+            }
+        });
 
         document.querySelectorAll("[data-document-row] input[type='file']").forEach((input) => {
             input.addEventListener("change", () => {
                 const row = input.closest("[data-document-row]");
                 const name = row.querySelector("[data-file-name]");
                 const label = row.querySelector(".upload-button");
+                const deleteButton = row.querySelector("[data-delete-file]");
                 const selectedFile = input.files[0];
 
-                name.textContent = selectedFile ? selectedFile.name : "Required document";
-                label.textContent = selectedFile ? "Replace file" : "Choose file";
+                name.textContent = selectedFile ? selectedFile.name : input.dataset.existingFilename
+                    ? `Previously submitted: ${input.dataset.existingFilename} — choose a file to replace`
+                    : "Required document";
+                label.textContent = selectedFile || input.dataset.existingFilename ? "Replace file" : "Choose file";
+                deleteButton.hidden = !(selectedFile || input.dataset.existingFilename);
+                input.dataset.fileDeleted = "false";
                 row.dataset.uploaded = String(Boolean(selectedFile));
                 errorNotice.dataset.visible = "false";
             });
         });
 
+        form.addEventListener("change", (event) => {
+            const input = event.target.closest("[data-loi-file]");
+            if (!input) return;
+            const selectedFile = input.files[0];
+            const isPdf = selectedFile && /\.pdf$/i.test(selectedFile.name);
+            input.setCustomValidity(selectedFile && !isPdf ? "Select a PDF file for this person's LOI." : "");
+            const row = input.closest(".roster-row");
+            row.querySelector(".roster-file-name").textContent = isPdf
+                ? selectedFile.name
+                : selectedFile ? "That file is not a PDF. Choose a PDF file."
+                    : input.dataset.existingFilename ? `Previously submitted: ${input.dataset.existingFilename} — choose a PDF to replace`
+                        : "PDF only; required for each person";
+            row.querySelector(".upload-button").textContent = selectedFile || input.dataset.existingFilename ? "Replace LOI PDF" : "Upload LOI PDF *";
+            const deleteButton = row.querySelector("[data-delete-file]");
+            deleteButton.hidden = !(selectedFile || input.dataset.existingFilename);
+            input.dataset.fileDeleted = "false";
+            errorNotice.dataset.visible = "false";
+        });
+
         form.addEventListener("submit", (event) => {
             event.preventDefault();
             successNotice.dataset.visible = "false";
+            const saveOnly = event.submitter?.id === "save-revision";
 
             if (!form.reportValidity()) {
                 errorNotice.textContent = "Complete all required fields and attach each required document before submitting.";
@@ -848,16 +1519,121 @@
                 return;
             }
 
-            statusPill.textContent = "Pending review";
-            statusPill.dataset.status = "pending";
-            reviewCopy.textContent = "Your profile is marked as awaiting administrator review in this demo. An administrator would check the information and documents before approval.";
-            successNotice.textContent = "Demo status updated to Pending review. No information or files have been sent to the school.";
-            successNotice.dataset.visible = "true";
-            errorNotice.dataset.visible = "false";
-            flowSteps[0].dataset.complete = "true";
-            flowSteps[1].dataset.complete = "true";
-            flowSteps[2].setAttribute("aria-current", "step");
-            flowSteps[0].removeAttribute("aria-current");
+            const formData = new FormData(form);
+            const name = String(formData.get("organizationName")).trim();
+            const organization = assignedOrganization;
+            if (!organization || !demoState.organizations.includes(organization)) {
+                errorNotice.textContent = "This preview cannot submit without its assigned organization.";
+                errorNotice.dataset.visible = "true";
+                return;
+            }
+
+            const executives = rosterRecords(executiveRoster, "executive");
+            const members = rosterRecords(memberRoster, "member");
+            const advisers = rosterRecords(adviserRoster, "adviser");
+            const representativeName = String(formData.get("officerName")).trim();
+            const representativeRole = String(formData.get("officerRole")).trim();
+            const representative = [...executives, ...members].find((person) => person.name.toLocaleLowerCase() === representativeName.toLocaleLowerCase());
+            if (!representative) {
+                errorNotice.textContent = "Include the submitting officer in the executive-officer or member roster so their LOI is included.";
+                errorNotice.dataset.visible = "true";
+                return;
+            }
+
+            organization.representative = {
+                name: representativeName,
+                role: representativeRole,
+                email: String(formData.get("officerEmail")).trim(),
+                contact: String(formData.get("officerContact")).trim()
+            };
+            organization.name = name;
+            organization.level = String(formData.get("organizationLevel"));
+            organization.category = String(formData.get("organizationCategory"));
+            organization.schoolYear = String(formData.get("schoolYear")).trim();
+            organization.adviser = advisers[0]?.name || "Name to be confirmed";
+            organization.description = String(formData.get("organizationDescription")).trim();
+            organization.executiveOfficers = executives;
+            organization.members = members;
+            organization.advisers = advisers;
+            organization.status = saveOnly ? "revision" : "pending";
+            if (!saveOnly) {
+                organization.adviserReview = "Not reviewed";
+                organization.reviewNote = "Submitted to the administrator demo queue.";
+            }
+            const standardDocuments = [
+                ["document-registration", "Organization registration form"],
+                ["document-endorsement", "Adviser endorsement"],
+                ["document-constitution", "Constitution or organization guidelines"],
+                ["document-officers", "Current list of officers"]
+            ].map(([id, type]) => {
+                const input = document.querySelector(`#${id}`);
+                return {
+                    type,
+                    name: input.files[0]?.name || (input.dataset.fileDeleted === "true" ? "" : input.dataset.existingFilename || getDocument(organization, type)?.name)
+                };
+            });
+            if (standardDocuments.some((document) => !document.name)) {
+                errorNotice.textContent = "Choose a file for each required organization document.";
+                errorNotice.dataset.visible = "true";
+                return;
+            }
+            if ([...executives, ...members].some((person) => !person.loiFilename)) {
+                errorNotice.textContent = "Every executive officer and member needs a PDF LOI. Upload a new LOI if you changed a person's name.";
+                errorNotice.dataset.visible = "true";
+                return;
+            }
+            const loiDocuments = [
+                ...executives.map((person) => ({ type: `Executive officer LOI — ${person.name}`, name: person.loiFilename })),
+                ...members.map((person) => ({ type: `Member LOI — ${person.name}`, name: person.loiFilename }))
+            ];
+            organization.documents = [...standardDocuments, ...loiDocuments];
+            organization.submittedAt = new Date().toISOString();
+
+            demoState.people = demoState.people.filter((person) => person.organizationId !== organization.id);
+            executives.forEach((person, index) => demoState.people.push({
+                id: `officer-${organization.id}-${Date.now()}-${index}`,
+                name: person.name,
+                role: person.role,
+                group: "Officer",
+                organizationId: organization.id
+            }));
+            members.forEach((person, index) => demoState.people.push({
+                id: `member-${organization.id}-${Date.now()}-${index}`,
+                name: person.name,
+                role: "Member",
+                group: "Member",
+                organizationId: organization.id
+            }));
+            advisers.forEach((person, index) => demoState.people.push({
+                id: `adviser-${organization.id}-${Date.now()}-${index}`,
+                name: person.name,
+                email: person.email,
+                role: "Faculty adviser",
+                group: "Adviser",
+                organizationId: organization.id
+            }));
+
+            try {
+                ISOMSDemoStore.save(demoState);
+                statusPill.textContent = saveOnly ? "Needs revision (demo)" : "Pending review";
+                statusPill.dataset.status = saveOnly ? "revision" : "pending";
+                reviewCopy.textContent = saveOnly
+                    ? "Your changes have been saved as a revision draft. The organization remains marked as needing revision until you resubmit for administrator review."
+                    : "Your profile and document filenames are in the shared browser demo queue. An administrator can change the sample status in the administrator workspace.";
+                successNotice.textContent = saveOnly
+                    ? "Revision changes saved in this browser demo. Your organization remains in Needs revision until you choose Resubmit revised information."
+                    : "Demo status updated to Pending review. The organization overview, rosters, and selected filenames are saved locally; PDF and other files are not stored or sent to the school.";
+                successNotice.dataset.visible = "true";
+                errorNotice.dataset.visible = "false";
+                setFormAvailability();
+                flowSteps[0].dataset.complete = "true";
+                flowSteps[1].dataset.complete = "true";
+                flowSteps[2].setAttribute("aria-current", "step");
+                flowSteps[0].removeAttribute("aria-current");
+            } catch (error) {
+                errorNotice.textContent = error.message;
+                errorNotice.dataset.visible = "true";
+            }
         });
     </script>
 </body>

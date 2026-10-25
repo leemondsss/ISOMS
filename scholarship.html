@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <title>Scholarships | ISOMS</title>
+    <style>
+        :root {
+            --green: #174d2a;
+            --green-dark: #10361f;
+            --gold: #f2c94c;
+            --ink: #173d27;
+            --muted: #526257;
+            --line: #e5eadf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f7ef;
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            min-height: 70px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px clamp(20px, 7vw, 104px);
+            background: var(--green);
+            color: #fff;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        .back-link {
+            color: #fff;
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link:hover,
+        .back-link:focus-visible {
+            color: var(--gold);
+        }
+
+        .main {
+            width: min(100% - 40px, 1000px);
+            margin: 0 auto;
+            padding: clamp(42px, 7vw, 76px) 0;
+            transform: translateX(-72px);
+        }
+
+        .intro {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: #1f6b3a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--ink);
+            font-size: clamp(2rem, 5vw, 3rem);
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+        }
+
+        .intro-copy {
+            max-width: 650px;
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .scholarship-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .scholarship-item {
+            overflow: hidden;
+            border: 1px solid #e8ebe6;
+            border-radius: 9px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(23, 61, 39, 0.06);
+        }
+
+        .scholarship-item summary {
+            display: flex;
+            min-height: 60px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 15px 20px;
+            color: #243e2d;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            list-style: none;
+        }
+
+        .scholarship-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .scholarship-item summary::after {
+            width: 9px;
+            height: 9px;
+            flex: 0 0 auto;
+            border-right: 2px solid #1f6b3a;
+            border-bottom: 2px solid #1f6b3a;
+            content: "";
+            transform: translateY(-2px) rotate(45deg);
+            transition: transform 160ms ease;
+        }
+
+        .scholarship-item[open] summary {
+            background: #f4f7f1;
+            color: var(--green);
+        }
+
+        .scholarship-item[open] summary::after {
+            transform: translateY(2px) rotate(225deg);
+        }
+
+        .scholarship-item summary:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: -3px;
+        }
+
+        .scholarship-details {
+            padding: 0 20px 18px;
+            border-top: 1px solid #e8ebe6;
+        }
+
+        .scholarship-content {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+            align-items: center;
+            gap: 20px;
+        }
+
+        .scholarship-details p {
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 0.86rem;
+            line-height: 1.6;
+        }
+
+        .scholarship-facts {
+            display: grid;
+            gap: 15px;
+            margin-top: 14px;
+        }
+
+        .scholarship-facts h2 {
+            margin: 0 0 6px;
+            color: var(--ink);
+            font-size: 0.84rem;
+        }
+
+        .scholarship-facts ul {
+            display: grid;
+            gap: 4px;
+            margin: 0;
+            padding-left: 19px;
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.55;
+        }
+
+        .scholarship-source-note {
+            margin-top: 14px !important;
+            color: #718076 !important;
+            font-size: 0.72rem !important;
+        }
+
+        .scholarship-visual {
+            overflow: hidden;
+            margin: 14px 0 0;
+            border: 1px solid #e2e9e1;
+            border-radius: 10px;
+            background: #eaf1e9;
+        }
+
+        .scholarship-visual img {
+            display: block;
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+        }
+
+        .scholarship-visual figcaption {
+            padding: 9px 12px;
+            background: #fff;
+            color: #526257;
+            font-size: 0.7rem;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 560px) {
+            .header {
+                min-height: 62px;
+                padding: 10px 16px;
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+            }
+
+            .brand-name {
+                font-size: 0.92rem;
+            }
+
+            .main {
+                width: min(100% - 32px, 1000px);
+                transform: none;
+            }
+
+            .scholarship-item summary {
+                min-height: 56px;
+                padding: 14px;
+                font-size: 0.84rem;
+            }
+
+            .scholarship-content {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            .scholarship-visual img {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="index.html" aria-label="ISOMS home">
+            <span class="brand-mark" aria-hidden="true">I</span>
+            <span class="brand-name">ISOMS</span>
+        </a>
+        <a class="back-link" href="index.html">← Back to home</a>
+    </header>
+
+    <main class="main">
+        <section class="intro" aria-labelledby="scholarship-title">
+            <p class="eyebrow">Student support</p>
+            <h1 id="scholarship-title">Scholarship Programs</h1>
+            <p class="intro-copy">Explore the scholarships available at PHINMA University of Pangasinan. Select a program to see where to confirm its current eligibility, requirements, and application details.</p>
+        </section>
+
+        <section class="scholarship-list" aria-label="Scholarship programs">
+            <details class="scholarship-item">
+                <summary>1. PHINMA Scholarship (formerly Presidential Scholarship)</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <div class="scholarship-facts">
+                            <section>
+                                <h2>Benefits</h2>
+                                <ul>
+                                    <li>100% discount on tuition and miscellaneous fees for 4 or 5 years.</li>
+                                    <li>₱4,000 monthly allowance for Honors or Top 10 Grade 12 students who passed the qualifying exam.</li>
+                                </ul>
+                            </section>
+                            <section>
+                                <h2>Maintenance</h2>
+                                <ul>
+                                    <li>Complete 2 hours of service per day at the assigned department.</li>
+                                    <li>No grade below 2.0.</li>
+                                    <li>Maintain an average of 1.75 or above.</li>
+                                    <li>Service may also be required during summer if included in the curriculum.</li>
+                                </ul>
+                            </section>
+                            <section>
+                                <h2>Requirements</h2>
+                                <ul>
+                                    <li>Scholarship acceptance letter from the Office of the President.</li>
+                                    <li>Enrollment Registration.</li>
+                                </ul>
+                            </section>
+                            <p class="scholarship-source-note">Details provided from the supplied scholarship reference. Confirm current terms with the University Scholarship Office.</p>
+                        </div>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved PHINMA Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>2. Student Assistance Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <div class="scholarship-facts">
+                            <section>
+                                <h2>Benefits</h2>
+                                <ul>
+                                    <li>100% off tuition (21 units only).</li>
+                                </ul>
+                            </section>
+                            <section>
+                                <h2>Eligibility</h2>
+                                <ul>
+                                    <li>Must be in good class standing.</li>
+                                    <li>Complete 4 hours of service per day at the assigned department.</li>
+                                    <li>Must have passing grades.</li>
+                                    <li>Not applicable during summer.</li>
+                                </ul>
+                            </section>
+                            <section>
+                                <h2>Requirements</h2>
+                                <ul>
+                                    <li>Should pass the examination and interview.</li>
+                                </ul>
+                            </section>
+                            <p class="scholarship-source-note">Details provided from the supplied scholarship reference. Confirm current terms with the University Scholarship Office.</p>
+                        </div>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Student Assistance Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>3. Valedictorian &amp; Salutatorian Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Valedictorian &amp; Salutatorian Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>4. Dean's List Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Dean's List Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>5. With Highest Honor</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Highest Honor scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>6. PHINMA UPang Direct Dependent Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Direct Dependent Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>7. Hawak Kamay Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Hawak Kamay Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>8. Victory Liner, 5-Star, and Transasia Oil Employee &amp; Direct Dependent Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Employee &amp; Direct Dependent Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>9. The Medical City Employee &amp; Direct Dependent Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Medical City Employee &amp; Direct Dependent Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>10. Kapamilya @ PHINMA UPang Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved Kapamilya @ PHINMA UPang Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+            <details class="scholarship-item">
+                <summary>11. PHINMA UPang Alumni Scholarship</summary>
+                <div class="scholarship-details">
+                    <div class="scholarship-content">
+                        <p>For current eligibility, benefits, required documents, and application dates, contact the University Scholarship Office.</p>
+                        <figure class="scholarship-visual">
+                            <img src="images/scholarship-placeholder.svg" alt="Illustration of a student holding a certificate, used as a placeholder">
+                            <figcaption>Illustrative placeholder — replace with an approved PHINMA UPang Alumni Scholarship photo.</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </details>
+        </section>
+    </main>
+</body>
+</html>

@@ -610,13 +610,19 @@
             position: absolute;
             z-index: 2;
             right: auto;
-            bottom: 54px;
+            bottom: 14px;
             left: 14px;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
             gap: 12px;
-            color: #fff;
+            max-width: calc(100% - 28px);
+            padding: 10px 14px;
+            border-left: 4px solid #f2c94c;
+            border-radius: 8px;
+            background: #fff;
+            color: #10361f;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
         }
 
         .viewer-status strong {
@@ -627,7 +633,7 @@
         .viewer-status span {
             display: block;
             margin-top: 4px;
-            color: #d3ded5;
+            color: #47614f;
             font-size: 0.68rem;
         }
 
@@ -909,6 +915,120 @@
                 font-size: 0.78rem;
             }
         }
+
+        body {
+            background: #fff;
+            color: #173d27;
+        }
+
+        .map-header {
+            background: rgba(23, 77, 42, 0.94);
+        }
+
+        .map-kicker {
+            color: #1f6b3a;
+        }
+
+        .map-kicker::before {
+            background: #f2c94c;
+            color: #173d27;
+        }
+
+        h1 {
+            color: #173d27;
+        }
+
+        .map-intro {
+            color: #526257;
+        }
+
+        .map-notice {
+            color: #6b756d;
+        }
+
+        .floor-panel,
+        .location-panel {
+            border-color: #e5eadf;
+            background: #fff;
+            box-shadow: 0 10px 24px rgba(23, 77, 42, 0.07);
+        }
+
+        .floor-heading {
+            border-bottom: 1px solid #edf0e9;
+            background: #fff;
+        }
+
+        .floor-heading h2,
+        .location-panel h2 {
+            color: #173d27;
+        }
+
+        .floor-switcher {
+            background: #f1f4ed;
+        }
+
+        .floor-button {
+            color: #34503b;
+        }
+
+        .floor-button[aria-pressed="true"] {
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .location-count {
+            background: #e9f1e8;
+            color: #34503b;
+        }
+
+        .location-card {
+            border-color: #e2e8dc;
+            background: #fff;
+            color: #263b2e;
+        }
+
+        .location-card:hover,
+        .location-card[aria-pressed="true"] {
+            border-color: #1f6b3a;
+            background: #f5f8f2;
+        }
+
+        .location-card-icon {
+            background: #e9f1e8;
+            color: #1f6b3a;
+        }
+
+        .location-card-copy small {
+            color: #65736a;
+        }
+
+        .location-card-arrow {
+            color: #1f6b3a;
+        }
+
+        .location-panel .location-hint {
+            color: #65736a;
+        }
+
+        .floor-links {
+            color: #526257;
+        }
+
+        .floor-link {
+            border-color: #dce6d8;
+            background: #fff;
+            color: #34503b;
+        }
+
+        .floor-link[aria-pressed="true"] {
+            border-color: #174d2a;
+            background: #174d2a;
+            color: #fff;
+        }
+
+        .tour-footnote {
+            color: #65736a;
+        }
     </style>
 </head>
 
@@ -1056,7 +1176,11 @@
             const detail = escapeXml(location.detail);
             const drawing = scenes[location.id] || scenes.lobby;
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700"><defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#dbe7e5"/><stop offset="1" stop-color="#f2e9d7"/></linearGradient><linearGradient id="window" x2="0" y2="1"><stop stop-color="#a4c3a8"/><stop offset="1" stop-color="#d1e5df"/></linearGradient><linearGradient id="floor" x2="0" y2="1"><stop stop-color="#b9916e"/><stop offset="1" stop-color="#765940"/></linearGradient></defs><rect width="1200" height="700" fill="url(#wall)"/><rect x="80" y="80" width="1040" height="360" rx="18" fill="#f5f1e6"/><rect x="115" y="105" width="970" height="250" rx="10" fill="url(#window)"/><path d="M600 105v250M115 230h970" stroke="#f3f0e7" stroke-width="17"/><rect y="440" width="1200" height="260" fill="url(#floor)"/><path d="M0 505h1200M0 590h1200" stroke="#d0ab83" stroke-width="5" opacity=".55"/>${drawing}<rect x="0" y="610" width="1200" height="90" fill="#10361f" opacity=".9"/><text x="54" y="652" fill="#f2c94c" font-family="Arial,sans-serif" font-size="19" font-weight="700">ILLUSTRATIVE SAMPLE</text><text x="54" y="686" fill="#fff" font-family="Arial,sans-serif" font-size="29" font-weight="700">${label}</text><text x="1145" y="674" text-anchor="end" fill="#d7e1ea" font-family="Arial,sans-serif" font-size="18">${detail}</text></svg>`;
-            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+            const footerlessSvg = svg.replace(
+                /<rect x="0" y="610"[\s\S]*?<\/svg>$/,
+                '<rect x="0" y="610" width="1200" height="90" fill="#10361f"/></svg>'
+            );
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(footerlessSvg)}`;
         };
 
         const selectLocation = (index) => {

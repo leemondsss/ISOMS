@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" data-required-role="administrator">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <script src="access-control.js"></script>
+    <title>Administrator Workspace | ISOMS</title>
+    <style>
+        :root { --green:#174d2a; --dark:#10361f; --gold:#f2c94c; --ink:#173d27; --muted:#526257; --line:#e5eadf; }
+        * { box-sizing:border-box; }
+        body { min-width:320px; min-height:100vh; margin:0; background:#f5f7ef; color:var(--ink); font-family:Arial,Helvetica,sans-serif; }
+        .header { display:flex; min-height:70px; align-items:center; justify-content:space-between; gap:18px; padding:12px clamp(20px,6vw,88px); background:var(--green); color:#fff; }
+        .brand { display:inline-flex; align-items:center; gap:12px; color:inherit; text-decoration:none; }
+        .brand-mark { display:grid; width:46px; height:46px; place-items:center; border:1px solid #ffffff80; border-radius:14px; background:#ffffff1f; font-weight:800; }
+        .brand-name { font-size:1.05rem; font-weight:800; letter-spacing:.14em; }
+        .header-account { display:flex; align-items:center; gap:14px; }
+        .username { padding:8px 11px; border:1px solid #ffffff55; border-radius:999px; color:#fff; font-size:.78rem; font-weight:800; }
+        .back-link { color:#fff; font-size:.82rem; font-weight:700; text-decoration:none; }
+        .page { width:min(100% - 40px,1240px); margin:0 auto; padding:42px 0 70px; }
+        .topline { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; }
+        .eyebrow { margin:0 0 9px; color:#1f6b3a; font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+        h1 { margin:0; font-size:clamp(2rem,4.5vw,3rem); letter-spacing:-.05em; }
+        .intro { max-width:700px; margin:12px 0 0; color:var(--muted); font-size:.9rem; line-height:1.6; }
+        .demo-note { max-width:390px; padding:13px 15px; border:1px solid #e6d79d; border-radius:10px; background:#fff9e8; color:#5a4a1f; font-size:.75rem; line-height:1.55; }
+        .error { margin:18px 0; padding:16px; border:1px solid #e6c2b7; border-radius:9px; background:#fff6f3; color:#8a3b26; }
+        .workspace { display:grid; gap:18px; margin-top:26px; }
+        .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+        .stat, .panel { border:1px solid var(--line); border-radius:13px; background:#fff; box-shadow:0 8px 22px #174d2a0f; }
+        .stat { padding:16px; }
+        .stat-label { color:#718076; font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+        .stat-value { display:block; margin-top:8px; color:var(--green); font-size:1.6rem; font-weight:800; }
+        .panel { padding:20px; }
+        .panel + .panel { margin-top:0; }
+        .panel-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:14px; }
+        .panel-heading h2 { margin:0; font-size:1.02rem; }
+        .panel-heading p { margin:6px 0 0; color:var(--muted); font-size:.76rem; line-height:1.5; }
+        .year-control, .edit-form, .person-form { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
+        label { display:grid; gap:6px; color:#354b3c; font-size:.7rem; font-weight:700; }
+        input, select, textarea { min-height:39px; padding:8px 10px; border:1px solid #d9e2d7; border-radius:7px; background:#fff; color:var(--ink); font:inherit; font-size:.78rem; }
+        input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+        .year-control input { width:150px; }
+        button, .button-link { min-height:39px; padding:9px 12px; border:1px solid var(--green); border-radius:7px; background:var(--green); color:#fff; cursor:pointer; font:inherit; font-size:.74rem; font-weight:800; text-decoration:none; }
+        button:hover, .button-link:hover { background:var(--dark); }
+        button.secondary { background:#fff; color:var(--green); }
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; text-align:left; }
+        th, td { padding:11px 10px; border-bottom:1px solid #edf1eb; vertical-align:top; }
+        th { color:#718076; font-size:.66rem; letter-spacing:.07em; text-transform:uppercase; }
+        td { color:#33483a; font-size:.76rem; line-height:1.45; }
+        td select { min-height:34px; padding:6px 8px; font-size:.7rem; }
+        .file-list { margin:0; padding-left:16px; }
+        .file-list li + li { margin-top:4px; }
+        .empty { padding:15px; color:var(--muted); font-size:.8rem; }
+        .edit-form { align-items:stretch; }
+        .edit-form label { flex:1 1 190px; }
+        .edit-form .wide { flex-basis:100%; }
+        .edit-form textarea { min-height:74px; resize:vertical; }
+        .announcement-form { display:grid; grid-template-columns:minmax(220px,.45fr) minmax(0,1fr) auto; align-items:end; gap:12px; }
+        .announcement-form label { min-width:0; }
+        .announcement-form select, .announcement-form textarea { width:100%; }
+        .announcement-form textarea { min-height:82px; resize:vertical; }
+        .person-form label { flex:1 1 170px; }
+        .person-form button { flex:0 0 auto; }
+        .person-name { font-weight:700; }
+        .notice { min-height:20px; margin:12px 0 0; color:var(--green); font-size:.76rem; }
+        .report-actions { display:flex; flex-wrap:wrap; gap:10px; }
+        @media(max-width:850px) { .topline { align-items:flex-start; flex-direction:column; } .demo-note { max-width:none; } .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media(max-width:560px) { .header { min-height:62px; padding:10px 16px; } .brand-mark { width:40px; height:40px; } .brand-name { font-size:.92rem; } .header-account { gap:8px; } .username { padding:7px 8px; font-size:.7rem; } .back-link { font-size:.74rem; } .page { width:min(100% - 28px,1240px); padding-top:30px; } .stats { grid-template-columns:1fr 1fr; } .panel { padding:15px; } .year-control { align-items:stretch; flex-direction:column; } .year-control input { width:100%; } }
+        @media(max-width:700px) { .announcement-form { grid-template-columns:1fr; } }
+        @media print { .header, .demo-note, .year-control, .edit-form, .person-form, .report-actions, button { display:none !important; } body { background:#fff; } .page { width:100%; padding:0; } .panel, .stat { box-shadow:none; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="index.html" aria-label="ISOMS home"><span class="brand-mark" aria-hidden="true">I</span><span class="brand-name">ISOMS</span></a>
+        <div class="header-account"><span class="username" data-demo-username>@adminisoms</span><a class="back-link" href="login.html" data-demo-signout>Sign out</a></div>
+    </header>
+    <main class="page">
+        <div class="topline">
+            <div><p class="eyebrow">Administration</p><h1>Administrator Workspace</h1><p class="intro">Review organization registrations and document records, manage directory status and people assignments, maintain the academic year, and export a summary report.</p></div>
+            <aside class="demo-note"><strong>Administrator demo workspace.</strong> The prototype role preview is not authentication or security. It uses sample records and browser-local storage only. Do not use real student data or sensitive documents.</aside>
+        </div>
+        <div id="admin-error" class="error" role="alert" hidden></div>
+        <div id="admin-app" class="workspace" hidden>
+            <section class="stats" aria-label="Organization totals">
+                <article class="stat"><span class="stat-label">Organizations</span><strong class="stat-value" id="total-count">0</strong></article>
+                <article class="stat"><span class="stat-label">Approved</span><strong class="stat-value" id="approved-count">0</strong></article>
+                <article class="stat"><span class="stat-label">Pending review</span><strong class="stat-value" id="pending-count">0</strong></article>
+                <article class="stat"><span class="stat-label">Needs revision</span><strong class="stat-value" id="revision-count">0</strong></article>
+            </section>
+
+            <section class="panel" aria-labelledby="year-heading">
+                <div class="panel-heading"><div><h2 id="year-heading">Academic-year records</h2><p>Set the school year used by this demo workspace.</p></div></div>
+                <form class="year-control" id="year-form"><label for="academic-year">Current academic year<input id="academic-year" maxlength="30" required></label><button type="submit">Save academic year</button></form>
+                <p class="notice" id="year-notice" role="status" aria-live="polite"></p>
+            </section>
+
+            <section class="panel" aria-labelledby="registrations-heading">
+                <div class="panel-heading"><div><h2 id="registrations-heading">Organization registrations &amp; document review</h2><p>Change each sample record's review status. Listed filenames are metadata only, not stored files.</p></div></div>
+                <div class="table-wrap"><table><thead><tr><th>Organization</th><th>Level / category</th><th>Document records</th><th>Review status and organization notice</th></tr></thead><tbody id="registration-rows"></tbody></table></div>
+                <p class="notice" id="registration-notice" role="status" aria-live="polite">Revision instructions are saved in the shared browser demo and shown in the representative workspace. No email or external message is sent.</p>
+            </section>
+
+            <section class="panel" aria-labelledby="announcement-heading">
+                <div class="panel-heading"><div><h2 id="announcement-heading">Send an organization update</h2><p>Post a notice in the selected organization officer workspace, or share it with every organization.</p></div></div>
+                <form class="announcement-form" id="announcement-form">
+                    <label for="announcement-organization">Recipients<select id="announcement-organization" required></select></label>
+                    <label for="announcement-message">Announcement or update<textarea id="announcement-message" maxlength="1000" placeholder="Enter the update or announcement for organization representatives." required></textarea></label>
+                    <button type="submit">Publish announcement</button>
+                </form>
+                <p class="notice" id="announcement-notice" role="status" aria-live="polite">Announcements appear in the representative notification panel. This browser demo does not send email.</p>
+            </section>
+
+            <section class="panel" aria-labelledby="profiles-heading">
+                <div class="panel-heading"><div><h2 id="profiles-heading">Manage organization profiles</h2><p>Edit directory profile information and publication status.</p></div></div>
+                <form class="edit-form" id="profile-form">
+                    <label for="profile-organization">Organization<select id="profile-organization" required></select></label>
+                    <label for="profile-name">Official name<input id="profile-name" required></label>
+                    <label for="profile-category">Category<select id="profile-category"><option>Leadership</option><option>Academic</option><option>Special interest</option><option>Service and advocacy</option></select></label>
+                    <label for="profile-level">School level<select id="profile-level"><option>Senior High School</option><option>College</option></select></label>
+                    <label for="profile-adviser">Adviser name<input id="profile-adviser"></label>
+                    <label class="wide" for="profile-description">Profile description<textarea id="profile-description"></textarea></label>
+                    <label for="profile-status">Directory status<select id="profile-status"><option value="pending">Pending review</option><option value="approved">Approved</option><option value="revision">Needs revision</option></select></label>
+                    <label class="wide" for="profile-revision-note" id="profile-revision-note-field" hidden>Revision instructions for the organization<textarea id="profile-revision-note" maxlength="1000" placeholder="Explain what the organization must edit or replace."></textarea></label>
+                    <button type="submit">Save organization profile</button>
+                </form>
+                <p class="notice" id="profile-notice" role="status" aria-live="polite"></p>
+            </section>
+
+            <section class="panel" aria-labelledby="people-heading">
+                <div class="panel-heading"><div><h2 id="people-heading">Manage officers, advisers &amp; members</h2><p>Add or remove sample people assignments for an organization.</p></div></div>
+                <form class="person-form" id="person-form">
+                    <label for="person-name">Name<input id="person-name" maxlength="100" required></label>
+                    <label for="person-role">Position / role<input id="person-role" maxlength="80" required></label>
+                    <label for="person-group">Record type<select id="person-group"><option>Officer</option><option>Adviser</option><option>Member</option></select></label>
+                    <label for="person-organization">Organization<select id="person-organization" required></select></label>
+                    <button type="submit">Add assignment</button>
+                </form>
+                <p class="notice" id="people-notice" role="status" aria-live="polite"></p>
+                <div class="table-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Type</th><th>Organization</th><th>Action</th></tr></thead><tbody id="people-rows"></tbody></table></div>
+            </section>
+
+            <section class="panel" aria-labelledby="reports-heading">
+                <div class="panel-heading"><div><h2 id="reports-heading">Reports</h2><p>Export the current demo directory and assignments for review.</p></div></div>
+                <div class="report-actions"><button type="button" id="download-report">Download CSV report</button><button type="button" class="secondary" id="print-report">Print this page</button></div>
+                <p class="notice" id="report-notice" role="status" aria-live="polite"></p>
+            </section>
+        </div>
+    </main>
+    <script src="demo-data.js"></script>
+    <script>
+        const errorBox = document.querySelector("#admin-error");
+        const app = document.querySelector("#admin-app");
+        const escapeHtml = ISOMSDemoStore.escapeHtml;
+        let state;
+
+        const getOrganization = (id) => state.organizations.find((organization) => organization.id === id);
+        const statusName = (status) => ({ approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" }[status] || "Not set");
+        const saveState = () => ISOMSDemoStore.save(state);
+
+        const render = () => {
+            const selectedProfileId = document.querySelector("#profile-organization").value;
+            document.querySelector("#total-count").textContent = state.organizations.length;
+            document.querySelector("#approved-count").textContent = state.organizations.filter((item) => item.status === "approved").length;
+            document.querySelector("#pending-count").textContent = state.organizations.filter((item) => item.status === "pending").length;
+            document.querySelector("#revision-count").textContent = state.organizations.filter((item) => item.status === "revision").length;
+            document.querySelector("#academic-year").value = state.academicYear;
+
+            const orgOptions = state.organizations.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("");
+            document.querySelector("#profile-organization").innerHTML = orgOptions;
+            if (state.organizations.some((item) => item.id === selectedProfileId)) {
+                document.querySelector("#profile-organization").value = selectedProfileId;
+            }
+            document.querySelector("#person-organization").innerHTML = orgOptions;
+            const announcementTarget = document.querySelector("#announcement-organization");
+            const selectedAnnouncementTarget = announcementTarget.value;
+            announcementTarget.innerHTML = `<option value="all">All organizations</option>${orgOptions}`;
+            if (selectedAnnouncementTarget && (selectedAnnouncementTarget === "all" || state.organizations.some((item) => item.id === selectedAnnouncementTarget))) {
+                announcementTarget.value = selectedAnnouncementTarget;
+            }
+            document.querySelector("#registration-rows").innerHTML = state.organizations.map((item) => {
+                const documents = item.documents?.length ? `<ul class="file-list">${item.documents.map((document) => `<li>${escapeHtml(document.type)}: ${escapeHtml(document.name)}</li>`).join("")}</ul>` : "No document records";
+                const currentNotice = item.notification?.type === "revision" ? item.notification.message : "";
+                return `<tr><td><strong>${escapeHtml(item.name)}</strong><br><small>${escapeHtml(item.reviewNote || "Demo record")}</small></td><td>${escapeHtml(item.level || "Not specified")}<br>${escapeHtml(item.category || "Uncategorized")}</td><td>${documents}</td><td><label class="visually-hidden" for="status-${escapeHtml(item.id)}">Status for ${escapeHtml(item.name)}</label><select id="status-${escapeHtml(item.id)}" data-org-status="${escapeHtml(item.id)}"><option value="pending" ${item.status === "pending" ? "selected" : ""}>Pending review</option><option value="approved" ${item.status === "approved" ? "selected" : ""}>Approved</option><option value="revision" ${item.status === "revision" ? "selected" : ""}>Needs revision</option></select><label class="visually-hidden" for="revision-note-${escapeHtml(item.id)}">Revision instructions for ${escapeHtml(item.name)}</label><textarea id="revision-note-${escapeHtml(item.id)}" data-revision-note="${escapeHtml(item.id)}" maxlength="1000" placeholder="Explain what the organization must edit or replace." ${item.status === "revision" ? "" : "hidden"}>${escapeHtml(currentNotice)}</textarea><button type="button" class="secondary" data-save-review="${escapeHtml(item.id)}">${item.status === "revision" ? "Save and notify organization" : "Save review status"}</button></td></tr>`;
+            }).join("");
+
+            const peopleRows = state.people.length ? state.people.map((person) => {
+                const organization = getOrganization(person.organizationId);
+                return `<tr><td class="person-name">${escapeHtml(person.name)}</td><td>${escapeHtml(person.role)}</td><td>${escapeHtml(person.group)}</td><td>${escapeHtml(organization?.name || "Organization not found")}</td><td><button class="secondary" type="button" data-remove-person="${escapeHtml(person.id)}">Remove</button></td></tr>`;
+            }).join("") : '<tr><td colspan="5" class="empty">No people assigned yet.</td></tr>';
+            document.querySelector("#people-rows").innerHTML = peopleRows;
+
+            const selected = getOrganization(document.querySelector("#profile-organization").value) || state.organizations[0];
+            if (selected) {
+                document.querySelector("#profile-name").value = selected.name;
+                document.querySelector("#profile-category").value = selected.category || "Special interest";
+                document.querySelector("#profile-level").value = selected.level || "College";
+                document.querySelector("#profile-adviser").value = selected.adviser === "Name to be confirmed" ? "" : selected.adviser || "";
+                document.querySelector("#profile-description").value = selected.description || "";
+                document.querySelector("#profile-status").value = selected.status || "pending";
+                document.querySelector("#profile-revision-note").value = selected.notification?.type === "revision" ? selected.notification.message : "";
+                document.querySelector("#profile-revision-note-field").hidden = selected.status !== "revision";
+            }
+        };
+
+        try {
+            state = ISOMSDemoStore.load();
+            document.querySelector("#announcement-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const targetId = document.querySelector("#announcement-organization").value;
+                const message = document.querySelector("#announcement-message").value.trim();
+                const recipients = targetId === "all"
+                    ? state.organizations
+                    : state.organizations.filter((organization) => organization.id === targetId);
+                if (!message || !recipients.length) return;
+
+                const sentAt = new Date().toISOString();
+                recipients.forEach((organization) => {
+                    const notification = {
+                        id: `announcement-${organization.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                        type: "announcement",
+                        message,
+                        sentAt,
+                        read: false
+                    };
+                    organization.notifications = [...(organization.notifications || []), notification];
+                    organization.notification = notification;
+                });
+                saveState();
+                event.target.reset();
+                render();
+                document.querySelector("#announcement-notice").textContent = `Announcement posted to ${targetId === "all" ? "all organizations" : recipients[0].name} in this browser demo. No email was sent.`;
+            });
+            document.querySelector("#year-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                state.academicYear = document.querySelector("#academic-year").value.trim();
+                saveState();
+                render();
+                document.querySelector("#year-notice").textContent = `Academic year set to ${state.academicYear} in this browser demo.`;
+            });
+            document.querySelector("#registration-rows").addEventListener("change", (event) => {
+                const id = event.target.dataset.orgStatus;
+                if (!id) return;
+                const note = document.querySelector(`[data-revision-note="${id}"]`);
+                if (note) note.hidden = event.target.value !== "revision";
+                const saveButton = document.querySelector(`[data-save-review="${id}"]`);
+                if (saveButton) saveButton.textContent = event.target.value === "revision" ? "Save and notify organization" : "Save review status";
+            });
+            document.querySelector("#registration-rows").addEventListener("click", (event) => {
+                const id = event.target.dataset.saveReview;
+                if (!id) return;
+                const organization = getOrganization(id);
+                const selectedStatus = document.querySelector(`[data-org-status="${id}"]`).value;
+                const notice = document.querySelector("#registration-notice");
+                if (!organization) return;
+                if (selectedStatus === "revision") {
+                    const message = document.querySelector(`[data-revision-note="${id}"]`).value.trim();
+                    if (!message) {
+                        document.querySelector(`[data-revision-note="${id}"]`).focus();
+                        notice.textContent = "Add specific revision instructions before notifying the organization.";
+                        notice.style.color = "#8a3b26";
+                        return;
+                    }
+                    organization.status = "revision";
+                    organization.reviewNote = message;
+                    organization.notification = {
+                        id: `revision-${organization.id}-${Date.now()}`,
+                        type: "revision",
+                        message,
+                        sentAt: new Date().toISOString(),
+                        read: false
+                    };
+                    organization.notifications = [...(organization.notifications || []), organization.notification];
+                } else {
+                    organization.status = selectedStatus;
+                    organization.reviewNote = `Administrator set status to ${statusName(organization.status)} in the demo.`;
+                    organization.notification = {
+                        id: `review-${organization.id}-${Date.now()}`,
+                        type: selectedStatus,
+                        message: organization.reviewNote,
+                        sentAt: new Date().toISOString(),
+                        read: false
+                    };
+                    organization.notifications = [...(organization.notifications || []), organization.notification];
+                }
+                saveState();
+                render();
+                notice.textContent = selectedStatus === "revision"
+                    ? `${organization.name} has been notified in the representative workspace. The revision instructions are saved in this browser demo; no email was sent.`
+                    : `${organization.name} review status saved in the browser demo.`;
+                notice.style.color = "";
+            });
+            document.querySelector("#profile-organization").addEventListener("change", render);
+            document.querySelector("#profile-status").addEventListener("change", (event) => {
+                document.querySelector("#profile-revision-note-field").hidden = event.target.value !== "revision";
+            });
+            document.querySelector("#profile-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const organization = getOrganization(document.querySelector("#profile-organization").value);
+                if (!organization) return;
+                const selectedStatus = document.querySelector("#profile-status").value;
+                const revisionMessage = document.querySelector("#profile-revision-note").value.trim();
+                if (selectedStatus === "revision" && !revisionMessage) {
+                    document.querySelector("#profile-revision-note").focus();
+                    document.querySelector("#profile-notice").textContent = "Add specific revision instructions before saving and notifying the organization.";
+                    return;
+                }
+                organization.name = document.querySelector("#profile-name").value.trim();
+                organization.category = document.querySelector("#profile-category").value;
+                organization.level = document.querySelector("#profile-level").value;
+                organization.adviser = document.querySelector("#profile-adviser").value.trim() || "Name to be confirmed";
+                organization.description = document.querySelector("#profile-description").value.trim();
+                organization.status = selectedStatus;
+                organization.reviewNote = selectedStatus === "revision"
+                    ? revisionMessage
+                    : `Profile updated in administrator demo. Status: ${statusName(organization.status)}.`;
+                organization.notification = {
+                    id: `${selectedStatus}-${organization.id}-${Date.now()}`,
+                    type: selectedStatus,
+                    message: organization.reviewNote,
+                    sentAt: new Date().toISOString(),
+                    read: false
+                };
+                organization.notifications = [...(organization.notifications || []), organization.notification];
+                const adviserPerson = state.people.find((person) => person.organizationId === organization.id && person.group === "Adviser");
+                if (adviserPerson) {
+                    adviserPerson.name = organization.adviser;
+                    adviserPerson.role = "Faculty adviser";
+                } else if (organization.adviser !== "Name to be confirmed") {
+                    state.people.push({
+                        id: `adviser-${Date.now()}`,
+                        name: organization.adviser,
+                        role: "Faculty adviser",
+                        group: "Adviser",
+                        organizationId: organization.id
+                    });
+                }
+                saveState();
+                render();
+                document.querySelector("#profile-notice").textContent = selectedStatus === "revision"
+                    ? "Revision instructions saved and shown in the organization representative workspace. No email or external message was sent."
+                    : "Organization profile and directory status updated in this browser demo.";
+            });
+            document.querySelector("#person-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const person = {
+                    id: `person-${Date.now()}`,
+                    name: document.querySelector("#person-name").value.trim(),
+                    role: document.querySelector("#person-role").value.trim(),
+                    group: document.querySelector("#person-group").value,
+                    organizationId: document.querySelector("#person-organization").value
+                };
+                state.people.push(person);
+                saveState();
+                event.target.reset();
+                render();
+                document.querySelector("#people-notice").textContent = "Person assignment added to the shared browser demo.";
+            });
+            document.querySelector("#people-rows").addEventListener("click", (event) => {
+                const id = event.target.dataset.removePerson;
+                if (!id) return;
+                state.people = state.people.filter((person) => person.id !== id);
+                saveState();
+                render();
+                document.querySelector("#people-notice").textContent = "Person assignment removed from the shared browser demo.";
+            });
+            document.querySelector("#download-report").addEventListener("click", () => {
+                const rows = [["Organization", "Level", "Category", "Status", "Academic year", "Adviser", "Officer/adviser/member count"]];
+                state.organizations.forEach((organization) => {
+                    const related = state.people.filter((person) => person.organizationId === organization.id);
+                    rows.push([organization.name, organization.level, organization.category, statusName(organization.status), organization.schoolYear || state.academicYear, organization.adviser, related.length]);
+                });
+                const csv = rows.map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+                const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "isoms-demo-organization-report.csv";
+                link.click();
+                URL.revokeObjectURL(url);
+                document.querySelector("#report-notice").textContent = "CSV report generated from current demo records.";
+            });
+            document.querySelector("#print-report").addEventListener("click", () => window.print());
+            render();
+            app.hidden = false;
+        } catch (error) {
+            errorBox.textContent = error.message;
+            errorBox.hidden = false;
+        }
+    </script>
+</body>
+</html>

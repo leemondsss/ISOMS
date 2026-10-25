@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-required-role="adviser">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <script src="access-control.js"></script>
+    <title>Organization Adviser Workspace | ISOMS</title>
+    <style>
+        :root { --green:#174d2a; --dark:#10361f; --gold:#f2c94c; --ink:#173d27; --muted:#526257; --line:#e5eadf; }
+        * { box-sizing:border-box; }
+        body { min-width:320px; min-height:100vh; margin:0; background:#f5f7ef; color:var(--ink); font-family:Arial,Helvetica,sans-serif; }
+        .header { display:flex; min-height:70px; align-items:center; justify-content:space-between; gap:18px; padding:12px clamp(20px,6vw,88px); background:var(--green); color:#fff; }
+        .brand { display:inline-flex; align-items:center; gap:12px; color:inherit; text-decoration:none; }
+        .brand-mark { display:grid; width:46px; height:46px; place-items:center; border:1px solid #ffffff80; border-radius:14px; background:#ffffff1f; font-weight:800; }
+        .brand-name { font-size:1.05rem; font-weight:800; letter-spacing:.14em; }
+        .header-account { display:flex; align-items:center; gap:14px; }
+        .username { padding:8px 11px; border:1px solid #ffffff55; border-radius:999px; color:#fff; font-size:.78rem; font-weight:800; }
+        .back-link { color:#fff; font-size:.82rem; font-weight:700; text-decoration:none; }
+        .page { width:min(100% - 40px,1120px); margin:0 auto; padding:42px 0 70px; }
+        .topline { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; }
+        .eyebrow { margin:0 0 9px; color:#1f6b3a; font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+        h1 { margin:0; font-size:clamp(2rem,4.5vw,3rem); letter-spacing:-.05em; }
+        .intro { max-width:680px; margin:12px 0 0; color:var(--muted); font-size:.9rem; line-height:1.6; }
+        .demo-note { max-width:370px; padding:13px 15px; border:1px solid #e6d79d; border-radius:10px; background:#fff9e8; color:#5a4a1f; font-size:.75rem; line-height:1.55; }
+        .toolbar { display:flex; align-items:center; gap:12px; margin:26px 0 18px; padding:12px 14px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--muted); font-size:.78rem; }
+        .grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.75fr); gap:18px; align-items:start; }
+        .card { padding:22px; border:1px solid var(--line); border-radius:14px; background:#fff; box-shadow:0 8px 22px #174d2a0f; }
+        .card h2 { margin:0 0 16px; font-size:1rem; }
+        .facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:0; }
+        .facts div { padding:12px; border-radius:9px; background:#f5f7ef; }
+        .facts dt { color:#718076; font-size:.66rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+        .facts dd { margin:5px 0 0; color:var(--ink); font-size:.82rem; line-height:1.5; }
+        .description { margin:16px 0 0; color:var(--muted); font-size:.82rem; line-height:1.6; }
+        .doc-list { display:grid; gap:10px; margin:0; padding:0; list-style:none; }
+        .doc-list li { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:12px; border:1px solid #edf1eb; border-radius:8px; }
+        .doc-list strong { display:block; font-size:.78rem; }
+        .doc-list small { display:block; margin-top:4px; color:var(--muted); font-size:.7rem; }
+        .doc-state { flex:0 0 auto; color:#715517; font-size:.68rem; font-weight:800; }
+        .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
+        button, .button-link { min-height:40px; padding:9px 13px; border:1px solid var(--green); border-radius:8px; background:var(--green); color:#fff; cursor:pointer; font:inherit; font-size:.75rem; font-weight:800; text-decoration:none; }
+        button.secondary, .button-link.secondary { background:#fff; color:var(--green); }
+        button:hover:not(:disabled), .button-link:hover { background:var(--dark); color:#fff; }
+        .notice { margin-top:14px; padding:12px; border-radius:8px; background:#edf4ec; color:var(--green); font-size:.78rem; line-height:1.5; }
+        .error { padding:16px; border:1px solid #e6c2b7; border-radius:9px; background:#fff6f3; color:#8a3b26; }
+        @media(max-width:800px) { .topline { align-items:flex-start; flex-direction:column; } .demo-note { max-width:none; } .grid { grid-template-columns:1fr; } }
+        @media(max-width:560px) { .header { min-height:62px; padding:10px 16px; } .brand-mark { width:40px; height:40px; } .brand-name { font-size:.92rem; } .header-account { gap:8px; } .username { padding:7px 8px; font-size:.7rem; } .back-link { font-size:.74rem; } .page { width:min(100% - 32px,1120px); padding-top:30px; } .facts { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="index.html" aria-label="ISOMS home"><span class="brand-mark" aria-hidden="true">I</span><span class="brand-name">ISOMS</span></a>
+        <div class="header-account"><span class="username" data-demo-username>@facultyadviser</span><a class="back-link" href="login.html" data-demo-signout>Sign out</a></div>
+    </header>
+    <main class="page">
+        <div class="topline">
+            <div><p class="eyebrow">Faculty workspace</p><h1>Organization Adviser</h1><p class="intro">Review assigned organization details and submitted document records. Advisers can mark their review or return a profile for revision.</p></div>
+            <aside class="demo-note"><strong>Adviser demo workspace.</strong> This preview is assigned to the Supreme Student Council and is not authentication or enforced access control. It uses browser-local sample data and does not send notifications.</aside>
+        </div>
+        <div id="workspace-error" class="error" role="alert" hidden></div>
+        <div id="workspace" hidden>
+            <div class="toolbar">
+                <span>Assigned organization: <strong>Supreme Student Council</strong></span>
+            </div>
+            <div class="grid">
+                <section class="card" aria-labelledby="org-heading">
+                    <h2 id="org-heading">Assigned organization information</h2>
+                    <dl class="facts" id="organization-facts"></dl>
+                    <p class="description" id="organization-description"></p>
+                    <div class="actions">
+                        <button type="button" id="mark-reviewed">Mark adviser review complete</button>
+                        <button class="secondary" type="button" id="request-revision">Return for revision</button>
+                    </div>
+                    <p class="notice" id="adviser-notice" role="status" aria-live="polite">Changes are saved only in this browser's demo workspace.</p>
+                </section>
+                <section class="card" aria-labelledby="documents-heading">
+                    <h2 id="documents-heading">Submitted document records</h2>
+                    <ul class="doc-list" id="document-list"></ul>
+                    <p class="description">Sample filenames are metadata only. Actual documents are not stored in this prototype.</p>
+                </section>
+            </div>
+        </div>
+    </main>
+    <script src="demo-data.js"></script>
+    <script>
+        const errorBox = document.querySelector("#workspace-error");
+        const workspace = document.querySelector("#workspace");
+        const assignedOrganizationId = window.sessionStorage.getItem("isomsDemoOrganizationId");
+        const escapeHtml = ISOMSDemoStore.escapeHtml;
+        let state;
+
+        const statusLabel = (status) => ({ approved: "Approved (demo)", pending: "Pending administrator review (demo)", revision: "Needs revision (demo)" }[status] || "Status not set");
+
+        const render = () => {
+            const organization = state.organizations.find((item) => item.id === assignedOrganizationId);
+            if (!organization) {
+                document.querySelector("#organization-facts").innerHTML = "";
+                document.querySelector("#organization-description").textContent = "No assigned organization is available in the demo data.";
+                document.querySelector("#document-list").innerHTML = "<li>No assigned organization is available.</li>";
+                return;
+            }
+            const adviser = state.people.find((person) => person.organizationId === organization.id && person.group === "Adviser");
+            const facts = [
+                ["Organization", organization.name],
+                ["School level", organization.level || "Not specified"],
+                ["Category", organization.category || "Not specified"],
+                ["Academic year", organization.schoolYear || state.academicYear],
+                ["Adviser", adviser?.name || organization.adviser || "Not assigned"],
+                ["Review status", statusLabel(organization.status)],
+                ["Adviser review", organization.adviserReview || "Not reviewed"]
+            ];
+            document.querySelector("#organization-facts").innerHTML = facts.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
+            document.querySelector("#organization-description").textContent = organization.description || "No profile description has been submitted.";
+            const documents = organization.documents || [];
+            document.querySelector("#document-list").innerHTML = documents.length
+                ? documents.map((document) => `<li><span><strong>${escapeHtml(document.type || "Supporting document")}</strong><small>${escapeHtml(document.name)}</small></span><span class="doc-state">Submitted (demo)</span></li>`).join("")
+                : "<li><span><strong>No document records</strong><small>No sample documents attached to this profile.</small></span></li>";
+        };
+
+        try {
+            state = ISOMSDemoStore.load();
+            if (!assignedOrganizationId || !state.organizations.some((organization) => organization.id === assignedOrganizationId)) {
+                throw new Error("No organization is assigned to this adviser demo role. Return to sign-in and choose the adviser preview again.");
+            }
+            document.querySelector("#mark-reviewed").addEventListener("click", () => {
+                const organization = state.organizations.find((item) => item.id === assignedOrganizationId);
+                if (!organization) return;
+                organization.adviserReview = "Reviewed by adviser (demo)";
+                ISOMSDemoStore.save(state);
+                render();
+                document.querySelector("#adviser-notice").textContent = "Adviser review marked complete in the shared browser demo. Administrator review is still separate.";
+            });
+            document.querySelector("#request-revision").addEventListener("click", () => {
+                const organization = state.organizations.find((item) => item.id === assignedOrganizationId);
+                if (!organization) return;
+                organization.status = "revision";
+                organization.adviserReview = "Returned for revision by adviser (demo)";
+                organization.reviewNote = "Adviser requested a revision in the demo workspace.";
+                ISOMSDemoStore.save(state);
+                render();
+                document.querySelector("#adviser-notice").textContent = "Marked as needing revision in this browser demo. No message was sent to the officer.";
+            });
+            render();
+            workspace.hidden = false;
+        } catch (error) {
+            errorBox.textContent = error.message;
+            errorBox.hidden = false;
+        }
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#174d2a">
-    <title>Organization Officer Sign In | ISOMS</title>
+    <title>Workspace Sign In | ISOMS</title>
     <style>
         :root {
             --green: #174d2a;
@@ -82,117 +82,223 @@
         .main {
             display: grid;
             place-items: center;
-            padding: 48px 20px;
+            padding: 40px 20px;
         }
 
         .login-card {
-            width: min(100%, 760px);
-            padding: clamp(26px, 5vw, 48px);
+            width: min(100%, 520px);
+            padding: clamp(24px, 5vw, 34px);
             border: 1px solid var(--line);
-            border-radius: 22px;
+            border-radius: 12px;
             background: #fff;
-            box-shadow: 0 20px 55px rgba(23, 77, 42, 0.1);
-        }
-
-        .eyebrow {
-            margin: 0 0 12px;
-            color: var(--green);
-            font-size: 0.72rem;
-            font-weight: 800;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
+            box-shadow: 0 14px 36px rgba(23, 42, 30, 0.16);
         }
 
         h1 {
-            margin: 0;
-            color: var(--ink);
-            font-size: clamp(2rem, 5vw, 3rem);
-            letter-spacing: -0.05em;
-            line-height: 1.05;
+            width: fit-content;
+            margin: 0 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--green);
+            color: #66736d;
+            font-size: 1.5rem;
+            font-weight: 500;
         }
 
         .intro {
-            margin: 14px 0 0;
+            margin: 0 0 22px;
             color: var(--muted);
-            font-size: 0.96rem;
-            line-height: 1.65;
+            font-size: 0.84rem;
+            line-height: 1.55;
         }
 
-        .officer-mark {
+        .email-status {
+            margin-top: 18px;
+        }
+
+        .email-status label {
+            display: block;
+            margin-bottom: 2px;
+            color: #59665e;
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .email-field {
+            display: flex;
+            min-height: 42px;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 0 10px;
+            border-bottom: 1px solid #cfd8d1;
+        }
+
+        .email-field input {
+            width: 100%;
+            min-width: 0;
+            padding: 8px 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #65736a;
+            font-size: 0.86rem;
+            cursor: not-allowed;
+        }
+
+        .email-field input:disabled {
+            opacity: 1;
+            -webkit-text-fill-color: #65736a;
+        }
+
+        .email-icon {
             display: grid;
-            width: 44px;
-            height: 44px;
-            place-items: center;
-            border-radius: 13px;
-            background: #e9f1e8;
-            color: var(--green);
-            font-size: 1.15rem;
-            font-weight: 800;
+            width: 18px;
+            height: 18px;
+            flex: 0 0 auto;
+            color: #829187;
         }
 
-        .officer-title {
-            margin: 18px 0 0;
-            color: var(--ink);
-            font-size: 1.18rem;
-        }
-
-        .officer-copy {
-            margin: 8px 0 0;
+        .email-status small {
+            display: block;
+            margin-top: 7px;
             color: var(--muted);
-            font-size: 0.82rem;
+            font-size: 0.74rem;
             line-height: 1.5;
         }
 
         .secure-notice {
-            margin-top: 24px;
-            padding: 16px 18px;
-            border: 1px solid #e6d79d;
-            border-radius: 12px;
-            background: #fff9e8;
-            color: #5a4a1f;
-            font-size: 0.84rem;
-            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px auto 0;
+            padding: 12px 14px;
+            border: 1px solid #d8e2da;
+            border-radius: 8px;
+            background: #f7faf7;
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.5;
+        }
+
+        .verification-icon {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 50%;
+            background: #e5f2e8;
+            color: #23884b;
+            font-size: 1rem;
+            font-weight: 800;
         }
 
         .secure-notice strong {
             display: block;
-            margin-bottom: 4px;
-            color: #453813;
+            color: #354b3c;
         }
 
         .provider-button {
             display: flex;
-            min-height: 48px;
+            min-height: 42px;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            width: 100%;
-            margin-top: 22px;
+            width: min(100%, 280px);
+            margin: 22px auto 0;
             padding: 10px 16px;
             border: 0;
-            border-radius: 9px;
+            border-radius: 7px;
             background: var(--green);
             color: #fff;
             cursor: not-allowed;
-            font-size: 0.86rem;
+            font-size: 0.84rem;
             font-weight: 800;
             opacity: 0.68;
         }
 
         .setup-note {
-            margin: 10px 0 0;
+            margin: 9px 0 0;
             color: var(--muted);
             font-size: 0.74rem;
             line-height: 1.55;
+            text-align: center;
+        }
+
+        .recovery-note {
+            margin: 12px 0 0;
+            color: #1769c2;
+            font-size: 0.74rem;
+            text-align: center;
         }
 
         .disclaimer {
-            margin: 22px 0 0;
-            padding-top: 16px;
+            margin: 18px 0 0;
+            padding-top: 13px;
             border-top: 1px solid #edf1eb;
             color: #758078;
             font-size: 0.74rem;
             line-height: 1.55;
+        }
+
+        .demo-access {
+            margin-top: 26px;
+            padding-top: 20px;
+            border-top: 1px solid #edf1eb;
+        }
+
+        .demo-access h2 {
+            margin: 0;
+            color: var(--ink);
+            font-size: 1rem;
+        }
+
+        .demo-access-copy {
+            margin: 8px 0 14px;
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.55;
+        }
+
+        .role-options {
+            display: grid;
+            gap: 9px;
+        }
+
+        .role-option {
+            display: flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid #d8e2da;
+            border-radius: 8px;
+            background: #fff;
+            color: var(--green);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .role-option:hover,
+        .role-option:focus-visible {
+            border-color: var(--green);
+            background: #f4f7f1;
+        }
+
+        .role-option span:last-child {
+            color: #718076;
+            font-size: 1rem;
+        }
+
+        .role-message {
+            min-height: 18px;
+            margin: 10px 0 0;
+            color: #8a3b26;
+            font-size: 0.74rem;
+            line-height: 1.45;
         }
 
         @media (max-width: 560px) {
@@ -233,26 +339,78 @@
 
     <main class="main">
         <section class="login-card" aria-labelledby="login-title">
-            <p class="eyebrow">ISOMS officer access</p>
-            <h1 id="login-title">Organization Officer sign in</h1>
-            <p class="intro">Use your PHINMA Education Google Workspace account to access the organization officer portal.</p>
+            <h1 id="login-title">Sign In</h1>
+            <p class="intro">Administrator, adviser, and organization officer accounts will use their assigned PHINMA Education access after official sign-in is configured.</p>
 
-            <div class="officer-mark" aria-hidden="true">O</div>
-            <h2 class="officer-title">Organization Officer</h2>
-            <p class="officer-copy">Sign in with your authorized PHINMA Education account to manage your organization profile, submit documents, and track review status.</p>
+            <div class="email-status">
+                <label for="phinma-email">PHINMAED email address</label>
+                <div class="email-field">
+                    <input id="phinma-email" type="email" value="Available after two-factor authentication" disabled aria-describedby="email-status-note">
+                    <svg class="email-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <circle cx="12" cy="8" r="3.5"></circle>
+                        <path d="M5.5 20v-1.5a6.5 6.5 0 0 1 13 0V20z"></path>
+                    </svg>
+                </div>
+                <small id="email-status-note">Two-factor authentication will be required after the school approves the official email setup.</small>
+            </div>
 
             <aside class="secure-notice">
-                <strong>Your account security stays with PHINMA / Google</strong>
-                Your password and 2-Step Verification code should only be entered on the official PHINMA Education Google sign-in page. ISOMS should never collect or store those credentials.
+                <span class="verification-icon" aria-hidden="true">✓</span>
+                <span><strong>Two-factor authentication</strong>Will be enabled with the approved PHINMA / Google sign-in.</span>
             </aside>
 
             <button class="provider-button" type="button" disabled aria-disabled="true">
-                Continue with PHINMA Education Google account
+                Sign In <span aria-hidden="true">↪</span>
             </button>
-            <p class="setup-note">Secure sign-in is not connected yet. The school’s Google Workspace OAuth client and approved redirect URL must be configured before this button can authenticate users and send verified officers to the portal.</p>
+            <p class="setup-note">Sign-in will be available after the school configures the official account connection. Passwords and verification codes are entered only on the official PHINMA / Google sign-in page.</p>
+            <p class="recovery-note">Forgot your password? Contact your PHINMA account administrator.</p>
 
-            <p class="disclaimer">Students can browse the homepage directly. This sign-in page is reserved for organization officers.</p>
+            <section class="demo-access" aria-labelledby="demo-access-title">
+                <h2 id="demo-access-title">Preview a role-specific workspace</h2>
+                <p class="demo-access-copy">Prototype navigation only—not authentication or access security. Each preview uses a sample assignment for the Supreme Student Council.</p>
+                <div class="role-options">
+                    <button class="role-option" type="button" data-demo-role="administrator" data-demo-username="@adminisoms"><span>Administrator workspace</span><span aria-hidden="true">→</span></button>
+                    <button class="role-option" type="button" data-demo-role="adviser" data-demo-username="@facultyadviser"><span>Organization adviser workspace</span><span aria-hidden="true">→</span></button>
+                    <button class="role-option" type="button" data-demo-role="officer" data-demo-username="@leemonds"><span>Organization officer / representative workspace</span><span aria-hidden="true">→</span></button>
+                </div>
+                <p class="role-message" id="role-message" role="status" aria-live="polite"></p>
+            </section>
+
+            <p class="disclaimer">Students and university personnel can browse the public directory directly. Production role permissions require a secure school sign-in and server-side authorization.</p>
         </section>
     </main>
+    <script>
+        const workspaceByRole = {
+            administrator: "admin.html",
+            adviser: "adviser-portal.html",
+            officer: "officer.html"
+        };
+        const roleMessage = document.querySelector("#role-message");
+
+        document.querySelectorAll("[data-demo-role]").forEach((button) => {
+            button.addEventListener("click", () => {
+                try {
+                    const role = button.dataset.demoRole;
+                    window.sessionStorage.setItem("isomsDemoRole", role);
+                    window.sessionStorage.setItem("isomsDemoUsername", button.dataset.demoUsername);
+                    if (role === "adviser" || role === "officer") {
+                        window.sessionStorage.setItem("isomsDemoOrganizationId", "ssc");
+                    } else {
+                        window.sessionStorage.removeItem("isomsDemoOrganizationId");
+                    }
+                    window.location.assign(workspaceByRole[role]);
+                } catch (error) {
+                    roleMessage.textContent = `Could not open the demo workspace: ${error.message}`;
+                }
+            });
+        });
+
+        const accessMessage = new URLSearchParams(window.location.search).get("access");
+        if (accessMessage === "denied") {
+            roleMessage.textContent = "Choose the correct demo role to open that workspace. For real access restrictions, the school must configure server-side permissions.";
+        } else if (accessMessage === "unavailable") {
+            roleMessage.textContent = "This browser could not establish the demo role preview.";
+        }
+    </script>
 </body>
 </html>

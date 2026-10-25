@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <title>Advisers | ISOMS</title>
+    <style>
+        :root {
+            --green: #174d2a;
+            --green-dark: #10361f;
+            --gold: #f2c94c;
+            --ink: #173d27;
+            --muted: #526257;
+            --line: #e5eadf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f7ef;
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            min-height: 70px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px clamp(20px, 7vw, 104px);
+            background: var(--green);
+            color: #fff;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        .back-link {
+            color: #fff;
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link:hover,
+        .back-link:focus-visible {
+            color: var(--gold);
+        }
+
+        .main {
+            width: min(100% - 40px, 1080px);
+            margin: 0 auto;
+            padding: clamp(42px, 7vw, 76px) 0;
+        }
+
+        .intro {
+            margin-bottom: 34px;
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: #1f6b3a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--ink);
+            font-size: clamp(2rem, 5vw, 3rem);
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+        }
+
+        .intro-copy {
+            max-width: 690px;
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+            line-height: 1.65;
+        }
+
+        .workspace-link {
+            display: inline-flex;
+            margin-top: 18px;
+            padding: 11px 15px;
+            border-radius: 8px;
+            background: var(--green);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .workspace-link:hover,
+        .workspace-link:focus-visible {
+            background: var(--green-dark);
+        }
+
+        .section-heading {
+            margin: 0 0 16px;
+            color: var(--ink);
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .dean-section,
+        .organization-section {
+            margin-top: 36px;
+        }
+
+        .dean-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .dean-card,
+        .adviser-card {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fff;
+            box-shadow: 0 8px 22px rgba(23, 77, 42, 0.06);
+        }
+
+        .dean-card {
+            padding: 23px;
+            border-top: 4px solid var(--gold);
+        }
+
+        .profile-picture {
+            overflow: hidden;
+            margin: 0 0 18px;
+            border: 1px solid #e2e9e1;
+            border-radius: 10px;
+            background: #eaf1e9;
+        }
+
+        .profile-picture img {
+            display: block;
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+
+        .profile-picture--portrait img {
+            height: 300px;
+            object-fit: contain;
+        }
+
+        .profile-picture figcaption {
+            padding: 7px 10px;
+            background: #fff;
+            color: #68766d;
+            font-size: 0.68rem;
+        }
+
+        .card-label {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #edf4ec;
+            color: var(--green);
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .dean-card h3,
+        .adviser-card h3 {
+            margin: 14px 0 6px;
+            color: var(--ink);
+            font-size: 1.08rem;
+        }
+
+        .person-name {
+            margin: 0;
+            color: #65736a;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .card-note {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 0.8rem;
+            line-height: 1.55;
+        }
+
+        .adviser-quote {
+            position: relative;
+            margin: 16px 0 0;
+            padding: 14px 14px 14px 17px;
+            border-left: 3px solid var(--gold);
+            border-radius: 0 8px 8px 0;
+            background: #fff9e8;
+        }
+
+        .adviser-quote-label {
+            margin: 0 0 6px;
+            color: #6e5a20;
+            font-size: 0.66rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .adviser-quote p:last-child {
+            margin: 0;
+            color: #5a4a1f;
+            font-size: 0.78rem;
+            line-height: 1.55;
+        }
+
+        .organization-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .adviser-card {
+            padding: 20px;
+        }
+
+        .adviser-card .profile-picture img {
+            height: 145px;
+        }
+
+        .adviser-card h3 {
+            margin-top: 0;
+            line-height: 1.4;
+        }
+
+        .adviser-label {
+            margin: 14px 0 4px;
+            color: #718076;
+            font-size: 0.69rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .directory-note {
+            margin: 18px 0 0;
+            padding: 14px 16px;
+            border-left: 4px solid var(--gold);
+            border-radius: 7px;
+            background: #fff9e8;
+            color: #5a4a1f;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 760px) {
+            .organization-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .header {
+                min-height: 62px;
+                padding: 10px 16px;
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+            }
+
+            .brand-name {
+                font-size: 0.92rem;
+            }
+
+            .main {
+                width: min(100% - 32px, 1080px);
+            }
+
+            .dean-grid,
+            .organization-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="index.html" aria-label="ISOMS home">
+            <span class="brand-mark" aria-hidden="true">I</span>
+            <span class="brand-name">ISOMS</span>
+        </a>
+        <a class="back-link" href="index.html">← Back to home</a>
+    </header>
+
+    <main class="main">
+        <section class="intro" aria-labelledby="advisers-title">
+            <p class="eyebrow">Our campus community</p>
+            <h1 id="advisers-title">Deans &amp; Organization Advisers</h1>
+            <p class="intro-copy">Meet the faculty leaders who support our student organizations. SHS and College have separate dean listings, followed by the advisers for each organization.</p>
+            <a class="workspace-link" href="adviser-portal.html">Open adviser workspace demo</a>
+        </section>
+
+        <section class="dean-section" aria-labelledby="deans-heading">
+            <h2 class="section-heading" id="deans-heading">School Deans</h2>
+            <div class="dean-grid">
+                <article class="dean-card">
+                    <figure class="profile-picture profile-picture--portrait">
+                        <img src="images/shs-dean.png" alt="Senior High School Dean portrait">
+                        <figcaption>Senior High School Dean</figcaption>
+                    </figure>
+                    <span class="card-label">Senior High School</span>
+                    <h3>SHS Dean</h3>
+                    <p class="person-name">Name to be confirmed</p>
+                    <p class="card-note">Dean for the Senior High School student community and organizations.</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">A message from the SHS dean</p>
+                        <p>Quote to be added after the dean's message is provided and approved.</p>
+                    </blockquote>
+                </article>
+                <article class="dean-card">
+                    <figure class="profile-picture profile-picture--portrait">
+                        <img src="images/college-dean.png" alt="College Dean portrait">
+                        <figcaption>College Dean</figcaption>
+                    </figure>
+                    <span class="card-label">College</span>
+                    <h3>College Dean</h3>
+                    <p class="person-name">Name to be confirmed</p>
+                    <p class="card-note">Dean for the College student community and organizations.</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">A message from the College dean</p>
+                        <p>Quote to be added after the dean's message is provided and approved.</p>
+                    </blockquote>
+                </article>
+            </div>
+        </section>
+
+        <section class="organization-section" aria-labelledby="org-advisers-heading">
+            <h2 class="section-heading" id="org-advisers-heading">Organization Advisers</h2>
+            <div class="organization-grid">
+                <article class="adviser-card">
+                    <figure class="profile-picture">
+                        <img src="images/adviser-placeholder.svg" alt="Illustrated portrait placeholder for the Supreme Student Council adviser">
+                        <figcaption>Portrait placeholder</figcaption>
+                    </figure>
+                    <span class="card-label">College</span>
+                    <h3>Supreme Student Council (SSC)</h3>
+                    <p class="adviser-label">Faculty adviser</p>
+                    <p class="person-name">Name to be confirmed</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">Adviser message</p>
+                        <p>Quote to be added after the adviser message is provided and approved.</p>
+                    </blockquote>
+                </article>
+                <article class="adviser-card">
+                    <figure class="profile-picture">
+                        <img src="images/adviser-placeholder.svg" alt="Illustrated portrait placeholder for the Supreme Secondary Learner Government adviser">
+                        <figcaption>Portrait placeholder</figcaption>
+                    </figure>
+                    <h3>Supreme Secondary Learner Government (SSLG)</h3>
+                    <span class="card-label">Senior High School</span>
+                    <p class="adviser-label">Faculty adviser</p>
+                    <p class="person-name">Name to be confirmed</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">Adviser message</p>
+                        <p>Quote to be added after the adviser message is provided and approved.</p>
+                    </blockquote>
+                </article>
+                <article class="adviser-card">
+                    <figure class="profile-picture">
+                        <img src="images/adviser-placeholder.svg" alt="Illustrated portrait placeholder for recognized student organization advisers">
+                        <figcaption>Portrait placeholder</figcaption>
+                    </figure>
+                    <h3>Recognized Student Organizations</h3>
+                    <span class="card-label">Organization directory</span>
+                    <p class="adviser-label">Faculty advisers</p>
+                    <p class="person-name">Names to be confirmed</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">Adviser message</p>
+                        <p>Quotes to be added after the advisers' messages are provided and approved.</p>
+                    </blockquote>
+                </article>
+                <article class="adviser-card">
+                    <figure class="profile-picture">
+                        <img src="images/adviser-placeholder.svg" alt="Illustrated portrait placeholder for the UVC adviser">
+                        <figcaption>Portrait placeholder</figcaption>
+                    </figure>
+                    <h3>UVC</h3>
+                    <span class="card-label">Organization</span>
+                    <p class="adviser-label">Faculty adviser</p>
+                    <p class="person-name">Name to be confirmed</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">Adviser message</p>
+                        <p>Quote to be added after the adviser message is provided and approved.</p>
+                    </blockquote>
+                </article>
+                <article class="adviser-card">
+                    <figure class="profile-picture">
+                        <img src="images/adviser-placeholder.svg" alt="Illustrated portrait placeholder for the TNT adviser">
+                        <figcaption>Portrait placeholder</figcaption>
+                    </figure>
+                    <h3>TNT</h3>
+                    <span class="card-label">Organization</span>
+                    <p class="adviser-label">Faculty adviser</p>
+                    <p class="person-name">Name to be confirmed</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">Adviser message</p>
+                        <p>Quote to be added after the adviser message is provided and approved.</p>
+                    </blockquote>
+                </article>
+                <article class="adviser-card">
+                    <figure class="profile-picture">
+                        <img src="images/adviser-placeholder.svg" alt="Illustrated portrait placeholder for the DANGAT adviser">
+                        <figcaption>Portrait placeholder</figcaption>
+                    </figure>
+                    <h3>DANGAT</h3>
+                    <span class="card-label">Organization</span>
+                    <p class="adviser-label">Faculty adviser</p>
+                    <p class="person-name">Name to be confirmed</p>
+                    <blockquote class="adviser-quote">
+                        <p class="adviser-quote-label">Adviser message</p>
+                        <p>Quote to be added after the adviser message is provided and approved.</p>
+                    </blockquote>
+                </article>
+            </div>
+            <p class="directory-note">Adviser names and organization assignments are placeholders until confirmed by the school. Update this directory with approved names and the correct SHS or College affiliation.</p>
+        </section>
+    </main>
+</body>
+</html>

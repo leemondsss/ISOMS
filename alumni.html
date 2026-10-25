@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174d2a">
+    <title>Alumni Stories | ISOMS</title>
+    <style>
+        :root {
+            --green: #174d2a;
+            --green-dark: #10361f;
+            --gold: #f2c94c;
+            --ink: #173d27;
+            --muted: #526257;
+            --line: #e5eadf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f7ef;
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            min-height: 70px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px clamp(20px, 7vw, 104px);
+            background: var(--green);
+            color: #fff;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 46px;
+            height: 46px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        .back-link {
+            color: #fff;
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link:hover,
+        .back-link:focus-visible {
+            color: var(--gold);
+        }
+
+        .main {
+            width: min(100% - 40px, 1080px);
+            margin: 0 auto;
+            padding: clamp(42px, 7vw, 76px) 0;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(250px, 0.9fr);
+            overflow: hidden;
+            border-radius: 20px;
+            background: var(--green);
+            box-shadow: 0 16px 36px rgba(23, 77, 42, 0.14);
+        }
+
+        .hero-copy {
+            padding: clamp(28px, 5vw, 52px);
+            color: #fff;
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--gold);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            color: #fff;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+        }
+
+        .hero-copy > p:not(.eyebrow) {
+            max-width: 570px;
+            margin: 16px 0 0;
+            color: #e0e9e1;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .hero-art {
+            position: relative;
+            display: grid;
+            min-height: 290px;
+            place-items: center;
+            overflow: hidden;
+            background: linear-gradient(145deg, #2c7544, #10361f);
+        }
+
+        .hero-art::before,
+        .hero-art::after {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 50%;
+            content: "";
+        }
+
+        .hero-art::before {
+            width: 310px;
+            height: 310px;
+        }
+
+        .hero-art::after {
+            width: 220px;
+            height: 220px;
+        }
+
+        .hero-icon {
+            z-index: 1;
+            display: grid;
+            width: 112px;
+            height: 112px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.46);
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--gold);
+            font-size: 3.2rem;
+            font-weight: 800;
+            transform: rotate(-8deg);
+        }
+
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 22px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: var(--gold);
+            color: var(--green-dark);
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 160ms ease, background-color 160ms ease;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            background: #ffdc68;
+        }
+
+        .stories-section {
+            margin-top: 48px;
+        }
+
+        .section-heading {
+            margin: 0;
+            color: var(--ink);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            letter-spacing: -0.035em;
+        }
+
+        .section-copy {
+            max-width: 680px;
+            margin: 10px 0 22px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .story-card {
+            display: flex;
+            min-height: 220px;
+            flex-direction: column;
+            padding: 22px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fff;
+            box-shadow: 0 8px 22px rgba(23, 77, 42, 0.06);
+        }
+
+        .story-category {
+            margin: 0;
+            color: #1f6b3a;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .story-card h3 {
+            margin: 12px 0 0;
+            color: var(--ink);
+            font-size: 1.08rem;
+            line-height: 1.4;
+        }
+
+        .story-date {
+            margin: 8px 0 0;
+            color: #718076;
+            font-size: 0.74rem;
+        }
+
+        .story-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            width: fit-content;
+            margin-top: auto;
+            padding-top: 20px;
+            color: var(--green);
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .story-link:hover,
+        .story-link:focus-visible {
+            color: #1f6b3a;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .source-note {
+            margin: 24px 0 0;
+            padding: 14px 16px;
+            border-left: 4px solid var(--gold);
+            border-radius: 0 8px 8px 0;
+            background: #fff9e8;
+            color: #5a4a1f;
+            font-size: 0.78rem;
+            line-height: 1.6;
+        }
+
+        .source-note a {
+            color: #174d2a;
+            font-weight: 700;
+        }
+
+        @media (max-width: 760px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-art {
+                min-height: 210px;
+            }
+
+            .story-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .header {
+                min-height: 62px;
+                padding: 10px 16px;
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+            }
+
+            .brand-name {
+                font-size: 0.92rem;
+            }
+
+            .main {
+                width: min(100% - 32px, 1080px);
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="index.html" aria-label="ISOMS home">
+            <span class="brand-mark" aria-hidden="true">I</span>
+            <span class="brand-name">ISOMS</span>
+        </a>
+        <a class="back-link" href="index.html">← Back to home</a>
+    </header>
+
+    <main class="main">
+        <section class="hero" aria-labelledby="alumni-title">
+            <div class="hero-copy">
+                <p class="eyebrow">Once a student, always part of the community</p>
+                <h1 id="alumni-title">Alumni Stories</h1>
+                <p>Celebrate the graduates and achievers whose journeys began at PHINMA University of Pangasinan. Discover how learning, perseverance, and opportunity can shape what comes next.</p>
+                <a class="feature-link" href="https://up.phinma.edu.ph/alumni/" target="_blank" rel="noopener noreferrer">
+                    Explore the official alumni page <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="hero-icon">★</span>
+            </div>
+        </section>
+
+        <section class="stories-section" aria-labelledby="stories-heading">
+            <h2 class="section-heading" id="stories-heading">Featured journeys</h2>
+            <p class="section-copy">Meet alumni and achievers featured by PHINMA UPang. Open the original stories on the university website to learn more about each journey.</p>
+            <div class="story-grid">
+                <article class="story-card">
+                    <p class="story-category">Featured alumna</p>
+                    <h3>Hezelle S. Francisco</h3>
+                    <p class="story-date">Education and teaching</p>
+                    <a class="story-link" href="https://up.phinma.edu.ph/sample-success-story/" target="_blank" rel="noopener noreferrer">Read her story <span aria-hidden="true">↗</span></a>
+                </article>
+                <article class="story-card">
+                    <p class="story-category">Success story</p>
+                    <h3>Ar. Ben Lazo</h3>
+                    <p class="story-date">Top 2 Architecture Licensure Examination</p>
+                    <a class="story-link" href="https://up.phinma.edu.ph/sample-success-story-2/" target="_blank" rel="noopener noreferrer">Read his story <span aria-hidden="true">↗</span></a>
+                </article>
+                <article class="story-card">
+                    <p class="story-category">Success story</p>
+                    <h3>Wesley Halili</h3>
+                    <p class="story-date">Marketing Department, PHINMA</p>
+                    <a class="story-link" href="https://up.phinma.edu.ph/wesley-halili/" target="_blank" rel="noopener noreferrer">Read his story <span aria-hidden="true">↗</span></a>
+                </article>
+                <article class="story-card">
+                    <p class="story-category">Success story</p>
+                    <h3>Sarah S. Estrada</h3>
+                    <p class="story-date">Top 9 NLE 2015</p>
+                    <a class="story-link" href="https://up.phinma.edu.ph/alumni-article-1/" target="_blank" rel="noopener noreferrer">Read her story <span aria-hidden="true">↗</span></a>
+                </article>
+                <article class="story-card">
+                    <p class="story-category">Alumni story</p>
+                    <h3>Micheal Angelo Lucido</h3>
+                    <p class="story-date">BSIT student story</p>
+                    <a class="story-link" href="https://up.phinma.edu.ph/alumni-article-2/" target="_blank" rel="noopener noreferrer">Read his story <span aria-hidden="true">↗</span></a>
+                </article>
+                <article class="story-card">
+                    <p class="story-category">Alumni news</p>
+                    <h3>Topnotchers’ Secrets Revealed</h3>
+                    <p class="story-date">July 17, 2024</p>
+                    <a class="story-link" href="https://up.phinma.edu.ph/topnotchers-secrets-revealed/" target="_blank" rel="noopener noreferrer">Read the article <span aria-hidden="true">↗</span></a>
+                </article>
+            </div>
+            <p class="source-note">Alumni names, achievements, and story links are based on the <a href="https://up.phinma.edu.ph/alumni/" target="_blank" rel="noopener noreferrer">official PHINMA UPang Alumni page</a>. Full stories and original photos remain on the university website.</p>
+        </section>
+    </main>
+</body>
+</html>
