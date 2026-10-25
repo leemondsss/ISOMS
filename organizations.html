@@ -13,54 +13,99 @@
             --ink: #173d27;
             --muted: #526257;
             --line: #e5eadf;
+            --night: #101a23;
+            --night-card: #17232e;
         }
         * { box-sizing: border-box; }
-        body { min-width: 320px; min-height: 100vh; margin: 0; background: #f5f7ef; color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+        body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--night); color: #fff; font-family: Arial, Helvetica, sans-serif; }
         .header { display: flex; min-height: 70px; align-items: center; justify-content: space-between; gap: 20px; padding: 12px clamp(20px, 7vw, 104px); background: var(--green); color: #fff; }
         .brand { display: inline-flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
         .brand-mark { display: grid; width: 46px; height: 46px; place-items: center; border: 1px solid rgba(255,255,255,.5); border-radius: 14px; background: rgba(255,255,255,.12); font-size: 1.1rem; font-weight: 800; }
         .brand-name { font-size: 1.05rem; font-weight: 800; letter-spacing: .14em; }
         .back-link { color: #fff; font-size: .84rem; font-weight: 700; text-decoration: none; }
         .back-link:hover, .back-link:focus-visible { color: var(--gold); }
-        .main { width: min(100% - 40px, 1080px); margin: 0 auto; padding: clamp(42px, 7vw, 76px) 0; }
-        .eyebrow { margin: 0 0 10px; color: #1f6b3a; font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-        h1 { margin: 0; color: var(--ink); font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.045em; line-height: 1.08; }
-        .intro-copy { max-width: 720px; margin: 14px 0 0; color: var(--muted); font-size: .96rem; line-height: 1.65; }
-        .demo-notice { margin: 24px 0; padding: 14px 16px; border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; background: #fff9e8; color: #5a4a1f; font-size: .8rem; line-height: 1.6; }
-        .filters { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(150px, 1fr)); gap: 12px; margin: 26px 0 18px; }
-        .filters label { display: grid; gap: 6px; color: #354b3c; font-size: .72rem; font-weight: 700; }
-        .filters input, .filters select { min-height: 42px; padding: 9px 11px; border: 1px solid #d9e2d7; border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: .82rem; }
-        .filters input:focus-visible, .filters select:focus-visible, summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-        .results-count { margin: 0 0 14px; color: var(--muted); font-size: .8rem; }
-        .directory { display: grid; gap: 12px; }
-        .org-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 6px 18px rgba(23,77,42,.05); }
-        .org-card[hidden] { display: none; }
-        .org-card summary { display: flex; min-height: 66px; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; cursor: pointer; list-style: none; }
-        .org-card summary::-webkit-details-marker { display: none; }
-        .org-card summary::after { width: 9px; height: 9px; flex: 0 0 auto; border-right: 2px solid var(--green); border-bottom: 2px solid var(--green); content: ""; transform: translateY(-2px) rotate(45deg); }
-        .org-card[open] summary { background: #f4f7f1; }
-        .org-card[open] summary::after { transform: translateY(2px) rotate(225deg); }
-        .org-name { display: block; color: var(--ink); font-size: .96rem; font-weight: 800; }
-        .org-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-        .tag { padding: 4px 8px; border-radius: 999px; background: #edf4ec; color: var(--green); font-size: .64rem; font-weight: 800; }
-        .status { padding: 4px 8px; border-radius: 999px; background: #fff5d8; color: #715517; font-size: .64rem; font-weight: 800; }
-        .status[data-status="approved"] { background: #e8f4e7; color: #246033; }
-        .status[data-status="revision"] { background: #fff0e5; color: #8b4c1c; }
-        .org-detail { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(220px, .8fr); gap: 18px; padding: 18px; border-top: 1px solid var(--line); }
-        .org-detail h2 { margin: 0 0 8px; font-size: .86rem; }
-        .org-detail p { margin: 0 0 14px; color: var(--muted); font-size: .8rem; line-height: 1.55; }
-        .org-detail ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: .78rem; line-height: 1.65; }
-        .not-approved { padding: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; line-height: 1.6; }
-        .empty-state { padding: 24px; border: 1px dashed #cbd7ca; border-radius: 10px; color: var(--muted); text-align: center; }
-        .error { padding: 16px; border: 1px solid #e6c2b7; border-radius: 9px; background: #fff6f3; color: #8a3b26; }
+        .main { width: 100%; margin: 0; padding: 0 0 58px; }
+        .directory { width: min(100% - 40px, 1120px); margin: 0 auto; }
+        .main { padding-top: clamp(28px, 4vw, 48px); }
+        .eyebrow { margin: 0 0 10px; color: var(--gold); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        h1 { margin: 0; color: #fff; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.045em; line-height: 1.08; }
+        .directory { display: grid; gap: 16px; }
+        .org-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; border-bottom: 1px solid #33414b; scrollbar-width: thin; }
+        .org-tab { display: inline-flex; flex: 0 0 auto; min-height: 42px; align-items: center; gap: 9px; padding: 7px 12px 7px 8px; border: 1px solid #3b4a54; border-radius: 9px; background: #17232e; color: #d9e2df; cursor: pointer; font: inherit; font-size: .76rem; font-weight: 800; }
+        .org-tab:hover, .org-tab[aria-selected="true"] { border-color: var(--org-accent); background: #1d3a2a; color: #fff; }
+        .org-tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+        .org-tab-mark { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border: 1px solid color-mix(in srgb, var(--org-accent), white 34%); border-radius: 8px; background: linear-gradient(145deg, var(--org-accent), var(--org-secondary)); color: #fff; font-size: .62rem; font-weight: 900; letter-spacing: -.04em; }
+        .org-panel { min-width: 0; overflow: hidden; border: 1px solid #293741; border-radius: 14px; background: var(--night); box-shadow: 0 16px 40px rgba(0,0,0,.22); }
+        .org-hero { position: relative; display: grid; min-height: clamp(280px, 42vw, 460px); place-items: center; overflow: hidden; padding: 36px 22px; background: #183526 url("images/123.png") center 48% / cover no-repeat; text-align: center; }
+        .org-hero::before { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,19,14,.76), rgba(11,39,23,.75)); content: ""; }
+        .org-hero-content { position: relative; z-index: 1; width: min(100%, 760px); }
+        .org-logo-placeholder { display: grid; width: 112px; height: 112px; place-items: center; gap: 2px; margin: 0 auto 18px; padding: 10px; border: 2px solid color-mix(in srgb, var(--org-accent), white 32%); border-radius: 26px; background: linear-gradient(145deg, color-mix(in srgb, var(--org-accent), transparent 12%), color-mix(in srgb, var(--org-secondary), #101a23 22%)); box-shadow: 0 12px 32px rgba(0,0,0,.32), inset 0 0 0 5px rgba(255,255,255,.1); color: #fff; }
+        .org-logo-initials { font-size: 2rem; font-weight: 900; letter-spacing: -.07em; line-height: 1; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+        .org-logo-caption { font-size: .54rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .org-hero h2 { margin: 0; color: #fff; font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -.025em; line-height: 1.08; text-transform: uppercase; text-shadow: 0 2px 16px rgba(0,0,0,.35); }
+        .org-hero p { max-width: 650px; margin: 12px auto 0; color: #e0e8e2; font-size: .88rem; line-height: 1.65; }
+        .org-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+        .tag { padding: 5px 9px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(9,28,18,.45); color: #f5f6ed; font-size: .64rem; font-weight: 800; }
+        .status { padding: 5px 9px; border: 1px solid rgba(242,201,76,.4); border-radius: 999px; background: rgba(242,201,76,.15); color: #ffe58d; font-size: .64rem; font-weight: 800; }
+        .status[data-status="approved"] { border-color: rgba(162,221,167,.45); background: rgba(60,132,69,.32); color: #d9ffcf; }
+        .status[data-status="revision"] { border-color: rgba(250,180,133,.45); background: rgba(146,80,33,.32); color: #ffe1c6; }
+        .profile-section { padding: clamp(24px, 5vw, 48px) clamp(18px, 5vw, 58px); }
+        .mission-section { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(220px, .8fr); align-items: center; gap: clamp(20px, 5vw, 58px); background: linear-gradient(115deg, #1d562e, #123a25); }
+        .section-kicker { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; color: var(--gold); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+        .section-kicker::before { width: 9px; height: 9px; border-radius: 3px; background: var(--gold); content: ""; transform: rotate(45deg); }
+        .profile-section h3 { margin: 0; color: #fff; font-size: clamp(1.15rem, 2.5vw, 1.55rem); letter-spacing: -.02em; }
+        .mission-copy { max-width: 620px; margin: 12px 0 0; color: #e2eee2; font-size: .84rem; line-height: 1.75; }
+        .vision-copy { margin-top: 14px; padding: 12px 14px; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; background: rgba(10,28,19,.55); color: #f0ead1; font-size: .76rem; line-height: 1.6; }
+        .mission-visual { min-height: 185px; border: 1px solid rgba(255,255,255,.25); border-radius: 12px; background: linear-gradient(180deg, rgba(6,21,13,.1), rgba(6,21,13,.2)), url("images/123.png") center / cover; box-shadow: 0 12px 25px rgba(0,0,0,.24); }
+        .team-section { background: var(--night); text-align: center; }
+        .team-section .section-kicker, .team-section .section-copy, .achievement-section .section-kicker, .gallery-section .section-kicker { justify-content: center; }
+        .section-copy { margin: 8px 0 22px; color: #aeb9bf; font-size: .78rem; line-height: 1.55; }
+        .leadership-chart { display: grid; gap: 0; }
+        .adviser-row { position: relative; display: flex; justify-content: center; padding-bottom: 20px; }
+        .adviser-row::after, .chart-connector { width: 2px; height: 20px; margin: 0 auto; background: #bdd0b9; content: ""; }
+        .adviser-row::after { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); }
+        .adviser-card { width: min(100%, 220px); }
+        .executive-tier { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-content: center; gap: 12px; max-width: 900px; margin: 0 auto; }
+        .executive-tier--lead { grid-template-columns: minmax(150px, 220px); }
+        .executive-tier--support { position: relative; padding-top: 16px; }
+        .executive-tier--support::before { position: absolute; top: 0; right: 10%; left: 10%; height: 2px; background: #40515b; content: ""; }
+        .person-card { display: flex; min-width: 0; flex-direction: column; align-items: stretch; overflow: hidden; border: 1px solid #31414b; border-radius: 10px; background: var(--night-card); text-align: left; }
+        .person-avatar { display: grid; width: 100%; height: 142px; flex: 0 0 auto; overflow: hidden; place-items: center; border: 0; border-radius: 0; background: linear-gradient(145deg, #356648, #182b35 70%); color: #d4e7d6; font-size: 1.55rem; font-weight: 800; }
+        .person-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .person-info { min-width: 0; min-height: 64px; padding: 10px 11px 12px; }
+        .person-info strong { display: block; overflow-wrap: anywhere; color: #fff; font-size: .78rem; }
+        .person-info span { display: block; margin-top: 5px; color: #afbdc3; font-size: .68rem; line-height: 1.4; }
+        .adviser-card .person-avatar { height: 160px; }
+        .team-empty { grid-column: 1 / -1; padding: 20px; border: 1px dashed #40515b; border-radius: 10px; color: #b7c1c7; font-size: .8rem; line-height: 1.55; text-align: center; }
+        .achievement-section { background: linear-gradient(125deg, #174d2a, #10361f); }
+        .achievement-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+        .achievement-card { min-height: 118px; padding: 16px; border: 1px solid rgba(222,241,217,.2); border-radius: 10px; background: rgba(255,255,255,.07); }
+        .achievement-card strong { display: block; color: #fff; font-size: .78rem; }
+        .achievement-card p { margin: 8px 0 0; color: #d1e0d1; font-size: .7rem; line-height: 1.55; }
+        .gallery-section { background: #111d27; text-align: center; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; text-align: left; }
+        .gallery-card { position: relative; display: flex; min-height: 160px; align-items: flex-end; overflow: hidden; padding: 14px; border: 1px solid #34444e; border-radius: 10px; background: linear-gradient(145deg, #315740, #182c38 65%, #26353b); }
+        .gallery-card:nth-child(2) { background: linear-gradient(145deg, #575238, #253a35 65%, #1b2a35); }
+        .gallery-card:nth-child(3) { background: linear-gradient(145deg, #31505b, #283b34 65%, #503e2e); }
+        .gallery-card strong { position: relative; color: #fff; font-size: .78rem; }
+        .gallery-card span { position: absolute; top: 12px; left: 12px; padding: 5px 8px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; background: rgba(10,20,17,.55); color: #e9e4c9; font-size: .6rem; font-weight: 700; }
+        .profile-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-top: 18px; color: #aeb9bf; font-size: .72rem; }
+        .not-approved { margin: 18px; padding: 16px; border: 1px solid #625a3a; border-radius: 10px; background: #29291f; color: #ece1bc; font-size: .82rem; line-height: 1.6; }
+        .empty-state { padding: 24px; border: 1px dashed #40515b; border-radius: 10px; color: #c3ccd2; text-align: center; }
+        .error { padding: 16px; border: 1px solid #9a5949; border-radius: 9px; background: #38231f; color: #ffd7cb; }
         @media (max-width: 760px) { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 560px) {
             .header { min-height: 62px; padding: 10px 16px; }
             .brand-mark { width: 40px; height: 40px; }
             .brand-name { font-size: .92rem; }
-            .main { width: min(100% - 32px, 1080px); }
-            .filters, .org-detail { grid-template-columns: 1fr; }
-            .org-card summary { align-items: flex-start; }
+            .directory { width: min(100% - 32px, 1120px); }
+            .mission-section { grid-template-columns: 1fr; }
+            .mission-visual { min-height: 155px; }
+            .achievement-grid, .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-card { min-height: 190px; }
+            .executive-tier { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .executive-tier--lead { grid-template-columns: minmax(150px, 220px); }
+            .person-avatar { height: 125px; }
         }
     </style>
 </head>
@@ -70,82 +115,196 @@
         <a class="back-link" href="index.html">← Back to home</a>
     </header>
     <main class="main">
-        <p class="eyebrow">Find your campus community</p>
-        <h1>Organization Directory</h1>
-        <p class="intro-copy">Search and filter organizations, check their review status, and explore approved demo profiles, adviser assignments, officers, and member information.</p>
-        <aside class="demo-notice"><strong>Interactive prototype — sample records only.</strong> This browser-only directory is not an official school record. Only profiles marked approved are expandable. Do not enter real student information here.</aside>
-        <div id="directory-error" class="error" role="alert" hidden></div>
+        <div id="directory-error" class="error directory" role="alert" hidden></div>
         <div id="directory-app" hidden>
-            <div class="filters" role="search">
-                <label for="org-search">Search organizations<input id="org-search" type="search" placeholder="Name or activity"></label>
-                <label for="category-filter">Category<select id="category-filter"><option value="">All categories</option></select></label>
-                <label for="level-filter">School level<select id="level-filter"><option value="">All levels</option><option>Senior High School</option><option>College</option></select></label>
-                <label for="status-filter">Review status<select id="status-filter"><option value="">All statuses</option><option value="approved">Approved</option><option value="pending">Pending review</option><option value="revision">Needs revision</option></select></label>
-            </div>
-            <p class="results-count" id="results-count" aria-live="polite"></p>
-            <section class="directory" id="organization-directory" aria-label="Organization results"></section>
+            <section class="directory" aria-label="Organization results">
+                <div class="org-tabs" id="organization-tabs" role="tablist" aria-label="Organizations"></div>
+                <div id="organization-panel"></div>
+            </section>
         </div>
     </main>
     <script src="demo-data.js"></script>
     <script>
         const errorBox = document.querySelector("#directory-error");
         const app = document.querySelector("#directory-app");
-        const directory = document.querySelector("#organization-directory");
-        const count = document.querySelector("#results-count");
-        const search = document.querySelector("#org-search");
-        const categoryFilter = document.querySelector("#category-filter");
-        const levelFilter = document.querySelector("#level-filter");
-        const statusFilter = document.querySelector("#status-filter");
+        const tabs = document.querySelector("#organization-tabs");
+        const panel = document.querySelector("#organization-panel");
         const escapeHtml = ISOMSDemoStore.escapeHtml;
         let state;
+        let activeOrganizationId = null;
 
-        const statusLabels = { approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" };
+        const statusLabels = { approved: "Approved" };
+        const organizationThemes = {
+            ssc: { accent: "#c99a27", secondary: "#174d2a" },
+            sslg: { accent: "#2877b8", secondary: "#c94747" },
+            rso: { accent: "#8060bb", secondary: "#238477" },
+            uvc: { accent: "#2375a5", secondary: "#d3a52d" },
+            tnt: { accent: "#dc762d", secondary: "#26313b" },
+            dangat: { accent: "#178b85", secondary: "#d0a738" }
+        };
+        const organizationMarks = { ssc: "SSC", sslg: "SSLG", rso: "RSO", uvc: "UVC", tnt: "TNT", dangat: "DA" };
 
-        const render = (organizations) => {
-            const query = search.value.trim().toLowerCase();
-            const category = categoryFilter.value;
-            const level = levelFilter.value;
-            const status = statusFilter.value;
-            const matches = organizations.filter((organization) => {
-                const searchable = `${organization.id} ${organization.name} ${organization.category} ${organization.level} ${organization.description}`.toLowerCase();
-                return searchable.includes(query)
-                    && (!category || organization.category === category)
-                    && (!level || organization.level === level)
-                    && (!status || organization.status === status);
-            });
+        const organizationTheme = (organization) => organizationThemes[organization.id] || {
+            accent: "#5d9a70",
+            secondary: "#244f74"
+        };
 
-            count.textContent = `${matches.length} of ${organizations.length} organizations shown`;
-            if (!matches.length) {
-                directory.innerHTML = '<p class="empty-state">No organizations match those filters.</p>';
+        const organizationLogo = (organization, compact = false) => {
+            const name = escapeHtml(organization.name);
+            const shortName = escapeHtml(organizationMarks[organization.id] || initials(organization.name));
+            return compact
+                ? `<span class="org-tab-mark" aria-hidden="true">${shortName}</span>`
+                : `<div class="org-logo-placeholder" role="img" aria-label="${name} logo placeholder: ${shortName} initials in organization colors"><span class="org-logo-initials" aria-hidden="true">${shortName}</span><span class="org-logo-caption">Logo placeholder</span></div>`;
+        };
+
+        const organizationStyle = (organization) => {
+            const theme = organizationTheme(organization);
+            return `--org-accent:${theme.accent};--org-secondary:${theme.secondary}`;
+        };
+
+        const initials = (name) => {
+            const parts = String(name || "").match(/[A-Za-z0-9]+/g) || [];
+            return (parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : parts[0]?.slice(0, 2) || "?").toUpperCase();
+        };
+
+        const personCard = (person, role, extraClass = "") => {
+            const name = person.name || "Name not provided";
+            const photoUrl = typeof person.photoUrl === "string" && /^(https?:\/\/|images\/)/i.test(person.photoUrl)
+                ? person.photoUrl
+                : "";
+            const avatar = photoUrl
+                ? `<span class="person-avatar"><img src="${escapeHtml(photoUrl)}" alt=""></span>`
+                : `<span class="person-avatar" aria-hidden="true">${escapeHtml(initials(name))}</span>`;
+            return `<article class="person-card ${extraClass}">
+                ${avatar}
+                <div class="person-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(role || person.role || "Organization member")}</span></div>
+            </article>`;
+        };
+
+        const renderOrganization = (organization) => {
+            const title = escapeHtml(organization.name);
+            const label = statusLabels[organization.status] || "Status unavailable";
+            const organizationPeople = state.people.filter((person) => person.organizationId === organization.id);
+            const executives = organizationPeople.filter((person) => person.group === "Officer");
+            const advisers = organizationPeople.filter((person) => person.group === "Adviser");
+            const members = organizationPeople.filter((person) => person.group === "Member");
+            const fallbackExecutives = executives.length ? executives : organization.executiveOfficers || organization.officers || [];
+            const fallbackMembers = members.length ? members : organization.members || [];
+            const fallbackAdvisers = advisers.length
+                ? advisers
+                : organization.advisers?.length
+                    ? organization.advisers
+                    : organization.adviser && !/^names? to be confirmed$/i.test(organization.adviser)
+                        ? [{ name: organization.adviser, role: "Faculty adviser" }]
+                        : [];
+            const hasTeam = fallbackExecutives.length || fallbackAdvisers.length;
+            const presidents = fallbackExecutives.filter((person) => /president/i.test(person.role || ""));
+            const otherExecutives = fallbackExecutives.filter((person) => !/president/i.test(person.role || ""));
+            const achievements = Array.isArray(organization.achievements) ? organization.achievements.slice(0, 3) : [];
+            const gallery = Array.isArray(organization.gallery) ? organization.gallery.slice(0, 3) : [];
+            const executiveChart = fallbackExecutives.length
+                ? `${presidents.length ? `<div class="executive-tier executive-tier--lead">${presidents.map((person) => personCard(person, person.role || "President")).join("")}</div>` : ""}
+                    ${presidents.length && otherExecutives.length ? '<div class="chart-connector" aria-hidden="true"></div>' : ""}
+                    ${otherExecutives.length || !presidents.length ? `<div class="executive-tier ${presidents.length ? "executive-tier--support" : ""}">${(presidents.length ? otherExecutives : fallbackExecutives).map((person) => personCard(person, person.role || "Executive officer")).join("")}</div>` : ""}`
+                : '<p class="team-empty">Executive officer details have not been added yet.</p>';
+
+            if (organization.status !== "approved") {
+                panel.innerHTML = `<section class="org-panel" id="panel-${escapeHtml(organization.id)}" style="${organizationStyle(organization)}" role="tabpanel" aria-labelledby="tab-${escapeHtml(organization.id)}" tabindex="0">
+                    <header class="org-hero"><div class="org-hero-content"><p class="section-kicker">Organization profile</p>${organizationLogo(organization)}<h2>${title}</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p><div class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="${escapeHtml(organization.status)}">${escapeHtml(label)}</span></div></div></header>
+                    <p class="not-approved">Leadership and organization details will appear here after the profile is approved for the public directory.</p>
+                </section>`;
                 return;
             }
 
-            directory.innerHTML = matches.map((organization) => {
-                const title = escapeHtml(organization.name);
-                const label = statusLabels[organization.status] || "Status unavailable";
-                const organizationId = escapeHtml(organization.id);
-                const details = organization.status === "approved"
-                    ? `<div class="org-detail">
-                        <div><h2>About the organization</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p>
-                            <h2>Officers</h2><ul>${state.people.filter((person) => person.organizationId === organization.id && person.group === "Officer").length ? state.people.filter((person) => person.organizationId === organization.id && person.group === "Officer").map((person) => `<li>${escapeHtml(person.name)} — ${escapeHtml(person.role)}</li>`).join("") : "<li>Officer details have not been added.</li>"}</ul>
-                            <h2>Members</h2><p>${state.people.filter((person) => person.organizationId === organization.id && person.group === "Member").length ? `${state.people.filter((person) => person.organizationId === organization.id && person.group === "Member").length} member record(s) in this demo.` : "Member information has not been added."}</p></div>
-                        <div>                        <h2>Organization information</h2><ul><li>Level: ${escapeHtml(organization.level || "Not specified")}</li><li>Category: ${escapeHtml(organization.category || "Not specified")}</li><li>Adviser: ${escapeHtml(state.people.find((person) => person.organizationId === organization.id && person.group === "Adviser")?.name || organization.adviser || "Not assigned")}</li><li>Academic year: ${escapeHtml(organization.schoolYear || state.academicYear || "Not specified")}</li></ul></div>
-                    </div>`
-                    : `<div class="not-approved">This profile is not publicly expandable while its status is <strong>${escapeHtml(label)}</strong>.</div>`;
-                return `<details class="org-card" id="${organizationId}">
-                    <summary><span><span class="org-name">${title}</span><span class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="${escapeHtml(organization.status)}">${escapeHtml(label)}</span></span></span></summary>
-                    ${details}
-                </details>`;
-            }).join("");
+            panel.innerHTML = `<section class="org-panel" id="panel-${escapeHtml(organization.id)}" style="${organizationStyle(organization)}" role="tabpanel" aria-labelledby="tab-${escapeHtml(organization.id)}" tabindex="0">
+                <header class="org-hero"><div class="org-hero-content"><p class="section-kicker">Organization profile</p>${organizationLogo(organization)}<h2>${title}</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p><div class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="approved">${escapeHtml(label)}</span></div></div></header>
+                <section class="profile-section mission-section" aria-labelledby="mission-${escapeHtml(organization.id)}">
+                    <div><p class="section-kicker">Our purpose</p><h3 id="mission-${escapeHtml(organization.id)}">Our Mission &amp; Vision</h3>
+                        <p class="mission-copy"><strong>Mission:</strong> ${escapeHtml(organization.mission || "The organization mission has not been added yet.")}</p>
+                        <p class="vision-copy"><strong>Vision:</strong> ${escapeHtml(organization.vision || "The organization vision has not been added yet.")}</p>
+                    </div>
+                    <div class="mission-visual" role="img" aria-label="University of Pangasinan campus"></div>
+                </section>
+                <section class="profile-section team-section" aria-labelledby="team-${escapeHtml(organization.id)}">
+                    <p class="section-kicker">Meet the team</p><h3 id="team-${escapeHtml(organization.id)}">The Executive Council</h3>
+                    <p class="section-copy">Meet the officers and adviser serving ${title}. Portraits are shown when provided; initials are placeholders.</p>
+                    ${hasTeam ? `<div class="leadership-chart">
+                        ${fallbackAdvisers.length ? `<div class="adviser-row">${fallbackAdvisers.map((person) => personCard(person, "Faculty adviser", "adviser-card")).join("")}</div>` : ""}
+                        ${executiveChart}
+                    </div>` : '<p class="team-empty">Executive officers and adviser details have not been added yet.</p>'}
+                </section>
+                <section class="profile-section achievement-section" aria-labelledby="achievements-${escapeHtml(organization.id)}">
+                    <p class="section-kicker">Making an impact</p><h3 id="achievements-${escapeHtml(organization.id)}">Recent Achievements</h3>
+                    <p class="section-copy">Highlights shared by the organization for the current academic year.</p>
+                    <div class="achievement-grid">${achievements.length ? achievements.map((achievement) => `<article class="achievement-card"><strong>${escapeHtml(achievement.title || "Achievement")}</strong><p>${escapeHtml(achievement.description || "More details coming soon.")}</p></article>`).join("") : [1, 2, 3].map(() => '<article class="achievement-card"><strong>Achievement highlight</strong><p>Verified achievements will appear here when the organization adds them.</p></article>').join("")}</div>
+                </section>
+                <section class="profile-section gallery-section" aria-labelledby="gallery-${escapeHtml(organization.id)}">
+                    <p class="section-kicker">Campus life</p><h3 id="gallery-${escapeHtml(organization.id)}">Featured Event Gallery</h3>
+                    <p class="section-copy">Photos and stories from activities organized by this group.</p>
+                    <div class="gallery-grid">${gallery.length ? gallery.map((item) => {
+                        const photoUrl = typeof item.photoUrl === "string" && /^(https?:\/\/|images\/)/i.test(item.photoUrl) ? item.photoUrl : "";
+                        const imageStyle = photoUrl ? ` style="background-image:linear-gradient(180deg,rgba(7,16,20,.08),rgba(7,16,20,.82)),url('${escapeHtml(photoUrl)}')"` : "";
+                        return `<article class="gallery-card"${imageStyle}><span>${escapeHtml(item.category || "Organization event")}</span><strong>${escapeHtml(item.title || "Featured event")}</strong></article>`;
+                    }).join("") : [1, 2, 3].map(() => '<article class="gallery-card"><span>Photo placeholder</span><strong>Event photos will appear here</strong></article>').join("")}</div>
+                    <div class="profile-facts"><span><strong>Academic year:</strong> ${escapeHtml(organization.schoolYear || state.academicYear || "Not specified")}</span><span><strong>Members listed:</strong> ${fallbackMembers.length}</span><span><strong>Category:</strong> ${escapeHtml(organization.category || "Not specified")}</span></div>
+                </section>
+            </section>`;
+
+            panel.querySelectorAll(".person-avatar img").forEach((image) => {
+                image.addEventListener("error", () => {
+                    const avatar = image.closest(".person-avatar");
+                    avatar.textContent = initials(image.closest(".person-card").querySelector(".person-info strong").textContent);
+                    avatar.setAttribute("aria-hidden", "true");
+                }, { once: true });
+            });
         };
+
+        const render = (organizations) => {
+            const matches = organizations.filter((organization) => organization.status === "approved");
+            if (!matches.length) {
+                tabs.innerHTML = "";
+                panel.innerHTML = '<p class="empty-state">There are no approved organizations to display yet.</p>';
+                return;
+            }
+
+            if (!matches.some((organization) => organization.id === activeOrganizationId)) {
+                activeOrganizationId = matches[0].id;
+            }
+            tabs.innerHTML = matches.map((organization, index) => {
+                const selected = organization.id === activeOrganizationId;
+                return `<button class="org-tab" id="tab-${escapeHtml(organization.id)}" type="button" role="tab" aria-selected="${selected}" aria-controls="panel-${escapeHtml(organization.id)}" tabindex="${selected ? "0" : "-1"}" data-organization-tab="${escapeHtml(organization.id)}" style="${organizationStyle(organization)}">${organizationLogo(organization, true)}${escapeHtml(organization.name)}</button>`;
+            }).join("");
+            const activeOrganization = matches.find((organization) => organization.id === activeOrganizationId);
+            renderOrganization(activeOrganization);
+        };
+
+        tabs.addEventListener("click", (event) => {
+            const tab = event.target.closest("[data-organization-tab]");
+            if (!tab) return;
+            activeOrganizationId = tab.dataset.organizationTab;
+            render(state.organizations);
+            tabs.querySelector(`#tab-${CSS.escape(activeOrganizationId)}`)?.focus();
+        });
+
+        tabs.addEventListener("keydown", (event) => {
+            const activeTab = event.target.closest("[data-organization-tab]");
+            if (!activeTab) return;
+            const tabButtons = [...tabs.querySelectorAll("[data-organization-tab]")];
+            const currentIndex = tabButtons.indexOf(activeTab);
+            let nextIndex = currentIndex;
+            if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabButtons.length;
+            else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+            else if (event.key === "Home") nextIndex = 0;
+            else if (event.key === "End") nextIndex = tabButtons.length - 1;
+            else return;
+            event.preventDefault();
+            activeOrganizationId = tabButtons[nextIndex].dataset.organizationTab;
+            render(state.organizations);
+            tabs.querySelector(`#tab-${CSS.escape(activeOrganizationId)}`)?.focus();
+        });
 
         try {
             state = ISOMSDemoStore.load();
-            const categories = [...new Set(state.organizations.map((organization) => organization.category).filter(Boolean))].sort();
-            categories.forEach((category) => {
-                categoryFilter.insertAdjacentHTML("beforeend", `<option>${escapeHtml(category)}</option>`);
-            });
-            [search, categoryFilter, levelFilter, statusFilter].forEach((control) => control.addEventListener("input", () => render(state.organizations)));
             render(state.organizations);
             app.hidden = false;
         } catch (error) {

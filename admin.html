@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#174d2a">
-    <script src="access-control.js"></script>
+    <script>document.documentElement.classList.add("access-checking");</script>
+    <script type="module" src="access-control.js"></script>
     <title>Administrator Workspace | ISOMS</title>
     <style>
         :root { --green:#174d2a; --dark:#10361f; --gold:#f2c94c; --ink:#173d27; --muted:#526257; --line:#e5eadf; }
@@ -36,6 +37,7 @@
         .panel-heading h2 { margin:0; font-size:1.02rem; }
         .panel-heading p { margin:6px 0 0; color:var(--muted); font-size:.76rem; line-height:1.5; }
         .year-control, .edit-form, .person-form { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
+        .access-checking body { visibility:hidden !important; }
         label { display:grid; gap:6px; color:#354b3c; font-size:.7rem; font-weight:700; }
         input, select, textarea { min-height:39px; padding:8px 10px; border:1px solid #d9e2d7; border-radius:7px; background:#fff; color:var(--ink); font:inherit; font-size:.78rem; }
         input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
@@ -49,6 +51,18 @@
         th { color:#718076; font-size:.66rem; letter-spacing:.07em; text-transform:uppercase; }
         td { color:#33483a; font-size:.76rem; line-height:1.45; }
         td select { min-height:34px; padding:6px 8px; font-size:.7rem; }
+        .organization-identity { display:flex; align-items:center; gap:10px; }
+        .organization-logo-placeholder { display:grid; width:42px; height:42px; flex:0 0 42px; place-items:center; border:2px solid var(--org-accent); border-radius:11px; background:linear-gradient(145deg,var(--org-accent),var(--org-secondary)); box-shadow:inset 0 0 0 3px #ffffff35; color:#fff; font-size:.68rem; font-weight:900; letter-spacing:-.04em; text-shadow:0 1px 3px #0008; }
+        .organization-identity-copy { min-width:0; }
+        .organization-identity-copy small { display:block; margin-top:4px; color:var(--muted); font-size:.65rem; }
+        .account-actions { display:grid; gap:6px; }
+        .account-actions button { white-space:nowrap; }
+        dialog { width:min(100% - 32px,480px); padding:22px; border:1px solid var(--line); border-radius:13px; color:var(--ink); }
+        dialog::backdrop { background:#10361fcc; }
+        dialog h2 { flex-basis:100%; margin:0; font-size:1.1rem; }
+        dialog p { flex-basis:100%; margin:0; color:var(--muted); font-size:.8rem; line-height:1.5; }
+        dialog label { flex-basis:100%; }
+        dialog input { width:100%; }
         .file-list { margin:0; padding-left:16px; }
         .file-list li + li { margin-top:4px; }
         .empty { padding:15px; color:var(--muted); font-size:.8rem; }
@@ -74,12 +88,12 @@
 <body>
     <header class="header">
         <a class="brand" href="index.html" aria-label="ISOMS home"><span class="brand-mark" aria-hidden="true">I</span><span class="brand-name">ISOMS</span></a>
-        <div class="header-account"><span class="username" data-demo-username>@adminisoms</span><a class="back-link" href="login.html" data-demo-signout>Sign out</a></div>
+        <div class="header-account"><span class="username" data-auth-user>Signed in</span><a class="back-link" href="login.html" data-demo-signout>Sign out</a></div>
     </header>
     <main class="page">
         <div class="topline">
             <div><p class="eyebrow">Administration</p><h1>Administrator Workspace</h1><p class="intro">Review organization registrations and document records, manage directory status and people assignments, maintain the academic year, and export a summary report.</p></div>
-            <aside class="demo-note"><strong>Administrator demo workspace.</strong> The prototype role preview is not authentication or security. It uses sample records and browser-local storage only. Do not use real student data or sensitive documents.</aside>
+            <aside class="demo-note"><strong>Authenticated administrator workspace.</strong> Account access is checked against Supabase. Organization records, notices, people, and documents on this page are still browser-local demo data; do not enter real student information.</aside>
         </div>
         <div id="admin-error" class="error" role="alert" hidden></div>
         <div id="admin-app" class="workspace" hidden>
@@ -90,6 +104,30 @@
                 <article class="stat"><span class="stat-label">Needs revision</span><strong class="stat-value" id="revision-count">0</strong></article>
             </section>
 
+            <section class="panel" aria-labelledby="accounts-heading">
+                <div class="panel-heading"><div><h2 id="accounts-heading">Account access and approvals</h2><p>Public signups remain pending until an administrator assigns a role and activates the account. Organization IDs currently refer to the local demo organizations. An administrator cannot view an existing password, but can set a temporary one; the account holder must replace it at their next sign-in.</p></div></div>
+                <div class="table-wrap"><table><thead><tr><th>Account</th><th>Role</th><th>Organization ID</th><th>Approval</th><th>Action</th></tr></thead><tbody id="account-rows"><tr><td colspan="5" class="empty">Loading accounts…</td></tr></tbody></table></div>
+                <p class="notice" id="accounts-notice" role="status" aria-live="polite"></p>
+            </section>
+            <dialog id="temporary-password-dialog" aria-labelledby="temporary-password-heading">
+                <form id="temporary-password-form" class="edit-form">
+                    <h2 id="temporary-password-heading">Set a temporary password</h2>
+                    <p id="temporary-password-account"></p>
+                    <p>The account holder must choose a new password at their next sign-in. Share this temporary password with them privately.</p>
+                    <label for="temporary-password">Temporary password
+                        <input id="temporary-password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
+                    </label>
+                    <label for="temporary-password-confirm">Confirm temporary password
+                        <input id="temporary-password-confirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
+                    </label>
+                    <div class="report-actions">
+                        <button class="secondary" id="toggle-temporary-password" type="button" aria-label="Show temporary password" aria-pressed="false">Show password</button>
+                        <button type="submit">Set temporary password</button>
+                        <button class="secondary" id="cancel-temporary-password" type="button">Cancel</button>
+                    </div>
+                </form>
+            </dialog>
+
             <section class="panel" aria-labelledby="year-heading">
                 <div class="panel-heading"><div><h2 id="year-heading">Academic-year records</h2><p>Set the school year used by this demo workspace.</p></div></div>
                 <form class="year-control" id="year-form"><label for="academic-year">Current academic year<input id="academic-year" maxlength="30" required></label><button type="submit">Save academic year</button></form>
@@ -99,7 +137,7 @@
             <section class="panel" aria-labelledby="registrations-heading">
                 <div class="panel-heading"><div><h2 id="registrations-heading">Organization registrations &amp; document review</h2><p>Change each sample record's review status. Listed filenames are metadata only, not stored files.</p></div></div>
                 <div class="table-wrap"><table><thead><tr><th>Organization</th><th>Level / category</th><th>Document records</th><th>Review status and organization notice</th></tr></thead><tbody id="registration-rows"></tbody></table></div>
-                <p class="notice" id="registration-notice" role="status" aria-live="polite">Revision instructions are saved in the shared browser demo and shown in the representative workspace. No email or external message is sent.</p>
+                <p class="notice" id="registration-notice" role="status" aria-live="polite">Save a review status to notify the assigned officer in their workspace. Review notifications are shared through Supabase; demo organization profile data remains browser-local.</p>
             </section>
 
             <section class="panel" aria-labelledby="announcement-heading">
@@ -109,7 +147,7 @@
                     <label for="announcement-message">Announcement or update<textarea id="announcement-message" maxlength="1000" placeholder="Enter the update or announcement for organization representatives." required></textarea></label>
                     <button type="submit">Publish announcement</button>
                 </form>
-                <p class="notice" id="announcement-notice" role="status" aria-live="polite">Announcements appear in the representative notification panel. This browser demo does not send email.</p>
+                <p class="notice" id="announcement-notice" role="status" aria-live="polite">Announcements appear in the organization officer notification panel. This browser demo does not send email.</p>
             </section>
 
             <section class="panel" aria-labelledby="profiles-heading">
@@ -149,15 +187,34 @@
         </div>
     </main>
     <script src="demo-data.js"></script>
-    <script>
+    <script type="module">
+        import { getSupabaseClient } from "./supabase.js";
+
         const errorBox = document.querySelector("#admin-error");
         const app = document.querySelector("#admin-app");
-        const escapeHtml = ISOMSDemoStore.escapeHtml;
+        const escapeHtml = window.ISOMSDemoStore.escapeHtml;
         let state;
 
         const getOrganization = (id) => state.organizations.find((organization) => organization.id === id);
         const statusName = (status) => ({ approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" }[status] || "Not set");
-        const saveState = () => ISOMSDemoStore.save(state);
+        const organizationColors = {
+            ssc: ["#c99a27", "#174d2a"],
+            sslg: ["#2877b8", "#c94747"],
+            rso: ["#8060bb", "#238477"],
+            uvc: ["#2375a5", "#d3a52d"],
+            tnt: ["#dc762d", "#26313b"],
+            dangat: ["#178b85", "#d0a738"]
+        };
+        const organizationMarks = { ssc: "SSC", sslg: "SSLG", rso: "RSO", uvc: "UVC", tnt: "TNT", dangat: "DA" };
+        const organizationInitials = (name) => {
+            const words = String(name || "").match(/[A-Za-z0-9]+/g) || [];
+            return (words.length > 1 ? `${words[0][0]}${words[words.length - 1][0]}` : words[0]?.slice(0, 2) || "?").toUpperCase();
+        };
+        const organizationColorsStyle = (organization) => {
+            const [accent, secondary] = organizationColors[organization.id] || ["#5d9a70", "#244f74"];
+            return `--org-accent:${accent};--org-secondary:${secondary}`;
+        };
+        const saveState = () => window.ISOMSDemoStore.save(state);
 
         const render = () => {
             const selectedProfileId = document.querySelector("#profile-organization").value;
@@ -182,7 +239,7 @@
             document.querySelector("#registration-rows").innerHTML = state.organizations.map((item) => {
                 const documents = item.documents?.length ? `<ul class="file-list">${item.documents.map((document) => `<li>${escapeHtml(document.type)}: ${escapeHtml(document.name)}</li>`).join("")}</ul>` : "No document records";
                 const currentNotice = item.notification?.type === "revision" ? item.notification.message : "";
-                return `<tr><td><strong>${escapeHtml(item.name)}</strong><br><small>${escapeHtml(item.reviewNote || "Demo record")}</small></td><td>${escapeHtml(item.level || "Not specified")}<br>${escapeHtml(item.category || "Uncategorized")}</td><td>${documents}</td><td><label class="visually-hidden" for="status-${escapeHtml(item.id)}">Status for ${escapeHtml(item.name)}</label><select id="status-${escapeHtml(item.id)}" data-org-status="${escapeHtml(item.id)}"><option value="pending" ${item.status === "pending" ? "selected" : ""}>Pending review</option><option value="approved" ${item.status === "approved" ? "selected" : ""}>Approved</option><option value="revision" ${item.status === "revision" ? "selected" : ""}>Needs revision</option></select><label class="visually-hidden" for="revision-note-${escapeHtml(item.id)}">Revision instructions for ${escapeHtml(item.name)}</label><textarea id="revision-note-${escapeHtml(item.id)}" data-revision-note="${escapeHtml(item.id)}" maxlength="1000" placeholder="Explain what the organization must edit or replace." ${item.status === "revision" ? "" : "hidden"}>${escapeHtml(currentNotice)}</textarea><button type="button" class="secondary" data-save-review="${escapeHtml(item.id)}">${item.status === "revision" ? "Save and notify organization" : "Save review status"}</button></td></tr>`;
+                return `<tr><td><div class="organization-identity" style="${organizationColorsStyle(item)}"><span class="organization-logo-placeholder" role="img" aria-label="${escapeHtml(item.name)} logo placeholder">${escapeHtml(organizationMarks[item.id] || organizationInitials(item.name))}</span><span class="organization-identity-copy"><strong>${escapeHtml(item.name)}</strong><small>Logo placeholder · ${escapeHtml(item.reviewNote || "Demo record")}</small></span></div></td><td>${escapeHtml(item.level || "Not specified")}<br>${escapeHtml(item.category || "Uncategorized")}</td><td>${documents}</td><td><label class="visually-hidden" for="status-${escapeHtml(item.id)}">Status for ${escapeHtml(item.name)}</label><select id="status-${escapeHtml(item.id)}" data-org-status="${escapeHtml(item.id)}"><option value="pending" ${item.status === "pending" ? "selected" : ""}>Pending review</option><option value="approved" ${item.status === "approved" ? "selected" : ""}>Approved</option><option value="revision" ${item.status === "revision" ? "selected" : ""}>Needs revision</option></select><label class="visually-hidden" for="revision-note-${escapeHtml(item.id)}">Revision instructions for ${escapeHtml(item.name)}</label><textarea id="revision-note-${escapeHtml(item.id)}" data-revision-note="${escapeHtml(item.id)}" maxlength="1000" placeholder="Explain what the organization must edit or replace." ${item.status === "revision" ? "" : "hidden"}>${escapeHtml(currentNotice)}</textarea><button type="button" class="secondary" data-save-review="${escapeHtml(item.id)}">${item.status === "revision" ? "Save and notify organization" : "Save review status"}</button></td></tr>`;
             }).join("");
 
             const peopleRows = state.people.length ? state.people.map((person) => {
@@ -205,7 +262,7 @@
         };
 
         try {
-            state = ISOMSDemoStore.load();
+            state = window.ISOMSDemoStore.load();
             document.querySelector("#announcement-form").addEventListener("submit", (event) => {
                 event.preventDefault();
                 const targetId = document.querySelector("#announcement-organization").value;
@@ -247,49 +304,74 @@
                 const saveButton = document.querySelector(`[data-save-review="${id}"]`);
                 if (saveButton) saveButton.textContent = event.target.value === "revision" ? "Save and notify organization" : "Save review status";
             });
-            document.querySelector("#registration-rows").addEventListener("click", (event) => {
-                const id = event.target.dataset.saveReview;
-                if (!id) return;
+            document.querySelector("#registration-rows").addEventListener("click", async (event) => {
+                const button = event.target.closest("[data-save-review]");
+                if (!button) return;
+                const id = button.dataset.saveReview;
                 const organization = getOrganization(id);
-                const selectedStatus = document.querySelector(`[data-org-status="${id}"]`).value;
+                const selectedStatus = document.querySelector(`[data-org-status="${id}"]`)?.value;
                 const notice = document.querySelector("#registration-notice");
-                if (!organization) return;
+                if (!organization || !selectedStatus) {
+                    notice.textContent = "Could not find the selected organization review.";
+                    notice.style.color = "#8a3b26";
+                    return;
+                }
+                const revisionMessage = selectedStatus === "revision"
+                    ? document.querySelector(`[data-revision-note="${id}"]`).value.trim()
+                    : "";
                 if (selectedStatus === "revision") {
-                    const message = document.querySelector(`[data-revision-note="${id}"]`).value.trim();
-                    if (!message) {
+                    if (!revisionMessage) {
                         document.querySelector(`[data-revision-note="${id}"]`).focus();
                         notice.textContent = "Add specific revision instructions before notifying the organization.";
                         notice.style.color = "#8a3b26";
                         return;
                     }
-                    organization.status = "revision";
-                    organization.reviewNote = message;
+                }
+
+                const message = selectedStatus === "revision"
+                    ? revisionMessage
+                    : `Organization review status updated to ${statusName(selectedStatus)}.`;
+                button.disabled = true;
+                try {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.rpc("save_organization_review", {
+                        p_organization_id: organization.id,
+                        p_status: selectedStatus,
+                        p_message: message
+                    });
+                    if (error) throw error;
+
+                    organization.status = selectedStatus;
+                    organization.reviewNote = selectedStatus === "revision"
+                        ? message
+                        : `Administrator set status to ${statusName(organization.status)} in the demo.`;
                     organization.notification = {
-                        id: `revision-${organization.id}-${Date.now()}`,
-                        type: "revision",
+                        id: `${selectedStatus}-${organization.id}-${Date.now()}`,
+                        type: selectedStatus,
                         message,
                         sentAt: new Date().toISOString(),
                         read: false
                     };
                     organization.notifications = [...(organization.notifications || []), organization.notification];
-                } else {
-                    organization.status = selectedStatus;
-                    organization.reviewNote = `Administrator set status to ${statusName(organization.status)} in the demo.`;
-                    organization.notification = {
-                        id: `review-${organization.id}-${Date.now()}`,
-                        type: selectedStatus,
-                        message: organization.reviewNote,
-                        sentAt: new Date().toISOString(),
-                        read: false
-                    };
-                    organization.notifications = [...(organization.notifications || []), organization.notification];
+                    let localSaveError = "";
+                    try {
+                        saveState();
+                    } catch (error) {
+                        localSaveError = error.message;
+                    }
+                    render();
+                    notice.textContent = selectedStatus === "revision"
+                        ? `Revision instructions sent to ${organization.name}'s officer workspace.`
+                        : `${organization.name} review status saved and its officer was notified in Supabase.`;
+                    if (localSaveError) {
+                        notice.textContent += ` Supabase was updated, but the local demo copy could not be saved: ${localSaveError}`;
+                    }
+                    notice.style.color = localSaveError ? "#8a3b26" : "";
+                } catch (error) {
+                    notice.textContent = error.message || "Could not save the review or notify the officer. Run the latest supabase-setup.sql in Supabase, then try again.";
+                    notice.style.color = "#8a3b26";
+                    button.disabled = false;
                 }
-                saveState();
-                render();
-                notice.textContent = selectedStatus === "revision"
-                    ? `${organization.name} has been notified in the representative workspace. The revision instructions are saved in this browser demo; no email was sent.`
-                    : `${organization.name} review status saved in the browser demo.`;
-                notice.style.color = "";
             });
             document.querySelector("#profile-organization").addEventListener("change", render);
             document.querySelector("#profile-status").addEventListener("change", (event) => {
@@ -339,7 +421,7 @@
                 saveState();
                 render();
                 document.querySelector("#profile-notice").textContent = selectedStatus === "revision"
-                    ? "Revision instructions saved and shown in the organization representative workspace. No email or external message was sent."
+                    ? "Revision instructions saved and shown in the organization officer workspace. No email was sent."
                     : "Organization profile and directory status updated in this browser demo.";
             });
             document.querySelector("#person-form").addEventListener("submit", (event) => {
@@ -388,5 +470,6 @@
             errorBox.hidden = false;
         }
     </script>
+    <script type="module" src="account-admin.js"></script>
 </body>
 </html>

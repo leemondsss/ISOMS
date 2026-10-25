@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#174d2a">
-    <script src="access-control.js"></script>
+    <script>document.documentElement.classList.add("access-checking");</script>
+    <script type="module" src="access-control.js"></script>
     <title>Organization Officer Portal | ISOMS</title>
     <style>
         :root {
@@ -22,6 +23,10 @@
 
         * {
             box-sizing: border-box;
+        }
+
+        .access-checking body {
+            visibility: hidden !important;
         }
 
         body {
@@ -932,7 +937,7 @@
         </a>
         <div class="header-right">
             <span class="role-badge">Organization officer</span>
-            <span class="username" data-demo-username>@leemonds</span>
+            <span class="username" data-auth-user>Signed in</span>
             <div class="notification-area">
                 <button class="notification-button" id="notification-button" type="button" aria-expanded="false" aria-controls="notification-panel">
                     Notifications <span class="notification-count" id="notification-count" hidden></span>
@@ -952,13 +957,13 @@
     <main class="page">
         <section class="intro" aria-labelledby="page-title">
             <div>
-                <p class="eyebrow">Officer workspace</p>
+                <p class="eyebrow">Organization officer workspace</p>
                 <h1 id="page-title">Organization registration</h1>
                 <p class="intro-copy">Complete your organization profile, attach the required documents, and track the review status from submission to the approved directory.</p>
             </div>
             <aside class="prototype-note">
-                <strong>Officer demo workspace</strong>
-                This preview is scoped to the Supreme Student Council. It is not authentication or enforced assignment access and does not connect to a school submission service.
+                <strong>Authenticated organization officer workspace</strong>
+                Account access and administrator review notices are shared through Supabase. Organization profile edits, roster details, and uploaded documents are still browser-local demo data and are not securely submitted.
             </aside>
         </section>
 
@@ -1144,7 +1149,9 @@
     </main>
 
     <script src="demo-data.js"></script>
-    <script>
+    <script type="module">
+        import { getSupabaseClient } from "./supabase.js";
+
         const form = document.querySelector("#organization-form");
         const statusPill = document.querySelector("#submission-status");
         const reviewCopy = document.querySelector("#review-copy");
@@ -1163,6 +1170,7 @@
         let rosterFieldId = 0;
         let demoState = null;
         let assignedOrganization = null;
+        let sharedNotifications = [];
 
         const createRosterField = (labelText, type, required, className = "") => {
             const wrapper = document.createElement("div");
@@ -1274,10 +1282,42 @@
         const getNotifications = () => {
             if (!assignedOrganization) return [];
             const history = assignedOrganization.notifications || [];
-            if (assignedOrganization.notification && !history.some((item) => item.id === assignedOrganization.notification.id)) {
-                return [...history, assignedOrganization.notification];
+            const combined = assignedOrganization.notification && !history.some((item) => item.id === assignedOrganization.notification.id)
+                ? [...history, assignedOrganization.notification, ...sharedNotifications]
+                : [...history, ...sharedNotifications];
+            return [...new Map(combined.map((item) => [item.id, item])).values()];
+        };
+
+        const loadSharedUpdates = async () => {
+            const client = await getSupabaseClient();
+            const [reviewResult, notificationResult] = await Promise.all([
+                client.from("organization_reviews")
+                    .select("status, revision_note, updated_at")
+                    .eq("organization_id", assignedOrganization.id)
+                    .maybeSingle(),
+                client.from("organization_notifications")
+                    .select("id, type, message, created_at, read_at")
+                    .eq("organization_id", assignedOrganization.id)
+                    .order("created_at", { ascending: false })
+                    .limit(50)
+            ]);
+            if (reviewResult.error) throw reviewResult.error;
+            if (notificationResult.error) throw notificationResult.error;
+
+            if (reviewResult.data) {
+                assignedOrganization.status = reviewResult.data.status;
+                assignedOrganization.reviewNote = reviewResult.data.revision_note || "";
             }
-            return history;
+            sharedNotifications = notificationResult.data.map((item) => ({
+                id: item.id,
+                type: item.type,
+                message: item.message,
+                sentAt: item.created_at,
+                read: Boolean(item.read_at),
+                shared: true
+            }));
+            renderNotifications();
+            setFormAvailability();
         };
 
         const renderNotifications = () => {
@@ -1292,26 +1332,44 @@
                     const sentAt = item.sentAt && !Number.isNaN(Date.parse(item.sentAt))
                         ? new Date(item.sentAt).toLocaleString()
                         : "Date unavailable";
-                    return `<article class="notification-item" data-read="${item.read ? "true" : "false"}"><strong>${title}${item.read ? "" : " · New"}</strong><p>${ISOMSDemoStore.escapeHtml(item.message || "No details provided.")}</p><time>${ISOMSDemoStore.escapeHtml(sentAt)}</time></article>`;
+                    return `<article class="notification-item" data-read="${item.read ? "true" : "false"}"><strong>${title}${item.read ? "" : " · New"}</strong><p>${window.ISOMSDemoStore.escapeHtml(item.message || "No details provided.")}</p><time>${window.ISOMSDemoStore.escapeHtml(sentAt)}</time></article>`;
                 }).join("")
                 : '<p class="notification-empty">No updates yet. Administrator revisions and announcements will appear here.</p>';
         };
 
-        notificationButton.addEventListener("click", () => {
+        notificationButton.addEventListener("click", async () => {
             const isOpening = notificationPanel.hidden;
             notificationPanel.hidden = !isOpening;
             notificationButton.setAttribute("aria-expanded", String(isOpening));
+            if (isOpening && assignedOrganization) {
+                try {
+                    await loadSharedUpdates();
+                } catch (error) {
+                    errorNotice.textContent = `Could not refresh administrator updates: ${error.message}`;
+                    errorNotice.dataset.visible = "true";
+                }
+            }
         });
 
-        document.querySelector("#mark-notifications-read").addEventListener("click", () => {
+        document.querySelector("#mark-notifications-read").addEventListener("click", async () => {
             if (!assignedOrganization) return;
             assignedOrganization.notifications = (assignedOrganization.notifications || []).map((item) => ({ ...item, read: true }));
             if (assignedOrganization.notification) assignedOrganization.notification.read = true;
             try {
-                ISOMSDemoStore.save(demoState);
+                const unreadIds = sharedNotifications.filter((item) => !item.read).map((item) => item.id);
+                if (unreadIds.length) {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.from("organization_notifications")
+                        .update({ read_at: new Date().toISOString() })
+                        .in("id", unreadIds)
+                        .eq("organization_id", assignedOrganization.id);
+                    if (error) throw error;
+                    sharedNotifications = sharedNotifications.map((item) => ({ ...item, read: true }));
+                }
+                window.ISOMSDemoStore.save(demoState);
                 renderNotifications();
             } catch (error) {
-                errorNotice.textContent = error.message;
+                errorNotice.textContent = `Could not mark updates as read: ${error.message}`;
                 errorNotice.dataset.visible = "true";
             }
         });
@@ -1367,7 +1425,8 @@
         const setFormAvailability = () => {
             const hasSubmission = Boolean(assignedOrganization?.submittedAt || assignedOrganization?.documents?.length);
             const canRevise = assignedOrganization?.status === "revision";
-            const editable = !hasSubmission || canRevise;
+            const awaitingReview = assignedOrganization?.status === "pending";
+            const editable = assignedOrganization?.status !== "approved" && (!hasSubmission || awaitingReview || canRevise);
 
             form.querySelectorAll("input, select, textarea, button").forEach((control) => {
                 control.disabled = !editable;
@@ -1384,7 +1443,7 @@
             } else if (hasSubmission) {
                 reviewCopy.textContent = assignedOrganization.status === "approved"
                     ? "This organization is approved. Editing is disabled; contact the administrator if a correction is required."
-                    : "This submission is awaiting review. Editing is paused until the administrator requests revisions.";
+                    : "This submission is awaiting review. You can continue editing and resubmit it until the administrator approves it.";
                 revisionNote.hidden = true;
             }
         };
@@ -1410,14 +1469,11 @@
         });
 
         try {
-            if (window.sessionStorage.getItem("isomsDemoRole") !== "officer") {
-                throw new Error("Choose the organization officer / representative preview from the sign-in page.");
-            }
-            const assignedOrganizationId = window.sessionStorage.getItem("isomsDemoOrganizationId");
-            demoState = ISOMSDemoStore.load();
-            assignedOrganization = demoState.organizations.find((item) => item.id === assignedOrganizationId);
+            const assignedOrganizationId = window.sessionStorage.getItem("isomsDemoOrganizationId")?.trim().toLocaleLowerCase();
+            demoState = window.ISOMSDemoStore.load();
+            assignedOrganization = demoState.organizations.find((item) => item.id.toLocaleLowerCase() === assignedOrganizationId);
             if (!assignedOrganization) {
-                throw new Error("No organization is assigned to this officer demo role. Return to sign-in and choose the officer preview again.");
+                throw new Error("No matching organization is assigned to this account. Ask an administrator to enter the organization ID (for example, ssc, sslg, or uvc) in lowercase, then sign in again.");
             }
 
             document.querySelector("#organization-name").value = assignedOrganization.name || "";
@@ -1446,7 +1502,12 @@
             statusPill.textContent = statusLabels[assignedOrganization.status] || "Not submitted";
             statusPill.dataset.status = assignedOrganization.status || "draft";
             setFormAvailability();
-            renderNotifications();
+            loadSharedUpdates().catch((error) => {
+                console.error("Could not load shared administrator updates.", error);
+                errorNotice.textContent = `Shared administrator updates are unavailable: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                errorNotice.dataset.visible = "true";
+                renderNotifications();
+            });
         } catch (error) {
             errorNotice.textContent = error.message;
             errorNotice.dataset.visible = "true";
@@ -1456,7 +1517,7 @@
         window.addEventListener("storage", (event) => {
             if (event.key !== "isoms-demo-workspace-v1" || !assignedOrganization) return;
             try {
-                demoState = ISOMSDemoStore.load();
+                demoState = window.ISOMSDemoStore.load();
                 assignedOrganization = demoState.organizations.find((item) => item.id === assignedOrganization.id);
                 if (!assignedOrganization) return;
                 const statusLabels = { approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" };
@@ -1614,7 +1675,7 @@
             }));
 
             try {
-                ISOMSDemoStore.save(demoState);
+                window.ISOMSDemoStore.save(demoState);
                 statusPill.textContent = saveOnly ? "Needs revision (demo)" : "Pending review";
                 statusPill.dataset.status = saveOnly ? "revision" : "pending";
                 reviewCopy.textContent = saveOnly

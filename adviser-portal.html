@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#174d2a">
-    <script src="access-control.js"></script>
+    <script>document.documentElement.classList.add("access-checking");</script>
+    <script type="module" src="access-control.js"></script>
     <title>Organization Adviser Workspace | ISOMS</title>
     <style>
         :root { --green:#174d2a; --dark:#10361f; --gold:#f2c94c; --ink:#173d27; --muted:#526257; --line:#e5eadf; }
+        .access-checking body { visibility:hidden !important; }
         * { box-sizing:border-box; }
         body { min-width:320px; min-height:100vh; margin:0; background:#f5f7ef; color:var(--ink); font-family:Arial,Helvetica,sans-serif; }
         .header { display:flex; min-height:70px; align-items:center; justify-content:space-between; gap:18px; padding:12px clamp(20px,6vw,88px); background:var(--green); color:#fff; }
@@ -50,12 +52,12 @@
 <body>
     <header class="header">
         <a class="brand" href="index.html" aria-label="ISOMS home"><span class="brand-mark" aria-hidden="true">I</span><span class="brand-name">ISOMS</span></a>
-        <div class="header-account"><span class="username" data-demo-username>@facultyadviser</span><a class="back-link" href="login.html" data-demo-signout>Sign out</a></div>
+        <div class="header-account"><span class="username" data-auth-user>Signed in</span><a class="back-link" href="login.html" data-demo-signout>Sign out</a></div>
     </header>
     <main class="page">
         <div class="topline">
             <div><p class="eyebrow">Faculty workspace</p><h1>Organization Adviser</h1><p class="intro">Review assigned organization details and submitted document records. Advisers can mark their review or return a profile for revision.</p></div>
-            <aside class="demo-note"><strong>Adviser demo workspace.</strong> This preview is assigned to the Supreme Student Council and is not authentication or enforced access control. It uses browser-local sample data and does not send notifications.</aside>
+            <aside class="demo-note"><strong>Authenticated adviser workspace.</strong> Account access is checked against Supabase. Organization review records and actions are still browser-local demo data and are not delivered to other accounts.</aside>
         </div>
         <div id="workspace-error" class="error" role="alert" hidden></div>
         <div id="workspace" hidden>

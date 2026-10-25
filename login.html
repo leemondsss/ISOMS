@@ -94,6 +94,118 @@
             box-shadow: 0 14px 36px rgba(23, 42, 30, 0.16);
         }
 
+        .auth-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .auth-form [hidden] {
+            display: none;
+        }
+
+        .auth-form label {
+            display: grid;
+            gap: 6px;
+            color: #354b3c;
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .auth-form input {
+            min-height: 42px;
+            padding: 9px 11px;
+            border: 1px solid #cfd8d1;
+            border-radius: 7px;
+            color: var(--ink);
+            font: inherit;
+        }
+
+        .password-control {
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .password-field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .password-control input {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .password-visibility {
+            display: grid;
+            width: 44px;
+            min-width: 44px;
+            min-height: 42px;
+            place-items: center;
+            border: 1px solid #cfd8d1;
+            border-radius: 7px;
+            background: #fff;
+            color: var(--green);
+            cursor: pointer;
+        }
+
+        .password-visibility svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .auth-form input:focus-visible,
+        .auth-form button:focus-visible,
+        .auth-toggle:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 2px;
+        }
+
+        .auth-button {
+            min-height: 44px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--green);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.84rem;
+            font-weight: 800;
+        }
+
+        .auth-button:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .auth-actions {
+            display: grid;
+            gap: 9px;
+        }
+
+        .auth-toggle {
+            padding: 8px;
+            border: 0;
+            background: transparent;
+            color: var(--green);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .auth-message {
+            min-height: 20px;
+            margin: 12px 0 0;
+            color: #8a3b26;
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .auth-message[data-kind="success"] {
+            color: var(--green);
+        }
+
         h1 {
             width: fit-content;
             margin: 0 0 20px;
@@ -340,77 +452,251 @@
     <main class="main">
         <section class="login-card" aria-labelledby="login-title">
             <h1 id="login-title">Sign In</h1>
-            <p class="intro">Administrator, adviser, and organization officer accounts will use their assigned PHINMA Education access after official sign-in is configured.</p>
-
-            <div class="email-status">
-                <label for="phinma-email">PHINMAED email address</label>
-                <div class="email-field">
-                    <input id="phinma-email" type="email" value="Available after two-factor authentication" disabled aria-describedby="email-status-note">
-                    <svg class="email-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                        <circle cx="12" cy="8" r="3.5"></circle>
-                        <path d="M5.5 20v-1.5a6.5 6.5 0 0 1 13 0V20z"></path>
-                    </svg>
+            <p class="intro" id="auth-intro">Sign in with your account email. New accounts must be approved and assigned a role by an administrator before they can open a workspace.</p>
+            <form class="auth-form" id="auth-form">
+                <label for="display-name" id="display-name-label" hidden>Full name
+                    <input id="display-name" name="displayName" type="text" autocomplete="name" maxlength="100">
+                </label>
+                <label for="email" id="email-label">Email address
+                    <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+                </label>
+                <div class="password-field">
+                    <label for="password">Password</label>
+                    <span class="password-control">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
+                        <button class="password-visibility" id="toggle-password-visibility" type="button" aria-label="Show password" aria-pressed="false">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </span>
                 </div>
-                <small id="email-status-note">Two-factor authentication will be required after the school approves the official email setup.</small>
-            </div>
-
-            <aside class="secure-notice">
-                <span class="verification-icon" aria-hidden="true">✓</span>
-                <span><strong>Two-factor authentication</strong>Will be enabled with the approved PHINMA / Google sign-in.</span>
-            </aside>
-
-            <button class="provider-button" type="button" disabled aria-disabled="true">
-                Sign In <span aria-hidden="true">↪</span>
-            </button>
-            <p class="setup-note">Sign-in will be available after the school configures the official account connection. Passwords and verification codes are entered only on the official PHINMA / Google sign-in page.</p>
-            <p class="recovery-note">Forgot your password? Contact your PHINMA account administrator.</p>
-
-            <section class="demo-access" aria-labelledby="demo-access-title">
-                <h2 id="demo-access-title">Preview a role-specific workspace</h2>
-                <p class="demo-access-copy">Prototype navigation only—not authentication or access security. Each preview uses a sample assignment for the Supreme Student Council.</p>
-                <div class="role-options">
-                    <button class="role-option" type="button" data-demo-role="administrator" data-demo-username="@adminisoms"><span>Administrator workspace</span><span aria-hidden="true">→</span></button>
-                    <button class="role-option" type="button" data-demo-role="adviser" data-demo-username="@facultyadviser"><span>Organization adviser workspace</span><span aria-hidden="true">→</span></button>
-                    <button class="role-option" type="button" data-demo-role="officer" data-demo-username="@leemonds"><span>Organization officer / representative workspace</span><span aria-hidden="true">→</span></button>
+                <div class="auth-actions">
+                    <button class="auth-button" id="sign-in-button" type="submit">Sign in</button>
+                    <button class="auth-toggle" id="forgot-password" type="button">Forgot password?</button>
+                    <button class="auth-toggle" id="toggle-sign-up" type="button">Create an account</button>
                 </div>
-                <p class="role-message" id="role-message" role="status" aria-live="polite"></p>
-            </section>
-
-            <p class="disclaimer">Students and university personnel can browse the public directory directly. Production role permissions require a secure school sign-in and server-side authorization.</p>
+            </form>
+            <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
+            <p class="disclaimer">Use your real email address so you can complete any required email confirmation. Do not share your password with anyone.</p>
         </section>
     </main>
-    <script>
+    <script type="module">
+        import { getSupabaseClient } from "./supabase.js";
+        import { completeTemporaryPasswordChange, loginUser, logoutUser, registerUser, sendPasswordReset, updatePassword } from "./auth.js";
+
         const workspaceByRole = {
             administrator: "admin.html",
             adviser: "adviser-portal.html",
             officer: "officer.html"
         };
-        const roleMessage = document.querySelector("#role-message");
+        const authForm = document.querySelector("#auth-form");
+        const authMessage = document.querySelector("#auth-message");
+        const authTitle = document.querySelector("#login-title");
+        const authIntro = document.querySelector("#auth-intro");
+        const emailLabel = document.querySelector("#email-label");
+        const emailInput = document.querySelector("#email");
+        const displayNameLabel = document.querySelector("#display-name-label");
+        const displayNameInput = document.querySelector("#display-name");
+        const passwordInput = document.querySelector("#password");
+        const signInButton = document.querySelector("#sign-in-button");
+        const toggleSignUpButton = document.querySelector("#toggle-sign-up");
+        const forgotPasswordButton = document.querySelector("#forgot-password");
+        const passwordVisibilityButton = document.querySelector("#toggle-password-visibility");
+        let isSignUp = false;
+        let isPasswordRecovery = false;
+        let isTemporaryPasswordChange = false;
 
-        document.querySelectorAll("[data-demo-role]").forEach((button) => {
-            button.addEventListener("click", () => {
-                try {
-                    const role = button.dataset.demoRole;
-                    window.sessionStorage.setItem("isomsDemoRole", role);
-                    window.sessionStorage.setItem("isomsDemoUsername", button.dataset.demoUsername);
-                    if (role === "adviser" || role === "officer") {
-                        window.sessionStorage.setItem("isomsDemoOrganizationId", "ssc");
-                    } else {
-                        window.sessionStorage.removeItem("isomsDemoOrganizationId");
-                    }
-                    window.location.assign(workspaceByRole[role]);
-                } catch (error) {
-                    roleMessage.textContent = `Could not open the demo workspace: ${error.message}`;
-                }
-            });
-        });
+        const showMessage = (message, kind = "error") => {
+            authMessage.textContent = message;
+            authMessage.dataset.kind = kind;
+        };
+
+        const setSignUpMode = (enabled) => {
+            isSignUp = enabled;
+            isPasswordRecovery = false;
+            isTemporaryPasswordChange = false;
+            authTitle.textContent = enabled ? "Create an account" : "Sign In";
+            emailLabel.hidden = false;
+            emailInput.required = true;
+            authIntro.textContent = enabled
+                ? "Create an account to request access. An administrator must approve it and assign your role before you can open a workspace."
+                : "Sign in with your account email. New accounts must be approved and assigned a role by an administrator before they can open a workspace.";
+            displayNameLabel.hidden = !enabled;
+            displayNameInput.required = enabled;
+            passwordInput.autocomplete = enabled ? "new-password" : "current-password";
+            passwordInput.minLength = 8;
+            signInButton.textContent = enabled ? "Create account" : "Sign in";
+            toggleSignUpButton.textContent = enabled ? "Already have an account? Sign in" : "Create an account";
+            toggleSignUpButton.hidden = false;
+            forgotPasswordButton.hidden = enabled;
+            forgotPasswordButton.textContent = "Forgot password?";
+            passwordInput.value = "";
+            passwordInput.type = "password";
+            passwordVisibilityButton.setAttribute("aria-label", "Show password");
+            passwordVisibilityButton.setAttribute("aria-pressed", "false");
+            showMessage("");
+        };
 
         const accessMessage = new URLSearchParams(window.location.search).get("access");
-        if (accessMessage === "denied") {
-            roleMessage.textContent = "Choose the correct demo role to open that workspace. For real access restrictions, the school must configure server-side permissions.";
-        } else if (accessMessage === "unavailable") {
-            roleMessage.textContent = "This browser could not establish the demo role preview.";
+        if (accessMessage === "approval") {
+            showMessage("Your account is waiting for administrator approval. You can sign in after an administrator assigns your role and activates it.");
+        } else if (accessMessage === "wrong-role") {
+            showMessage("Your account is active, but it does not have permission to open that workspace.");
+        } else if (accessMessage === "signed-out") {
+            showMessage("Please sign in to continue.");
+        } else if (accessMessage === "setup") {
+            showMessage("Could not verify your account. Check the Supabase setup and try again.");
         }
+
+        toggleSignUpButton.addEventListener("click", () => setSignUpMode(!isSignUp));
+
+        passwordVisibilityButton.addEventListener("click", () => {
+            const shouldShow = passwordInput.type === "password";
+            passwordInput.type = shouldShow ? "text" : "password";
+            passwordVisibilityButton.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+            passwordVisibilityButton.setAttribute("aria-pressed", String(shouldShow));
+        });
+
+        forgotPasswordButton.addEventListener("click", async () => {
+            const email = document.querySelector("#email").value.trim();
+            if (!email) {
+                showMessage("Enter your account email first, then choose Forgot password?");
+                document.querySelector("#email").focus();
+                return;
+            }
+
+            forgotPasswordButton.disabled = true;
+            try {
+                await sendPasswordReset(email);
+                showMessage("If an account uses that email, Supabase will send a password-reset link. Check your inbox and spam folder.", "success");
+            } catch (error) {
+                showMessage(error.message || "Could not request a password reset.");
+            } finally {
+                forgotPasswordButton.disabled = false;
+            }
+        });
+
+        const enterPasswordRecovery = () => {
+            isPasswordRecovery = true;
+            isTemporaryPasswordChange = false;
+            isSignUp = false;
+            authTitle.textContent = "Set a new password";
+            authIntro.textContent = "Choose a new password for your account.";
+            emailLabel.hidden = true;
+            emailInput.required = false;
+            displayNameLabel.hidden = true;
+            displayNameInput.required = false;
+            passwordInput.required = true;
+            passwordInput.minLength = 8;
+            passwordInput.autocomplete = "new-password";
+            passwordInput.value = "";
+            signInButton.textContent = "Update password";
+            toggleSignUpButton.hidden = true;
+            forgotPasswordButton.hidden = true;
+            showMessage("");
+            passwordInput.focus();
+        };
+
+        const enterTemporaryPasswordChange = () => {
+            isPasswordRecovery = true;
+            isTemporaryPasswordChange = true;
+            isSignUp = false;
+            authTitle.textContent = "Choose your password";
+            authIntro.textContent = "An administrator set a temporary password for your account. Choose a new password to continue.";
+            emailLabel.hidden = true;
+            emailInput.required = false;
+            displayNameLabel.hidden = true;
+            displayNameInput.required = false;
+            passwordInput.required = true;
+            passwordInput.minLength = 12;
+            passwordInput.autocomplete = "new-password";
+            passwordInput.value = "";
+            signInButton.textContent = "Save new password";
+            toggleSignUpButton.hidden = true;
+            forgotPasswordButton.hidden = true;
+            showMessage("");
+            passwordInput.focus();
+        };
+
+        getSupabaseClient().then((client) => {
+            client.auth.onAuthStateChange((event, session) => {
+                if (event === "PASSWORD_RECOVERY") enterPasswordRecovery();
+                if (session?.user?.app_metadata?.isoms_password_change_required === true) {
+                    enterTemporaryPasswordChange();
+                }
+            });
+            if (new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery") {
+                enterPasswordRecovery();
+            }
+            if (new URLSearchParams(window.location.search).get("access") === "password-change") {
+                client.auth.getUser().then(({ data: { user }, error }) => {
+                    if (error) throw error;
+                    if (user?.app_metadata?.isoms_password_change_required === true) {
+                        enterTemporaryPasswordChange();
+                    }
+                }).catch((error) => {
+                    showMessage(error.message || "Could not verify the required password change.");
+                });
+            }
+        }).catch((error) => {
+            showMessage(error.message || "Could not initialize account recovery.");
+        });
+
+        authForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            authMessage.textContent = "";
+            signInButton.disabled = true;
+
+            try {
+                const email = document.querySelector("#email").value.trim();
+                const password = passwordInput.value;
+
+                if (isPasswordRecovery) {
+                    if (isTemporaryPasswordChange) {
+                        await completeTemporaryPasswordChange(password);
+                    } else {
+                        await updatePassword(password);
+                    }
+                    await logoutUser();
+                    authForm.reset();
+                    setSignUpMode(false);
+                    showMessage("Password updated. Sign in using your new password.", "success");
+                    return;
+                }
+
+                if (isSignUp) {
+                    const registration = await registerUser(email, password, displayNameInput.value.trim());
+                    if (registration.session) await logoutUser();
+                    showMessage("Account created. Check your email if confirmation is required. Your workspace access will be available after administrator approval and role assignment.", "success");
+                    authForm.reset();
+                    return;
+                }
+
+                const { user, profile } = await loginUser(email, password);
+                if (user.app_metadata?.isoms_password_change_required === true) {
+                    enterTemporaryPasswordChange();
+                    showMessage("Your administrator set a temporary password. Choose a new password to continue.", "success");
+                    return;
+                }
+                const destination = workspaceByRole[profile.role];
+                if (!destination) {
+                    showMessage("Your account has an unsupported role. Contact the administrator.");
+                    return;
+                }
+
+                sessionStorage.setItem("isomsDemoRole", profile.role);
+                sessionStorage.setItem("isomsDemoUsername", profile.display_name || user.email || "");
+                if (profile.organization_id) {
+                    sessionStorage.setItem("isomsDemoOrganizationId", profile.organization_id);
+                } else {
+                    sessionStorage.removeItem("isomsDemoOrganizationId");
+                }
+                window.location.assign(destination);
+            } catch (error) {
+                showMessage(error.message || "Sign-in failed. Please try again.");
+            } finally {
+                signInButton.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>
