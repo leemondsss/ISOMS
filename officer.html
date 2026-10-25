@@ -377,6 +377,10 @@
             color: #fff;
         }
 
+        .flow-step[data-complete="true"] strong {
+            color: var(--green-dark);
+        }
+
         .flow-step strong {
             display: block;
             padding-top: 2px;
@@ -963,7 +967,7 @@
             </div>
             <aside class="prototype-note">
                 <strong>Authenticated organization officer workspace</strong>
-                Account access and administrator review notices are shared through Supabase. Organization profile edits, roster details, and uploaded documents are still browser-local demo data and are not securely submitted.
+                Account access, review notifications, and uploaded document files are shared through Supabase. Organization profile edits and roster details remain browser-local demo data.
             </aside>
         </section>
 
@@ -1141,7 +1145,7 @@
                     </div>
                     <p class="review-copy" id="review-copy">After submission, the administrator reviews the profile and documents. If details are incomplete or invalid, the organization is returned for revision. Approved organizations may then be published to the directory.</p>
                     <p class="review-copy" id="revision-note" hidden></p>
-                    <p class="review-demo-warning">This prototype only changes the status shown on this page. It saves roster details and selected filenames in this browser; it does not store or send the selected files to an administrator.</p>
+                    <p class="review-demo-warning">Document files are uploaded privately to Supabase so your organization adviser can view them. Other profile details and roster records remain in this browser demo.</p>
                     <p class="review-copy">View the <a href="organizations.html">public organization directory</a>.</p>
                 </section>
             </div>
@@ -1224,8 +1228,9 @@
                 fileInput.id = fileId;
                 fileInput.type = "file";
                 fileInput.accept = ".pdf,application/pdf";
-                fileInput.required = !record.loiFilename;
+                fileInput.required = !record.storagePath;
                 fileInput.dataset.existingFilename = record.loiFilename || "";
+                fileInput.dataset.existingStoragePath = record.storagePath || "";
                 fileInput.dataset.fileDeleted = "false";
                 fileInput.dataset.loiFile = "true";
                 const actions = document.createElement("div");
@@ -1238,7 +1243,10 @@
                 deleteButton.hidden = !record.loiFilename;
                 const fileName = document.createElement("small");
                 fileName.className = "roster-file-name";
-                fileName.textContent = record.loiFilename ? `Previously selected: ${record.loiFilename} (select again)` : "PDF only; required for each person";
+                fileName.textContent = record.storagePath
+                    ? `Uploaded: ${record.loiFilename}`
+                    : record.loiFilename ? `Previously only a filename was saved: ${record.loiFilename}. Upload the file for adviser access.`
+                        : "PDF only; required for each person";
                 actions.append(label, deleteButton);
                 fileWrapper.append(actions, fileInput, fileName);
                 row.append(fileWrapper);
@@ -1273,11 +1281,72 @@
                 const nameChanged = row.dataset.originalName
                     && row.dataset.originalName.toLocaleLowerCase() !== record.name.toLocaleLowerCase();
                 record.loiFilename = fileInput.files[0]?.name || (nameChanged || fileInput.dataset.fileDeleted === "true" ? "" : fileInput.dataset.existingFilename) || "";
+                record.storagePath = nameChanged || fileInput.dataset.fileDeleted === "true" ? "" : fileInput.dataset.existingStoragePath || "";
             }
             return record;
         });
 
         const getDocument = (organization, type) => organization.documents?.find((document) => document.type === type);
+        const documentMimeTypes = {
+            pdf: "application/pdf",
+            doc: "application/msword",
+            docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            jpg: "image/jpeg",
+            jpeg: "image/jpeg",
+            png: "image/png"
+        };
+        const uploadOrganizationDocuments = async (uploads) => {
+            if (!uploads.length) return [];
+            const client = await getSupabaseClient();
+            const { data: { user }, error: userError } = await client.auth.getUser();
+            if (userError) throw userError;
+            if (!user) throw new Error("Sign in again before uploading organization documents.");
+
+            const stored = [];
+            try {
+                for (const upload of uploads) {
+                    if (upload.file.size > 10 * 1024 * 1024) {
+                        throw new Error(`${upload.file.name} is larger than the 10 MB upload limit.`);
+                    }
+                    const extension = upload.file.name.split(".").pop().toLocaleLowerCase();
+                    const contentType = documentMimeTypes[extension];
+                    if (!contentType) {
+                        throw new Error(`${upload.file.name} is not a supported PDF, DOC, DOCX, JPG, or PNG file.`);
+                    }
+                    if (upload.document_type.endsWith("LOI") && extension !== "pdf") {
+                        throw new Error(`${upload.file.name}: officer and member LOIs must be PDF files.`);
+                    }
+                    const storagePath = `${assignedOrganization.id}/${user.id}/${crypto.randomUUID()}.${extension}`;
+                    const { error } = await client.storage.from("isoms-organization-documents")
+                        .upload(storagePath, upload.file, { contentType, upsert: false });
+                    if (error) throw new Error(`Could not upload ${upload.file.name}: ${error.message}`);
+                    stored.push({
+                        organization_id: assignedOrganization.id,
+                        document_type: upload.document_type,
+                        person_name: upload.person_name || null,
+                        file_name: upload.file.name,
+                        storage_path: storagePath,
+                        content_type: contentType,
+                        uploaded_by: user.id
+                    });
+                }
+
+                if (stored.length) {
+                    const { error } = await client.from("organization_documents").insert(stored);
+                    if (error) throw new Error(`Files uploaded, but document records could not be saved: ${error.message}`);
+                }
+                return stored;
+            } catch (error) {
+                const paths = stored.map((document) => document.storage_path);
+                if (paths.length) {
+                    const { error: cleanupError } = await client.storage.from("isoms-organization-documents").remove(paths);
+                    if (cleanupError) {
+                        throw new Error(`${error.message} Cleanup of the partially uploaded files also failed: ${cleanupError.message}`);
+                    }
+                }
+                throw error;
+            }
+        };
 
         const getNotifications = () => {
             if (!assignedOrganization) return [];
@@ -1328,7 +1397,11 @@
             notificationButton.setAttribute("aria-label", unreadCount ? `Notifications, ${unreadCount} unread` : "Notifications");
             notificationList.innerHTML = notifications.length
                 ? notifications.map((item) => {
-                    const title = item.type === "revision" ? "Revision requested" : item.type === "announcement" ? "Administrator announcement" : "Administrator update";
+                    const title = item.type === "revision" ? "Revision requested"
+                        : item.type === "resubmitted" ? "Resubmission received"
+                            : item.type === "registered" ? "Organization registered"
+                                : item.type === "adviser_comment" ? "Adviser feedback on your document"
+                                : item.type === "announcement" ? "Administrator announcement" : "Administrator update";
                     const sentAt = item.sentAt && !Number.isNaN(Date.parse(item.sentAt))
                         ? new Date(item.sentAt).toLocaleString()
                         : "Date unavailable";
@@ -1380,7 +1453,11 @@
                     ? `Executive officer LOI — ${record.name}`
                     : type === "member" ? `Member LOI — ${record.name}` : "";
                 const savedDocument = documentType ? getDocument(assignedOrganization, documentType) : null;
-                addRosterRow(container, type, { ...record, loiFilename: record.loiFilename || savedDocument?.name });
+                addRosterRow(container, type, {
+                    ...record,
+                    loiFilename: record.loiFilename || savedDocument?.name,
+                    storagePath: record.storagePath || savedDocument?.storagePath
+                });
             });
         };
 
@@ -1390,10 +1467,13 @@
             const existing = getDocument(assignedOrganization, type);
             if (!existing) return;
 
-            input.required = false;
+            input.required = !existing.storagePath;
             input.dataset.existingFilename = existing.name;
+            input.dataset.existingStoragePath = existing.storagePath || "";
             input.dataset.fileDeleted = "false";
-            row.querySelector("[data-file-name]").textContent = `Previously submitted: ${existing.name} — choose a file to replace`;
+            row.querySelector("[data-file-name]").textContent = existing.storagePath
+                ? `Uploaded: ${existing.name} — choose a file to replace`
+                : `Previously only a filename was saved: ${existing.name}. Upload the file for adviser access.`;
             row.querySelector(".upload-button").textContent = "Replace file";
             row.querySelector("[data-delete-file]").hidden = false;
         };
@@ -1404,6 +1484,7 @@
             const isRosterFile = input.hasAttribute("data-loi-file");
             input.value = "";
             input.dataset.existingFilename = "";
+            input.dataset.existingStoragePath = "";
             input.dataset.fileDeleted = "true";
             input.required = true;
             button.hidden = true;
@@ -1426,7 +1507,29 @@
             const hasSubmission = Boolean(assignedOrganization?.submittedAt || assignedOrganization?.documents?.length);
             const canRevise = assignedOrganization?.status === "revision";
             const awaitingReview = assignedOrganization?.status === "pending";
-            const editable = assignedOrganization?.status !== "approved" && (!hasSubmission || awaitingReview || canRevise);
+            const hasChangesWaitingForReview = assignedOrganization?.status === "pending";
+            const editable = assignedOrganization?.status !== "approved" && (!hasSubmission || hasChangesWaitingForReview || canRevise);
+            const approved = assignedOrganization?.status === "approved";
+            const activeStep = approved ? 3 : awaitingReview ? 2 : 0;
+            const statusLabels = { approved: "Approved", pending: "Pending review", revision: "Needs revision" };
+
+            flowSteps.forEach((step, index) => {
+                step.removeAttribute("aria-current");
+                if (index < activeStep || approved && index === activeStep) {
+                    step.dataset.complete = "true";
+                } else {
+                    delete step.dataset.complete;
+                }
+                if (index === activeStep) {
+                    step.setAttribute("aria-current", "step");
+                }
+            });
+
+            flowSteps[3].querySelector("small").textContent = approved
+                ? "Approved and ready for the organization directory"
+                : "Waiting for administrator approval";
+            statusPill.textContent = statusLabels[assignedOrganization?.status] || "Not submitted";
+            statusPill.dataset.status = assignedOrganization?.status || "draft";
 
             form.querySelectorAll("input, select, textarea, button").forEach((control) => {
                 control.disabled = !editable;
@@ -1440,6 +1543,9 @@
                 reviewCopy.textContent = "Your organization was returned for revision. Update the requested details or replace the affected files below, then resubmit for administrator review.";
                 revisionNote.textContent = assignedOrganization.reviewNote || "The administrator requested revisions. Review your profile and documents before resubmitting.";
                 revisionNote.hidden = false;
+            } else if (hasChangesWaitingForReview) {
+                reviewCopy.textContent = "Your submitted changes are waiting for administrator review. The previous approved directory profile remains published until this update is approved.";
+                revisionNote.hidden = true;
             } else if (hasSubmission) {
                 reviewCopy.textContent = assignedOrganization.status === "approved"
                     ? "This organization is approved. Editing is disabled; contact the administrator if a correction is required."
@@ -1498,7 +1604,7 @@
                 ["document-constitution", "Constitution or organization guidelines"],
                 ["document-officers", "Current list of officers"]
             ].forEach(([id, type]) => setSubmittedDocument(id, type));
-            const statusLabels = { approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" };
+            const statusLabels = { approved: "Approved", pending: "Pending review", revision: "Needs revision" };
             statusPill.textContent = statusLabels[assignedOrganization.status] || "Not submitted";
             statusPill.dataset.status = assignedOrganization.status || "draft";
             setFormAvailability();
@@ -1520,7 +1626,7 @@
                 demoState = window.ISOMSDemoStore.load();
                 assignedOrganization = demoState.organizations.find((item) => item.id === assignedOrganization.id);
                 if (!assignedOrganization) return;
-                const statusLabels = { approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" };
+                const statusLabels = { approved: "Approved", pending: "Pending review", revision: "Needs revision" };
                 statusPill.textContent = statusLabels[assignedOrganization.status] || "Not submitted";
                 statusPill.dataset.status = assignedOrganization.status || "draft";
                 setFormAvailability();
@@ -1569,7 +1675,7 @@
             errorNotice.dataset.visible = "false";
         });
 
-        form.addEventListener("submit", (event) => {
+        form.addEventListener("submit", async (event) => {
             event.preventDefault();
             successNotice.dataset.visible = "false";
             const saveOnly = event.submitter?.id === "save-revision";
@@ -1588,6 +1694,7 @@
                 errorNotice.dataset.visible = "true";
                 return;
             }
+            const isRevisionResubmission = organization.status === "revision";
 
             const executives = rosterRecords(executiveRoster, "executive");
             const members = rosterRecords(memberRoster, "member");
@@ -1601,6 +1708,9 @@
                 return;
             }
 
+            if (organization.status === "approved" && !organization.publishedProfile) {
+                window.ISOMSDemoStore.publishOrganization(organization, demoState.people);
+            }
             organization.representative = {
                 name: representativeName,
                 role: representativeRole,
@@ -1616,11 +1726,6 @@
             organization.executiveOfficers = executives;
             organization.members = members;
             organization.advisers = advisers;
-            organization.status = saveOnly ? "revision" : "pending";
-            if (!saveOnly) {
-                organization.adviserReview = "Not reviewed";
-                organization.reviewNote = "Submitted to the administrator demo queue.";
-            }
             const standardDocuments = [
                 ["document-registration", "Organization registration form"],
                 ["document-endorsement", "Adviser endorsement"],
@@ -1630,23 +1735,91 @@
                 const input = document.querySelector(`#${id}`);
                 return {
                     type,
-                    name: input.files[0]?.name || (input.dataset.fileDeleted === "true" ? "" : input.dataset.existingFilename || getDocument(organization, type)?.name)
+                    name: input.files[0]?.name || (input.dataset.fileDeleted === "true" ? "" : input.dataset.existingFilename || getDocument(organization, type)?.name),
+                    storagePath: input.files[0] || input.dataset.fileDeleted === "true" ? "" : input.dataset.existingStoragePath || getDocument(organization, type)?.storagePath || ""
                 };
             });
-            if (standardDocuments.some((document) => !document.name)) {
+            const uploadCandidates = [
+                ...[...form.querySelectorAll("[data-document-row]")].map((row) => {
+                    const input = row.querySelector("input[type='file']");
+                    return input.files[0] ? {
+                        document_type: row.querySelector("strong").textContent.replace(/\s*\*$/, "").trim(),
+                        person_name: null,
+                        file: input.files[0]
+                    } : null;
+                }),
+                ...[...executiveRoster.querySelectorAll(".roster-row"), ...memberRoster.querySelectorAll(".roster-row")].map((row) => {
+                    const input = row.querySelector("[data-loi-file]");
+                    if (!input.files[0]) return null;
+                    const personName = row.querySelector(".roster-field input").value.trim();
+                    return {
+                        document_type: row.dataset.rosterType === "executive" ? "Executive officer LOI" : "Member LOI",
+                        person_name: personName,
+                        file: input.files[0]
+                    };
+                })
+            ].filter(Boolean);
+            if (standardDocuments.some((document) => !document.name || (!document.storagePath && !uploadCandidates.some((upload) => upload.document_type === document.type)))) {
                 errorNotice.textContent = "Choose a file for each required organization document.";
                 errorNotice.dataset.visible = "true";
                 return;
             }
-            if ([...executives, ...members].some((person) => !person.loiFilename)) {
-                errorNotice.textContent = "Every executive officer and member needs a PDF LOI. Upload a new LOI if you changed a person's name.";
+            if ([...executives, ...members].some((person, index) => {
+                const isExecutive = index < executives.length;
+                const personIndex = isExecutive ? index : index - executives.length;
+                const rosterContainer = isExecutive ? executiveRoster : memberRoster;
+                const row = rosterContainer.querySelectorAll(".roster-row")[personIndex];
+                return !person.loiFilename || (!person.storagePath && !row.querySelector("[data-loi-file]").files[0]);
+            })) {
+                errorNotice.textContent = "Every executive officer and member needs an uploaded PDF LOI. Older filename-only records must be uploaded again so the adviser can view them.";
                 errorNotice.dataset.visible = "true";
                 return;
             }
             const loiDocuments = [
-                ...executives.map((person) => ({ type: `Executive officer LOI — ${person.name}`, name: person.loiFilename })),
-                ...members.map((person) => ({ type: `Member LOI — ${person.name}`, name: person.loiFilename }))
+                ...executives.map((person) => ({ type: `Executive officer LOI — ${person.name}`, name: person.loiFilename, storagePath: person.storagePath })),
+                ...members.map((person) => ({ type: `Member LOI — ${person.name}`, name: person.loiFilename, storagePath: person.storagePath }))
             ];
+            let storedDocuments;
+            try {
+                storedDocuments = await uploadOrganizationDocuments(uploadCandidates);
+            } catch (error) {
+                errorNotice.textContent = error.message || "Could not upload the organization documents.";
+                errorNotice.dataset.visible = "true";
+                return;
+            }
+            storedDocuments.forEach((stored) => {
+                const document = stored.document_type === "Organization registration form"
+                    || stored.document_type === "Adviser endorsement"
+                    || stored.document_type === "Constitution or organization guidelines"
+                    || stored.document_type === "Current list of officers"
+                    ? standardDocuments.find((item) => item.type === stored.document_type)
+                    : loiDocuments.find((item) => item.type.startsWith(stored.document_type) && item.type.endsWith(`— ${stored.person_name}`));
+                if (document) document.storagePath = stored.storage_path;
+            });
+            executives.forEach((person) => {
+                person.storagePath = loiDocuments.find((document) => document.type === `Executive officer LOI — ${person.name}`)?.storagePath || person.storagePath;
+            });
+            members.forEach((person) => {
+                person.storagePath = loiDocuments.find((document) => document.type === `Member LOI — ${person.name}`)?.storagePath || person.storagePath;
+            });
+            if (isRevisionResubmission && !saveOnly) {
+                try {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.rpc("submit_organization_resubmission", {
+                        p_organization_id: organization.id
+                    });
+                    if (error) throw error;
+                } catch (error) {
+                    errorNotice.textContent = `Could not notify the administrator about this resubmission: ${error.message}. Run the latest supabase-setup.sql in Supabase, then try again.`;
+                    errorNotice.dataset.visible = "true";
+                    return;
+                }
+            }
+            organization.status = saveOnly ? "revision" : "pending";
+            if (!saveOnly) {
+                organization.adviserReview = "Not reviewed";
+                organization.reviewNote = "Submitted to the administrator demo queue.";
+            }
             organization.documents = [...standardDocuments, ...loiDocuments];
             organization.submittedAt = new Date().toISOString();
 
@@ -1676,23 +1849,25 @@
 
             try {
                 window.ISOMSDemoStore.save(demoState);
-                statusPill.textContent = saveOnly ? "Needs revision (demo)" : "Pending review";
+                statusPill.textContent = saveOnly ? "Needs revision" : "Pending review";
                 statusPill.dataset.status = saveOnly ? "revision" : "pending";
                 reviewCopy.textContent = saveOnly
                     ? "Your changes have been saved as a revision draft. The organization remains marked as needing revision until you resubmit for administrator review."
-                    : "Your profile and document filenames are in the shared browser demo queue. An administrator can change the sample status in the administrator workspace.";
+                    : "Your profile and roster are saved in this browser demo. Uploaded supporting documents are stored privately in Supabase for adviser review.";
                 successNotice.textContent = saveOnly
                     ? "Revision changes saved in this browser demo. Your organization remains in Needs revision until you choose Resubmit revised information."
-                    : "Demo status updated to Pending review. The organization overview, rosters, and selected filenames are saved locally; PDF and other files are not stored or sent to the school.";
+                    : isRevisionResubmission
+                        ? "Your revised submission is saved in this browser demo, its files are stored privately in Supabase, and the administrator has been notified."
+                        : "Submission status is Pending review. Document files are stored privately in Supabase; profile and roster details remain in this browser demo.";
                 successNotice.dataset.visible = "true";
                 errorNotice.dataset.visible = "false";
                 setFormAvailability();
                 flowSteps[0].dataset.complete = "true";
                 flowSteps[1].dataset.complete = "true";
-                flowSteps[2].setAttribute("aria-current", "step");
-                flowSteps[0].removeAttribute("aria-current");
             } catch (error) {
-                errorNotice.textContent = error.message;
+                errorNotice.textContent = isRevisionResubmission
+                    ? `The administrator was notified, but the local demo copy could not be saved: ${error.message}`
+                    : error.message;
                 errorNotice.dataset.visible = "true";
             }
         });

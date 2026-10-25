@@ -617,6 +617,13 @@
             passwordInput.focus();
         };
 
+        const recoveryParams = new URLSearchParams(window.location.search);
+        const recoveryHash = new URLSearchParams(window.location.hash.slice(1));
+        const recoveryRequested = recoveryParams.get("mode") === "recovery"
+            || recoveryParams.get("type") === "recovery"
+            || recoveryHash.get("type") === "recovery";
+        if (recoveryRequested) enterPasswordRecovery();
+
         getSupabaseClient().then((client) => {
             client.auth.onAuthStateChange((event, session) => {
                 if (event === "PASSWORD_RECOVERY") enterPasswordRecovery();
@@ -624,7 +631,7 @@
                     enterTemporaryPasswordChange();
                 }
             });
-            if (new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery") {
+            if (recoveryHash.get("type") === "recovery") {
                 enterPasswordRecovery();
             }
             if (new URLSearchParams(window.location.search).get("access") === "password-change") {
@@ -657,6 +664,11 @@
                         await updatePassword(password);
                     }
                     await logoutUser();
+                    const cleanUrl = new URL(window.location.href);
+                    cleanUrl.searchParams.delete("mode");
+                    cleanUrl.searchParams.delete("type");
+                    cleanUrl.hash = "";
+                    window.history.replaceState({}, document.title, cleanUrl);
                     authForm.reset();
                     setSignUpMode(false);
                     showMessage("Password updated. Sign in using your new password.", "success");

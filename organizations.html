@@ -133,7 +133,7 @@
         let state;
         let activeOrganizationId = null;
 
-        const statusLabels = { approved: "Approved" };
+        const statusLabels = { approved: "Registered organization" };
         const organizationThemes = {
             ssc: { accent: "#c99a27", secondary: "#174d2a" },
             sslg: { accent: "#2877b8", secondary: "#c94747" },
@@ -184,7 +184,8 @@
         const renderOrganization = (organization) => {
             const title = escapeHtml(organization.name);
             const label = statusLabels[organization.status] || "Status unavailable";
-            const organizationPeople = state.people.filter((person) => person.organizationId === organization.id);
+            const organizationPeople = organization.publishedProfile?.people
+                || state.people.filter((person) => person.organizationId === organization.id);
             const executives = organizationPeople.filter((person) => person.group === "Officer");
             const advisers = organizationPeople.filter((person) => person.group === "Adviser");
             const members = organizationPeople.filter((person) => person.group === "Member");
@@ -260,10 +261,14 @@
         };
 
         const render = (organizations) => {
-            const matches = organizations.filter((organization) => organization.status === "approved");
+            const matches = organizations
+                .filter((organization) => (organization.directoryStatus === undefined ? organization.status : organization.directoryStatus) === "approved")
+                .map((organization) => organization.publishedProfile
+                    ? { ...organization, ...organization.publishedProfile, status: "approved" }
+                    : organization);
             if (!matches.length) {
                 tabs.innerHTML = "";
-                panel.innerHTML = '<p class="empty-state">There are no approved organizations to display yet.</p>';
+                panel.innerHTML = '<p class="empty-state">There are no registered organizations to display yet.</p>';
                 return;
             }
 

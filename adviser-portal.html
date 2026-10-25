@@ -38,12 +38,23 @@
         .doc-list li { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:12px; border:1px solid #edf1eb; border-radius:8px; }
         .doc-list strong { display:block; font-size:.78rem; }
         .doc-list small { display:block; margin-top:4px; color:var(--muted); font-size:.7rem; }
+        .doc-list article { width:100%; }
+        .document-link { display:inline-block; margin-top:8px; color:var(--green); font-size:.75rem; font-weight:800; }
+        .document-comment { display:grid; gap:8px; margin-top:12px; }
+        .document-comment textarea { width:100%; min-height:76px; padding:9px; border:1px solid var(--line); border-radius:7px; font:inherit; font-size:.75rem; }
+        .document-comments { margin:12px 0 0; padding:0; list-style:none; }
+        .document-comments li { display:block; margin-top:8px; padding:9px; background:#f5f7ef; }
+        .document-comments p { margin:5px 0; font-size:.75rem; line-height:1.5; }
         .doc-state { flex:0 0 auto; color:#715517; font-size:.68rem; font-weight:800; }
         .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
         button, .button-link { min-height:40px; padding:9px 13px; border:1px solid var(--green); border-radius:8px; background:var(--green); color:#fff; cursor:pointer; font:inherit; font-size:.75rem; font-weight:800; text-decoration:none; }
         button.secondary, .button-link.secondary { background:#fff; color:var(--green); }
         button:hover:not(:disabled), .button-link:hover { background:var(--dark); color:#fff; }
         .notice { margin-top:14px; padding:12px; border-radius:8px; background:#edf4ec; color:var(--green); font-size:.78rem; line-height:1.5; }
+        .notification-list { display:grid; gap:10px; margin:0; padding:0; list-style:none; }
+        .notification-list li { padding:12px; border:1px solid #edf1eb; border-radius:8px; }
+        .notification-list p { margin:6px 0; color:var(--muted); font-size:.78rem; line-height:1.5; }
+        .notification-list time { color:#718076; font-size:.68rem; }
         .error { padding:16px; border:1px solid #e6c2b7; border-radius:9px; background:#fff6f3; color:#8a3b26; }
         @media(max-width:800px) { .topline { align-items:flex-start; flex-direction:column; } .demo-note { max-width:none; } .grid { grid-template-columns:1fr; } }
         @media(max-width:560px) { .header { min-height:62px; padding:10px 16px; } .brand-mark { width:40px; height:40px; } .brand-name { font-size:.92rem; } .header-account { gap:8px; } .username { padding:7px 8px; font-size:.7rem; } .back-link { font-size:.74rem; } .page { width:min(100% - 32px,1120px); padding-top:30px; } .facts { grid-template-columns:1fr; } }
@@ -57,7 +68,7 @@
     <main class="page">
         <div class="topline">
             <div><p class="eyebrow">Faculty workspace</p><h1>Organization Adviser</h1><p class="intro">Review assigned organization details and submitted document records. Advisers can mark their review or return a profile for revision.</p></div>
-            <aside class="demo-note"><strong>Authenticated adviser workspace.</strong> Account access is checked against Supabase. Organization review records and actions are still browser-local demo data and are not delivered to other accounts.</aside>
+            <aside class="demo-note"><strong>Authenticated adviser workspace.</strong> Account access, private document files, comments, and registration notifications use Supabase. Organization profile and roster details remain browser-local demo data.</aside>
         </div>
         <div id="workspace-error" class="error" role="alert" hidden></div>
         <div id="workspace" hidden>
@@ -77,19 +88,30 @@
                 </section>
                 <section class="card" aria-labelledby="documents-heading">
                     <h2 id="documents-heading">Submitted document records</h2>
-                    <ul class="doc-list" id="document-list"></ul>
-                    <p class="description">Sample filenames are metadata only. Actual documents are not stored in this prototype.</p>
+                    <ul class="doc-list" id="document-list"><li>Loading uploaded documents…</li></ul>
+                    <p class="description">Files are private and viewable only by active members of this organization and administrators. Older demo filenames were not uploaded and must be resubmitted to be viewable here.</p>
+                    <p class="notice" id="document-notice" role="status" aria-live="polite"></p>
                 </section>
             </div>
+            <section class="card" aria-labelledby="notifications-heading" style="margin-top:18px">
+                <h2 id="notifications-heading">Notifications</h2>
+                <ul class="notification-list" id="adviser-notifications" aria-live="polite"><li>No organization registration updates yet.</li></ul>
+                <div class="actions"><button class="secondary" type="button" id="refresh-adviser-notifications">Refresh notifications</button><button class="secondary" type="button" id="mark-adviser-notifications-read">Mark notifications read</button></div>
+                <p class="notice" id="adviser-notification-notice" role="status" aria-live="polite"></p>
+            </section>
         </div>
     </main>
     <script src="demo-data.js"></script>
-    <script>
+    <script type="module">
+        import { getSupabaseClient } from "./supabase.js";
+
         const errorBox = document.querySelector("#workspace-error");
         const workspace = document.querySelector("#workspace");
         const assignedOrganizationId = window.sessionStorage.getItem("isomsDemoOrganizationId");
         const escapeHtml = ISOMSDemoStore.escapeHtml;
         let state;
+        let registrationNotifications = [];
+        let storedDocuments = [];
 
         const statusLabel = (status) => ({ approved: "Approved (demo)", pending: "Pending administrator review (demo)", revision: "Needs revision (demo)" }[status] || "Status not set");
 
@@ -97,8 +119,11 @@
             const organization = state.organizations.find((item) => item.id === assignedOrganizationId);
             if (!organization) {
                 document.querySelector("#organization-facts").innerHTML = "";
-                document.querySelector("#organization-description").textContent = "No assigned organization is available in the demo data.";
-                document.querySelector("#document-list").innerHTML = "<li>No assigned organization is available.</li>";
+                const message = assignedOrganizationId
+                    ? `The assigned organization ID “${assignedOrganizationId}” does not match an organization in this browser demo. Ask the administrator to select the correct organization in Account access and approvals, then sign out and sign in again.`
+                    : "No organization is assigned to this adviser account. Ask the administrator to select the adviser’s organization in Account access and approvals, then sign out and sign in again.";
+                document.querySelector("#organization-description").textContent = message;
+                document.querySelector("#document-list").innerHTML = `<li>${escapeHtml(message)}</li>`;
                 return;
             }
             const adviser = state.people.find((person) => person.organizationId === organization.id && person.group === "Adviser");
@@ -113,16 +138,83 @@
             ];
             document.querySelector("#organization-facts").innerHTML = facts.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
             document.querySelector("#organization-description").textContent = organization.description || "No profile description has been submitted.";
-            const documents = organization.documents || [];
-            document.querySelector("#document-list").innerHTML = documents.length
-                ? documents.map((document) => `<li><span><strong>${escapeHtml(document.type || "Supporting document")}</strong><small>${escapeHtml(document.name)}</small></span><span class="doc-state">Submitted (demo)</span></li>`).join("")
-                : "<li><span><strong>No document records</strong><small>No sample documents attached to this profile.</small></span></li>";
+            if (!storedDocuments.length) {
+                document.querySelector("#document-list").innerHTML = (organization.documents || []).length
+                    ? (organization.documents || []).map((document) => `<li><span><strong>${escapeHtml(document.type || "Supporting document")}</strong><small>${escapeHtml(document.name)} — filename only; request a new upload from the officer to view it.</small></span><span class="doc-state">Not uploaded</span></li>`).join("")
+                    : "<li><span><strong>No documents uploaded</strong><small>Submitted files will appear here for review.</small></span></li>";
+                return;
+            }
+            document.querySelector("#document-list").innerHTML = storedDocuments.map((document) => {
+                const comments = document.comments || [];
+                return `<li><article>
+                    <strong>${escapeHtml(document.document_type)}</strong>
+                    ${document.person_name ? `<small>For: ${escapeHtml(document.person_name)}</small>` : ""}
+                    <small>${escapeHtml(document.file_name)} · ${escapeHtml(new Date(document.created_at).toLocaleString())}</small>
+                    <a class="document-link" href="${escapeHtml(document.signedUrl)}" target="_blank" rel="noopener noreferrer">View or download file</a>
+                    <ul class="document-comments">${comments.map((comment) => `<li><strong>${escapeHtml(comment.author_name)}</strong><small> · ${escapeHtml(new Date(comment.created_at).toLocaleString())}</small><p>${escapeHtml(comment.comment)}</p></li>`).join("")}</ul>
+                    <form class="document-comment" data-document-comment="${escapeHtml(document.id)}">
+                        <label for="comment-${escapeHtml(document.id)}">Feedback for the officer</label>
+                        <textarea id="comment-${escapeHtml(document.id)}" name="comment" maxlength="700" required placeholder="Describe what should be corrected or confirmed."></textarea>
+                        <button type="submit">Send comment to officer</button>
+                    </form>
+                </article></li>`;
+            }).join("");
+        };
+
+        const loadStoredDocuments = async () => {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_documents")
+                .select("id, document_type, person_name, file_name, storage_path, content_type, created_at")
+                .eq("organization_id", assignedOrganizationId)
+                .order("created_at", { ascending: false })
+                .limit(500);
+            if (error) throw error;
+            const documents = await Promise.all((data || []).map(async (document) => {
+                const [{ data: signed, error: signedError }, { data: comments, error: commentsError }] = await Promise.all([
+                    client.storage.from("isoms-organization-documents").createSignedUrl(document.storage_path, 600),
+                    client.from("organization_document_comments")
+                        .select("author_name, comment, created_at")
+                        .eq("document_id", document.id)
+                        .order("created_at", { ascending: true })
+                ]);
+                if (signedError) throw signedError;
+                if (commentsError) throw commentsError;
+                return { ...document, signedUrl: signed.signedUrl, comments: comments || [] };
+            }));
+            storedDocuments = documents;
+            render();
+        };
+
+        const renderRegistrationNotifications = () => {
+            const list = document.querySelector("#adviser-notifications");
+            list.innerHTML = registrationNotifications.length
+                ? registrationNotifications.map((item) => {
+                    const sentAt = item.created_at && !Number.isNaN(Date.parse(item.created_at))
+                        ? new Date(item.created_at).toLocaleString()
+                        : "Date unavailable";
+                    return `<li><strong>${item.read_at ? "Organization registered" : "New: Organization registered"}</strong><p>${escapeHtml(item.message)}</p><time>${escapeHtml(sentAt)}</time></li>`;
+                }).join("")
+                : "<li>No organization registration updates yet.</li>";
+        };
+        const loadRegistrationNotifications = async () => {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_notifications")
+                .select("id, message, created_at, read_at")
+                .eq("organization_id", assignedOrganizationId)
+                .eq("type", "registered")
+                .order("created_at", { ascending: false })
+                .limit(25);
+            if (error) throw error;
+            registrationNotifications = data || [];
+            renderRegistrationNotifications();
         };
 
         try {
             state = ISOMSDemoStore.load();
             if (!assignedOrganizationId || !state.organizations.some((organization) => organization.id === assignedOrganizationId)) {
-                throw new Error("No organization is assigned to this adviser demo role. Return to sign-in and choose the adviser preview again.");
+                throw new Error(assignedOrganizationId
+                    ? `The assigned organization ID “${assignedOrganizationId}” does not match an organization in this browser demo. Ask the administrator to select the correct organization in Account access and approvals, then sign out and sign in again.`
+                    : "No organization is assigned to this adviser account. Ask the administrator to select the adviser’s organization in Account access and approvals, then sign out and sign in again.");
             }
             document.querySelector("#mark-reviewed").addEventListener("click", () => {
                 const organization = state.organizations.find((item) => item.id === assignedOrganizationId);
@@ -131,6 +223,27 @@
                 ISOMSDemoStore.save(state);
                 render();
                 document.querySelector("#adviser-notice").textContent = "Adviser review marked complete in the shared browser demo. Administrator review is still separate.";
+            });
+            document.querySelector("#document-list").addEventListener("submit", async (event) => {
+                const commentForm = event.target.closest("[data-document-comment]");
+                if (!commentForm) return;
+                event.preventDefault();
+                const submitButton = commentForm.querySelector('[type="submit"]');
+                const comment = String(new FormData(commentForm).get("comment") || "").trim();
+                submitButton.disabled = true;
+                try {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.rpc("submit_adviser_document_comment", {
+                        p_document_id: commentForm.dataset.documentComment,
+                        p_comment: comment
+                    });
+                    if (error) throw error;
+                    document.querySelector("#document-notice").textContent = "Comment sent to the organization officer.";
+                    await loadStoredDocuments();
+                } catch (error) {
+                    document.querySelector("#document-notice").textContent = `Could not send the comment: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                    submitButton.disabled = false;
+                }
             });
             document.querySelector("#request-revision").addEventListener("click", () => {
                 const organization = state.organizations.find((item) => item.id === assignedOrganizationId);
@@ -142,8 +255,42 @@
                 render();
                 document.querySelector("#adviser-notice").textContent = "Marked as needing revision in this browser demo. No message was sent to the officer.";
             });
+            document.querySelector("#mark-adviser-notifications-read").addEventListener("click", async () => {
+                const unreadIds = registrationNotifications.filter((item) => !item.read_at).map((item) => item.id);
+                if (!unreadIds.length) {
+                    document.querySelector("#adviser-notification-notice").textContent = "There are no unread registration notifications.";
+                    return;
+                }
+                try {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.from("organization_notifications")
+                        .update({ read_at: new Date().toISOString() })
+                        .in("id", unreadIds)
+                        .eq("organization_id", assignedOrganizationId)
+                        .eq("type", "registered");
+                    if (error) throw error;
+                    await loadRegistrationNotifications();
+                    document.querySelector("#adviser-notification-notice").textContent = "Registration notifications marked as read.";
+                } catch (error) {
+                    document.querySelector("#adviser-notification-notice").textContent = `Could not mark notifications as read: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                }
+            });
+            const refreshAdviserNotifications = () => {
+                loadRegistrationNotifications().catch((error) => {
+                    document.querySelector("#adviser-notification-notice").textContent = `Could not load registration notifications: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                });
+            };
+            document.querySelector("#refresh-adviser-notifications").addEventListener("click", refreshAdviserNotifications);
             render();
             workspace.hidden = false;
+            loadStoredDocuments().catch((error) => {
+                document.querySelector("#document-list").innerHTML = "<li>Uploaded documents could not be loaded.</li>";
+                document.querySelector("#document-notice").textContent = `Could not load uploaded documents: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+            });
+            refreshAdviserNotifications();
+            window.setInterval(() => {
+                if (document.visibilityState === "visible") refreshAdviserNotifications();
+            }, 30000);
         } catch (error) {
             errorBox.textContent = error.message;
             errorBox.hidden = false;

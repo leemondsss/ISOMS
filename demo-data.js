@@ -97,6 +97,23 @@
     };
 
     const clone = (value) => JSON.parse(JSON.stringify(value));
+    const createPublishedProfile = (organization, people = []) => {
+        const fields = [
+            "id", "name", "category", "level", "description", "mission", "vision", "adviser", "logo", "logoUrl", "officers",
+            "executiveOfficers", "members", "advisers", "achievements", "gallery",
+            "schoolYear", "representative"
+        ];
+        return {
+            ...Object.fromEntries(fields
+            .filter((field) => Object.prototype.hasOwnProperty.call(organization, field))
+            .map((field) => [field, clone(organization[field])])),
+            people: clone(people.filter((person) => person.organizationId === organization.id))
+        };
+    };
+    const publishOrganization = (organization, people = []) => {
+        organization.directoryStatus = "approved";
+        organization.publishedProfile = createPublishedProfile(organization, people);
+    };
 
     const load = () => {
         let saved;
@@ -113,7 +130,34 @@
         }
 
         try {
-            return JSON.parse(saved);
+            const state = JSON.parse(saved);
+            const fallbackById = new Map(initialState.organizations.map((organization) => [organization.id, organization]));
+            state.organizations = (Array.isArray(state.organizations) ? state.organizations : []).map((organization) => {
+                const fallback = fallbackById.get(organization.id);
+                if (!fallback) return organization;
+                const hasDirectoryStatus = Object.prototype.hasOwnProperty.call(organization, "directoryStatus");
+                const directoryStatus = hasDirectoryStatus
+                    ? organization.directoryStatus
+                    : fallback.status === "approved" && ["pending", "revision"].includes(organization.status)
+                        ? "approved"
+                        : organization.status === "approved" ? "approved" : null;
+                const publishedProfile = createPublishedProfile(
+                    organization,
+                    Array.isArray(state.people) ? state.people : []
+                );
+                return {
+                    ...organization,
+                    directoryStatus,
+                    publishedProfile: organization.publishedProfile
+                        ? {
+                            ...publishedProfile,
+                            ...organization.publishedProfile,
+                            people: organization.publishedProfile.people || publishedProfile.people
+                        }
+                        : directoryStatus === "approved" ? publishedProfile : null
+                };
+            });
+            return state;
         } catch (error) {
             throw new Error(`Saved demo data is invalid and could not be loaded: ${error.message}`);
         }
@@ -138,6 +182,7 @@
     window.ISOMSDemoStore = Object.freeze({
         load,
         save,
+        publishOrganization,
         escapeHtml
     });
 }());

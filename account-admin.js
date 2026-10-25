@@ -18,6 +18,8 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character
     "'": "&#39;"
 }[character]));
 
+const getOrganizations = () => window.ISOMSDemoStore.load().organizations;
+
 const showNotice = (message, isError = false) => {
     notice.textContent = message;
     notice.style.color = isError ? "#8a3b26" : "";
@@ -34,6 +36,7 @@ const loadAccounts = async () => {
 
     const { data: { user }, error: userError } = await client.auth.getUser();
     if (userError) throw userError;
+    const organizations = getOrganizations();
 
     if (!data.length) {
         rows.innerHTML = '<tr><td colspan="5" class="empty">No accounts have signed up yet.</td></tr>';
@@ -54,11 +57,15 @@ const loadAccounts = async () => {
             ["active", "Active"],
             ["disabled", "Disabled"]
         ].map(([value, label]) => `<option value="${value}" ${profile.account_status === value ? "selected" : ""}>${label}</option>`).join("");
+        const organizationOptions = [
+            '<option value="">No organization assigned</option>',
+            ...organizations.map((organization) => `<option value="${escapeHtml(organization.id)}" ${profile.organization_id === organization.id ? "selected" : ""}>${escapeHtml(organization.name)} (${escapeHtml(organization.id.toLocaleUpperCase())})</option>`)
+        ].join("");
 
         return `<tr>
             <td><strong>${escapeHtml(profile.display_name || "Unnamed account")}</strong><br>${escapeHtml(profile.email)}${isCurrentUser ? "<br><small>Your current account</small>" : ""}</td>
             <td><label class="visually-hidden" for="account-role-${id}">Role for ${escapeHtml(profile.email)}</label><select id="account-role-${id}" data-account-role="${id}" ${isCurrentUser ? "disabled" : ""}>${roles}</select></td>
-            <td><label class="visually-hidden" for="account-org-${id}">Organization ID for ${escapeHtml(profile.email)}</label><input id="account-org-${id}" data-account-org="${id}" value="${escapeHtml(profile.organization_id || "")}" maxlength="100" placeholder="e.g. ssc" ${isCurrentUser ? "disabled" : ""}></td>
+            <td><label class="visually-hidden" for="account-org-${id}">Organization for ${escapeHtml(profile.email)}</label><select id="account-org-${id}" data-account-org="${id}" ${isCurrentUser ? "disabled" : ""}>${organizationOptions}</select></td>
             <td><label class="visually-hidden" for="account-status-${id}">Approval status for ${escapeHtml(profile.email)}</label><select id="account-status-${id}" data-account-status="${id}" ${isCurrentUser ? "disabled" : ""}>${statuses}</select></td>
             <td><div class="account-actions"><button class="secondary" type="button" data-save-account="${id}" ${isCurrentUser ? "disabled" : ""}>Save access</button><button class="secondary" type="button" data-set-temp-access="${id}" data-account-name="${escapeHtml(profile.display_name || profile.email)}" ${isCurrentUser ? "disabled" : ""}>Set temporary password</button></div></td>
         </tr>`;
@@ -93,6 +100,10 @@ rows.addEventListener("click", async (event) => {
 
     if (accountStatus === "active" && !role) {
         showNotice("Assign a role before activating this account.", true);
+        return;
+    }
+    if (role === "adviser" && accountStatus === "active" && !organizationId) {
+        showNotice("Choose the adviser’s organization before activating this account.", true);
         return;
     }
     if (role === "administrator" && organizationId) {

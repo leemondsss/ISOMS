@@ -36,11 +36,16 @@ export async function loginUser(email, password) {
         .from("profiles")
         .select("id, email, display_name, role, account_status, organization_id")
         .eq("id", data.user.id)
-        .single();
+        .maybeSingle();
 
-    if (profileError || !profile) {
+    if (profileError) {
         await signOutAfterRejection(supabase);
-        throw new Error("Could not load your ISOMS profile. Please contact an administrator.");
+        throw new Error(`Could not read your ISOMS profile: ${profileError.message}`);
+    }
+
+    if (!profile) {
+        await signOutAfterRejection(supabase);
+        throw new Error("Your sign-in succeeded, but your ISOMS profile is missing. Ask the administrator to run the latest supabase-setup.sql; it now restores profiles for existing accounts.");
     }
 
     if (profile.account_status !== "active") {
@@ -63,8 +68,10 @@ export async function loginUser(email, password) {
 
 export async function sendPasswordReset(email) {
     const supabase = await getSupabaseClient();
+    const redirectUrl = new URL("./login.html", window.location.href);
+    redirectUrl.searchParams.set("mode", "recovery");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login.html`
+        redirectTo: redirectUrl.href
     });
 
     if (error) throw error;

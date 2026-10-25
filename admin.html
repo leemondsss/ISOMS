@@ -93,20 +93,20 @@
     <main class="page">
         <div class="topline">
             <div><p class="eyebrow">Administration</p><h1>Administrator Workspace</h1><p class="intro">Review organization registrations and document records, manage directory status and people assignments, maintain the academic year, and export a summary report.</p></div>
-            <aside class="demo-note"><strong>Authenticated administrator workspace.</strong> Account access is checked against Supabase. Organization records, notices, people, and documents on this page are still browser-local demo data; do not enter real student information.</aside>
+            <aside class="demo-note"><strong>Authenticated administrator workspace.</strong> Account access and uploaded organization documents use Supabase. Organization profiles, rosters, and document lists remain browser-local demo data; do not enter sensitive student information.</aside>
         </div>
         <div id="admin-error" class="error" role="alert" hidden></div>
         <div id="admin-app" class="workspace" hidden>
             <section class="stats" aria-label="Organization totals">
                 <article class="stat"><span class="stat-label">Organizations</span><strong class="stat-value" id="total-count">0</strong></article>
-                <article class="stat"><span class="stat-label">Approved</span><strong class="stat-value" id="approved-count">0</strong></article>
+                <article class="stat"><span class="stat-label">Registered</span><strong class="stat-value" id="approved-count">0</strong></article>
                 <article class="stat"><span class="stat-label">Pending review</span><strong class="stat-value" id="pending-count">0</strong></article>
                 <article class="stat"><span class="stat-label">Needs revision</span><strong class="stat-value" id="revision-count">0</strong></article>
             </section>
 
             <section class="panel" aria-labelledby="accounts-heading">
                 <div class="panel-heading"><div><h2 id="accounts-heading">Account access and approvals</h2><p>Public signups remain pending until an administrator assigns a role and activates the account. Organization IDs currently refer to the local demo organizations. An administrator cannot view an existing password, but can set a temporary one; the account holder must replace it at their next sign-in.</p></div></div>
-                <div class="table-wrap"><table><thead><tr><th>Account</th><th>Role</th><th>Organization ID</th><th>Approval</th><th>Action</th></tr></thead><tbody id="account-rows"><tr><td colspan="5" class="empty">Loading accounts…</td></tr></tbody></table></div>
+                <div class="table-wrap"><table><thead><tr><th>Account</th><th>Role</th><th>Organization</th><th>Approval</th><th>Action</th></tr></thead><tbody id="account-rows"><tr><td colspan="5" class="empty">Loading accounts…</td></tr></tbody></table></div>
                 <p class="notice" id="accounts-notice" role="status" aria-live="polite"></p>
             </section>
             <dialog id="temporary-password-dialog" aria-labelledby="temporary-password-heading">
@@ -135,9 +135,16 @@
             </section>
 
             <section class="panel" aria-labelledby="registrations-heading">
-                <div class="panel-heading"><div><h2 id="registrations-heading">Organization registrations &amp; document review</h2><p>Change each sample record's review status. Listed filenames are metadata only, not stored files.</p></div></div>
+                <div class="panel-heading"><div><h2 id="registrations-heading">Organization registrations &amp; document review</h2><p>Change each sample record's review status. Uploaded document files are privately stored in Supabase; older demo filenames may not have file contents.</p></div></div>
                 <div class="table-wrap"><table><thead><tr><th>Organization</th><th>Level / category</th><th>Document records</th><th>Review status and organization notice</th></tr></thead><tbody id="registration-rows"></tbody></table></div>
-                <p class="notice" id="registration-notice" role="status" aria-live="polite">Save a review status to notify the assigned officer in their workspace. Review notifications are shared through Supabase; demo organization profile data remains browser-local.</p>
+                <p class="notice" id="registration-notice" role="status" aria-live="polite">Save a review status to notify the assigned officer. Resubmissions appear in administrator notifications, and approval sends a registration notice to assigned advisers. These notifications are shared through Supabase.</p>
+            </section>
+
+            <section class="panel" aria-labelledby="resubmissions-heading">
+                <div class="panel-heading"><div><h2 id="resubmissions-heading">Revised submissions</h2><p>Officers' resubmissions after a revision request appear here.</p></div></div>
+                <div class="report-actions"><button class="secondary" id="refresh-resubmissions" type="button">Refresh notifications</button><button class="secondary" id="mark-resubmissions-read" type="button">Mark all read</button></div>
+                <div id="resubmission-notifications" aria-live="polite"><p class="empty">Loading administrator notifications…</p></div>
+                <p class="notice" id="resubmission-notice" role="status" aria-live="polite"></p>
             </section>
 
             <section class="panel" aria-labelledby="announcement-heading">
@@ -194,6 +201,7 @@
         const app = document.querySelector("#admin-app");
         const escapeHtml = window.ISOMSDemoStore.escapeHtml;
         let state;
+        let resubmissionNotifications = [];
 
         const getOrganization = (id) => state.organizations.find((organization) => organization.id === id);
         const statusName = (status) => ({ approved: "Approved (demo)", pending: "Pending review (demo)", revision: "Needs revision (demo)" }[status] || "Not set");
@@ -215,6 +223,29 @@
             return `--org-accent:${accent};--org-secondary:${secondary}`;
         };
         const saveState = () => window.ISOMSDemoStore.save(state);
+        const renderResubmissionNotifications = () => {
+            const list = document.querySelector("#resubmission-notifications");
+            list.innerHTML = resubmissionNotifications.length
+                ? resubmissionNotifications.map((item) => {
+                    const organization = getOrganization(item.organization_id);
+                    const sentAt = item.created_at && !Number.isNaN(Date.parse(item.created_at))
+                        ? new Date(item.created_at).toLocaleString()
+                        : "Date unavailable";
+                    return `<article class="notice" data-read="${item.read_at ? "true" : "false"}"><strong>${escapeHtml(organization?.name || item.organization_id)} — ${item.read_at ? "Resubmitted" : "New resubmission"}</strong><p>${escapeHtml(item.message)}</p><small>${escapeHtml(sentAt)}</small></article>`;
+                }).join("")
+                : '<p class="empty">No revised submissions have been received.</p>';
+        };
+        const loadResubmissionNotifications = async () => {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_notifications")
+                .select("id, organization_id, message, created_at, read_at")
+                .eq("type", "resubmitted")
+                .order("created_at", { ascending: false })
+                .limit(50);
+            if (error) throw error;
+            resubmissionNotifications = data || [];
+            renderResubmissionNotifications();
+        };
 
         const render = () => {
             const selectedProfileId = document.querySelector("#profile-organization").value;
@@ -304,6 +335,33 @@
                 const saveButton = document.querySelector(`[data-save-review="${id}"]`);
                 if (saveButton) saveButton.textContent = event.target.value === "revision" ? "Save and notify organization" : "Save review status";
             });
+            document.querySelector("#refresh-resubmissions").addEventListener("click", () => {
+                loadResubmissionNotifications().then(() => {
+                    document.querySelector("#resubmission-notice").textContent = "Resubmission notifications refreshed.";
+                }).catch((error) => {
+                    document.querySelector("#resubmission-notice").textContent = `Could not load resubmission notifications: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                });
+            });
+            document.querySelector("#mark-resubmissions-read").addEventListener("click", async () => {
+                const unreadIds = resubmissionNotifications.filter((item) => !item.read_at).map((item) => item.id);
+                if (!unreadIds.length) {
+                    document.querySelector("#resubmission-notice").textContent = "There are no unread resubmission notifications.";
+                    return;
+                }
+                try {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.from("organization_notifications")
+                        .update({ read_at: new Date().toISOString() })
+                        .in("id", unreadIds)
+                        .is("read_at", null)
+                        .eq("type", "resubmitted");
+                    if (error) throw error;
+                    await loadResubmissionNotifications();
+                    document.querySelector("#resubmission-notice").textContent = "Resubmission notifications marked as read.";
+                } catch (error) {
+                    document.querySelector("#resubmission-notice").textContent = `Could not mark notifications as read: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                }
+            });
             document.querySelector("#registration-rows").addEventListener("click", async (event) => {
                 const button = event.target.closest("[data-save-review]");
                 if (!button) return;
@@ -342,6 +400,11 @@
                     if (error) throw error;
 
                     organization.status = selectedStatus;
+                    if (selectedStatus !== "approved") {
+                        organization.directoryStatus = null;
+                    } else {
+                        window.ISOMSDemoStore.publishOrganization(organization, state.people);
+                    }
                     organization.reviewNote = selectedStatus === "revision"
                         ? message
                         : `Administrator set status to ${statusName(organization.status)} in the demo.`;
@@ -362,7 +425,9 @@
                     render();
                     notice.textContent = selectedStatus === "revision"
                         ? `Revision instructions sent to ${organization.name}'s officer workspace.`
-                        : `${organization.name} review status saved and its officer was notified in Supabase.`;
+                        : selectedStatus === "approved"
+                            ? `${organization.name} is registered. Its officer and assigned advisers were notified through Supabase.`
+                            : `${organization.name} review status saved and its officer was notified through Supabase.`;
                     if (localSaveError) {
                         notice.textContent += ` Supabase was updated, but the local demo copy could not be saved: ${localSaveError}`;
                     }
@@ -377,7 +442,7 @@
             document.querySelector("#profile-status").addEventListener("change", (event) => {
                 document.querySelector("#profile-revision-note-field").hidden = event.target.value !== "revision";
             });
-            document.querySelector("#profile-form").addEventListener("submit", (event) => {
+            document.querySelector("#profile-form").addEventListener("submit", async (event) => {
                 event.preventDefault();
                 const organization = getOrganization(document.querySelector("#profile-organization").value);
                 if (!organization) return;
@@ -388,12 +453,30 @@
                     document.querySelector("#profile-notice").textContent = "Add specific revision instructions before saving and notifying the organization.";
                     return;
                 }
+                const profileReviewMessage = selectedStatus === "revision"
+                    ? revisionMessage
+                    : `Organization profile review status updated to ${statusName(selectedStatus)}.`;
+                try {
+                    const client = await getSupabaseClient();
+                    const { error } = await client.rpc("save_organization_review", {
+                        p_organization_id: organization.id,
+                        p_status: selectedStatus,
+                        p_message: profileReviewMessage
+                    });
+                    if (error) throw error;
+                } catch (error) {
+                    document.querySelector("#profile-notice").textContent = `Could not save the review or notify the organization: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+                    return;
+                }
                 organization.name = document.querySelector("#profile-name").value.trim();
                 organization.category = document.querySelector("#profile-category").value;
                 organization.level = document.querySelector("#profile-level").value;
                 organization.adviser = document.querySelector("#profile-adviser").value.trim() || "Name to be confirmed";
                 organization.description = document.querySelector("#profile-description").value.trim();
                 organization.status = selectedStatus;
+                if (selectedStatus !== "approved") {
+                    organization.directoryStatus = null;
+                }
                 organization.reviewNote = selectedStatus === "revision"
                     ? revisionMessage
                     : `Profile updated in administrator demo. Status: ${statusName(organization.status)}.`;
@@ -418,11 +501,24 @@
                         organizationId: organization.id
                     });
                 }
-                saveState();
+                if (selectedStatus === "approved") {
+                    window.ISOMSDemoStore.publishOrganization(organization, state.people);
+                }
+                let localSaveError = "";
+                try {
+                    saveState();
+                } catch (error) {
+                    localSaveError = error.message;
+                }
                 render();
                 document.querySelector("#profile-notice").textContent = selectedStatus === "revision"
-                    ? "Revision instructions saved and shown in the organization officer workspace. No email was sent."
-                    : "Organization profile and directory status updated in this browser demo.";
+                    ? "Revision instructions saved and the assigned officer was notified through Supabase."
+                    : selectedStatus === "approved"
+                        ? "Organization profile updated. The officer and assigned advisers were notified that it is registered through Supabase."
+                        : "Organization profile and review status updated. The assigned officer was notified through Supabase.";
+                if (localSaveError) {
+                    document.querySelector("#profile-notice").textContent += ` Supabase was updated, but the local demo copy could not be saved: ${localSaveError}`;
+                }
             });
             document.querySelector("#person-form").addEventListener("submit", (event) => {
                 event.preventDefault();
@@ -465,6 +561,16 @@
             document.querySelector("#print-report").addEventListener("click", () => window.print());
             render();
             app.hidden = false;
+            loadResubmissionNotifications().catch((error) => {
+                document.querySelector("#resubmission-notifications").innerHTML = '<p class="empty">Administrator notifications could not be loaded.</p>';
+                document.querySelector("#resubmission-notice").textContent = `Could not load resubmission notifications: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
+            });
+            window.setInterval(() => {
+                if (document.visibilityState !== "visible") return;
+                loadResubmissionNotifications().catch((error) => {
+                    document.querySelector("#resubmission-notice").textContent = `Could not refresh resubmission notifications: ${error.message}.`;
+                });
+            }, 30000);
         } catch (error) {
             errorBox.textContent = error.message;
             errorBox.hidden = false;
