@@ -1,2 +1,0 @@
-# ISOMS
-SOFT ENG 1&amp;2 CASE STUDY
