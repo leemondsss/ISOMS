@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="site-navigation.js"></script>
     <meta name="theme-color" content="#174d2a">
     <title>ISOMS | Integrated School Organization Management System</title>
     <style>
@@ -143,6 +144,15 @@
         .site-nav .login-link:focus-visible {
             background: #f2c94c;
             color: #174d2a;
+        }
+
+        .site-nav .signout-link {
+            color: #f2c94c;
+        }
+
+        .site-nav .signout-link:hover,
+        .site-nav .signout-link:focus-visible {
+            color: #fff;
         }
 
         .site-nav-chevron {
@@ -371,7 +381,6 @@
         .steps-inner {
             width: min(100%, 1440px);
             margin: 0 auto;
-            transform: translateX(-48px);
         }
 
         .steps-kicker {
@@ -469,7 +478,6 @@
         .organizations-inner {
             width: min(100%, 1440px);
             margin: 0 auto;
-            transform: translateX(-48px);
         }
 
         .organizations-heading {
@@ -574,126 +582,104 @@
         }
 
         .organizations-grid {
-            display: flex;
-            gap: 22px;
-            overflow-x: auto;
-            padding: 34px 2px 12px;
+            display: grid;
+            width: min(100%, 1200px);
+            margin-inline: auto;
+            gap: 14px;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding: 20px 2px 12px;
             scroll-behavior: smooth;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
+            scrollbar-gutter: stable;
         }
 
-        .organizations-grid::-webkit-scrollbar {
-            display: none;
+        @media (prefers-reduced-motion: reduce) {
+            .organizations-grid {
+                scroll-behavior: auto;
+            }
         }
 
         .organization-card {
-            flex: 0 0 calc((100% - 44px) / 3);
-            overflow: hidden;
+            display: grid;
+            grid-template-columns: minmax(130px, 170px) minmax(0, 1fr);
+            align-items: center;
+            gap: clamp(18px, 3vw, 30px);
+            min-height: 156px;
+            padding: 14px clamp(18px, 3vw, 30px);
             border: 1px solid #e5eadf;
-            border-radius: 18px;
+            border-radius: 9px;
             background: #fff;
-            box-shadow: 0 10px 24px rgba(23, 77, 42, 0.07);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
             transition: transform 180ms ease, box-shadow 180ms ease;
-            scroll-snap-align: start;
         }
 
         .organization-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 32px rgba(23, 77, 42, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
         }
 
         .organization-art {
-            position: relative;
-            display: flex;
-            min-height: 176px;
-            align-items: flex-end;
-            overflow: hidden;
-            padding: 20px 22px;
-            background: #174d2a;
-            color: #fff;
-        }
-
-        .organization-art::before,
-        .organization-art::after {
-            position: absolute;
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            border-radius: 50%;
-            content: "";
-        }
-
-        .organization-art::before {
-            top: -74px;
-            right: -24px;
-            width: 240px;
-            height: 240px;
-        }
-
-        .organization-art::after {
-            top: -34px;
-            right: 16px;
-            width: 160px;
-            height: 160px;
-        }
-
-        .organization-art--leadership {
-            background: linear-gradient(135deg, #174d2a, #32814a);
-        }
-
-        .organization-art--academic {
-            background: linear-gradient(135deg, #273d34, #727c42);
-        }
-
-        .organization-art--interest {
-            background: linear-gradient(135deg, #24443b, #31766d);
+            display: grid;
+            min-height: 120px;
+            place-items: center;
+            padding: 6px;
+            border-radius: 8px;
+            background: #fff;
         }
 
         .organization-art-mark {
-            position: absolute;
-            z-index: 1;
-            top: 18px;
-            left: 20px;
-            display: grid;
-            width: 44px;
-            height: 44px;
-            place-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.62);
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.13);
-            color: #f2c94c;
-            font-size: 0.82rem;
-            font-weight: 900;
-            letter-spacing: 0.03em;
-        }
-
-        .organization-art-label {
-            position: relative;
-            z-index: 1;
-            margin: 0;
-            color: rgba(255, 255, 255, 0.82);
-            font-size: 0.7rem;
-            font-weight: 800;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
+            display: block;
+            width: min(100%, 130px);
+            height: 108px;
+            object-fit: contain;
         }
 
         .organization-card-content {
-            padding: 20px 22px 18px;
+            min-width: 0;
         }
 
         .organization-card h3 {
             margin: 0;
             color: #173d27;
-            font-size: 1.08rem;
+            font-size: 1rem;
             letter-spacing: -0.02em;
         }
 
         .organization-card-description {
-            min-height: 66px;
-            margin: 10px 0 18px;
+            max-width: 760px;
+            margin: 6px 0 10px;
             color: #526257;
-            font-size: 0.88rem;
-            line-height: 1.6;
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .organization-card-facts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 7px 18px;
+            margin: 0 0 10px;
+        }
+
+        .organization-card-facts div {
+            min-width: 0;
+        }
+
+        .organization-card-facts dt {
+            margin-bottom: 3px;
+            color: #718076;
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .organization-card-facts dd {
+            margin: 0;
+            color: #34503b;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
         }
 
         .organization-card-footer {
@@ -704,8 +690,12 @@
         }
 
         .organization-tag {
+            display: inline-flex;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #edf4ec;
             color: #1f6b3a;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 800;
             text-transform: uppercase;
         }
@@ -730,45 +720,325 @@
             display: none;
         }
 
-        .organization-carousel-controls {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .organization-carousel-button {
-            display: grid;
-            width: 42px;
-            height: 42px;
-            place-items: center;
-            border: 1px solid #1f6b3a;
-            border-radius: 50%;
-            background: #fff;
-            color: #174d2a;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: background-color 160ms ease, color 160ms ease, opacity 160ms ease;
-        }
-
-        .organization-carousel-button:hover:not(:disabled) {
+        .community-section {
+            padding: clamp(56px, 8vw, 92px) clamp(24px, 7vw, 104px);
             background: #174d2a;
             color: #fff;
         }
 
-        .organization-carousel-button:disabled {
-            cursor: not-allowed;
-            opacity: 0.4;
+        .community-inner {
+            width: min(100%, 1280px);
+            margin: 0 auto;
+        }
+
+        .community-intro {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 0.82fr);
+            align-items: center;
+            gap: clamp(32px, 7vw, 90px);
+        }
+
+        .community-kicker {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0 0 14px;
+            color: #fff2bd;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .community-kicker::before {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #f2c94c;
+            box-shadow: 0 0 0 5px #f2c94c25;
+            content: "";
+        }
+
+        .community-title {
+            max-width: 660px;
+            margin: 0;
+            color: #fff;
+            font-size: clamp(2rem, 4vw, 3.25rem);
+            font-weight: 800;
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+            text-wrap: balance;
+        }
+
+        .community-copy {
+            max-width: 620px;
+            margin: 16px 0 0;
+            color: #e0e9e1;
+            font-size: 0.94rem;
+            line-height: 1.7;
+        }
+
+        .community-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .community-action {
+            display: inline-flex;
+            min-height: 40px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 16px;
+            border: 1px solid #f2c94c;
+            border-radius: 999px;
+            background: #f2c94c;
+            color: #173d27;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .community-action--secondary {
+            border-color: #ffffff70;
+            background: transparent;
+            color: #fff;
+        }
+
+        .community-highlights {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .community-highlight {
+            padding-top: 14px;
+            border-top: 1px solid #ffffff3b;
+        }
+
+        .community-highlight strong {
+            display: block;
+            color: #f2c94c;
+            font-size: 0.84rem;
+        }
+
+        .community-highlight p {
+            margin: 6px 0 0;
+            color: #d6e3d8;
+            font-size: 0.72rem;
+            line-height: 1.5;
+        }
+
+        .community-visual {
+            position: relative;
+            min-height: 270px;
+            border: 1px solid #ffffff40;
+            border-radius: 20px;
+            background:
+                linear-gradient(180deg, #10361f12, #10361f55),
+                url("images/123.png") center / cover no-repeat;
+            box-shadow: 0 20px 44px #071d1180;
+        }
+
+        .community-quote {
+            position: absolute;
+            right: -14px;
+            bottom: 18px;
+            width: min(300px, calc(100% - 24px));
+            margin: 0;
+            padding: 16px 18px;
+            border: 1px solid #ffffff20;
+            border-radius: 13px;
+            background: #10251feF;
+            box-shadow: 0 12px 30px #071d1170;
+            color: #fff;
+        }
+
+        .community-quote-label {
+            margin: 0 0 8px;
+            color: #f2c94c;
+            font-size: 0.68rem;
+            font-weight: 800;
+        }
+
+        .community-quote blockquote {
+            margin: 0;
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.55;
+        }
+
+        .community-quote figcaption {
+            margin-top: 9px;
+            color: #ffffffb8;
+            font-size: 0.66rem;
+        }
+
+        .student-stories {
+            margin-top: clamp(50px, 7vw, 78px);
+        }
+
+        .student-stories-heading {
+            max-width: 700px;
+            margin-bottom: 24px;
+        }
+
+        .student-stories-kicker {
+            margin: 0 0 8px;
+            color: #f2c94c;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .student-stories-title {
+            margin: 0;
+            color: #fff;
+            font-size: clamp(1.7rem, 3.6vw, 2.55rem);
+            letter-spacing: -0.045em;
+            line-height: 1.1;
+            text-wrap: balance;
+        }
+
+        .student-stories-copy {
+            max-width: 480px;
+            margin: 9px 0 0;
+            color: #d6e3d8;
+            font-size: 0.82rem;
+            line-height: 1.55;
+        }
+
+        .community-story-link {
+            flex: 0 0 auto;
+            color: #f2c94c;
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .community-story-link:hover,
+        .community-story-link:focus-visible {
+            color: #fff;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .community-story-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            padding: 0 clamp(0px, 5vw, 58px);
+        }
+
+        .community-story-card {
+            display: flex;
+            min-height: 250px;
+            flex-direction: column;
+            align-items: center;
+            padding: 22px 24px 20px;
+            border: 1px solid #e5eadf;
+            border-radius: 12px;
+            background: #fff;
+            color: #173d27;
+            box-shadow: 0 12px 26px #071d1133;
+            text-align: center;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .community-story-card:hover,
+        .community-story-card:focus-within {
+            transform: scale(1.04);
+            box-shadow: 0 18px 34px #071d1152;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .community-story-card {
+                transition: none;
+            }
+
+            .community-story-card:hover,
+            .community-story-card:focus-within {
+                transform: none;
+            }
+        }
+
+        .community-story-avatar {
+            display: grid;
+            width: 76px;
+            height: 76px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 2px solid #1f6b3a;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #f8e6bb, #d8e6d5);
+            color: #174d2a;
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .community-story-stars {
+            margin: 9px 0 6px;
+            color: #ed9e00;
+            font-size: 1.05rem;
+            letter-spacing: 0.03em;
+            line-height: 1;
+        }
+
+        .community-story-quote {
+            position: relative;
+            margin: 0;
+            color: #283b2e;
+            font-size: 0.78rem;
+            font-weight: 600;
+            line-height: 1.55;
+            text-align: left;
+        }
+
+        .community-story-quote::before {
+            content: "“";
+            position: absolute;
+            top: -10px;
+            left: -12px;
+            color: #174d2a;
+            font-size: 1.35rem;
+            font-weight: 900;
+        }
+
+        .community-story-person {
+            margin: auto 0 0;
+            padding-top: 16px;
+            color: #174d2a;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .community-story-role {
+            margin: 2px 0 0;
+            color: #526257;
+            font-size: 0.68rem;
+        }
+
+        .community-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 26px;
+            padding-top: 18px;
+            border-top: 1px solid #ffffff35;
+            color: #d6e3d8;
+            font-size: 0.7rem;
         }
 
         @media (max-width: 700px) {
             .steps-section {
                 padding-right: 24px;
                 padding-left: 24px;
-            }
-
-            .steps-inner {
-                transform: translateX(-8px);
             }
 
             .hero {
@@ -841,8 +1111,38 @@
                 padding-left: 24px;
             }
 
-            .organizations-inner {
-                transform: translateX(-8px);
+            .community-section {
+                padding-right: 24px;
+                padding-left: 24px;
+            }
+
+            .community-intro {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .community-visual {
+                min-height: 250px;
+                margin-right: 12px;
+            }
+
+            .community-quote {
+                right: -12px;
+            }
+
+            .community-highlights {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .community-story-grid {
+                grid-template-columns: 1fr;
+                padding: 0;
+            }
+
+            .community-footer {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
             .organizations-heading,
@@ -855,27 +1155,72 @@
                 align-self: flex-start;
             }
 
-            .organizations-grid {
-                gap: 16px;
-                padding-top: 26px;
-            }
-
             .organization-card {
-                flex-basis: 100%;
+                grid-template-columns: 82px minmax(0, 1fr);
+                gap: 12px;
+                min-height: 0;
+                padding: 12px;
             }
 
-            .organization-carousel-controls {
-                margin-top: 10px;
+            .organization-art {
+                min-height: 92px;
+            }
+
+            .organization-art-mark {
+                height: 62px;
+            }
+
+            .organization-card h3 {
+                font-size: 0.92rem;
+                line-height: 1.2;
             }
 
             .organization-card-description {
-                min-height: auto;
+                display: -webkit-box;
+                overflow: hidden;
+                margin: 5px 0 8px;
+                font-size: 0.74rem;
+                line-height: 1.4;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
             }
 
+            .organization-card-footer {
+                align-items: center;
+                flex-direction: row;
+                gap: 6px;
+            }
 
+            .organization-tag {
+                padding: 5px 7px;
+                font-size: 0.56rem;
+            }
 
-            .organizations-grid {
-                gap: 16px;
+            .organization-link {
+                padding: 6px 8px;
+                font-size: 0.58rem;
+            }
+
+            .organization-card-facts {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .organization-card-facts div {
+                display: grid;
+                grid-template-columns: 68px minmax(0, 1fr);
+                align-items: baseline;
+                gap: 4px;
+            }
+
+            .organization-card-facts dt {
+                margin: 0;
+                font-size: 0.5rem;
+                white-space: nowrap;
+            }
+
+            .organization-card-facts dd {
+                font-size: 0.65rem;
             }
         }
 
@@ -899,10 +1244,6 @@
             .organizations-section {
                 padding-right: 18px;
                 padding-left: 18px;
-            }
-
-            .organizations-inner {
-                transform: translateX(-8px);
             }
 
             .brand {
@@ -1019,108 +1360,189 @@
                         <button class="organization-filter" type="button" data-organization-filter="academic" aria-pressed="false">Academic</button>
                         <button class="organization-filter" type="button" data-organization-filter="interest" aria-pressed="false">Special interest</button>
                     </div>
-                    <p class="organizations-count">6 featured groups <span aria-hidden="true">·</span> One campus community</p>
+                    <p class="organizations-count">5 featured groups <span aria-hidden="true">·</span> One campus community</p>
                 </div>
 
-                <div class="organizations-grid" id="organization-cards" role="region" aria-label="Featured student organizations" tabindex="0">
-                    <article class="organization-card" data-organization-category="leadership">
+                <div class="organizations-grid" id="organization-cards" role="region" aria-label="Featured student organizations, scrollable list showing up to three at a time" tabindex="0">
+                    <article class="organization-card" data-organization-id="ssc" data-organization-category="leadership">
                         <div class="organization-art organization-art--leadership">
-                            <span class="organization-art-mark" aria-hidden="true">SSC</span>
-                            <p class="organization-art-label">Lead with purpose</p>
+                            <img class="organization-art-mark" src="images/ssc-logo.png" alt="" aria-hidden="true">
                         </div>
                         <div class="organization-card-content">
-                            <h3>Supreme Student Council</h3>
-                            <p class="organization-card-description">Represent student voices, champion campus initiatives, and help shape a more connected school community.</p>
+                            <h3 data-org-name>Supreme Student Council</h3>
+                            <p class="organization-card-description" data-org-description>Represent student voices, champion campus initiatives, and help shape a more connected school community.</p>
+                            <dl class="organization-card-facts">
+                                <div><dt>Adviser</dt><dd data-org-adviser>Not yet listed</dd></div>
+                                <div><dt>President</dt><dd data-org-president>Not yet listed</dd></div>
+                                <div><dt>Vice President</dt><dd data-org-vice-president>Not yet listed</dd></div>
+                                <div><dt>Department</dt><dd data-org-department>Not yet listed</dd></div>
+                            </dl>
                             <div class="organization-card-footer">
-                                <span class="organization-tag">Leadership</span>
+                                <span class="organization-tag" data-org-category>Leadership</span>
                                 <a class="organization-link" href="organizations.html#ssc">LEARN MORE <span aria-hidden="true">→</span></a>
                             </div>
                         </div>
                     </article>
 
-                    <article class="organization-card" data-organization-category="academic">
+                    <article class="organization-card" data-organization-id="sslg" data-organization-category="academic">
                         <div class="organization-art organization-art--academic">
-                            <span class="organization-art-mark" aria-hidden="true">SSLG</span>
-                            <p class="organization-art-label">Grow together</p>
+                            <img class="organization-art-mark" src="images/sslg-logo.png" alt="" aria-hidden="true">
                         </div>
                         <div class="organization-card-content">
-                            <h3>Supreme Secondary Learner Government</h3>
-                            <p class="organization-card-description">Work with fellow learners to plan meaningful activities and bring your ideas to the wider school community.</p>
+                            <h3 data-org-name>Supreme Student Learner's Government</h3>
+                            <p class="organization-card-description" data-org-description>Work with fellow learners to plan meaningful activities and bring your ideas to the wider school community.</p>
+                            <dl class="organization-card-facts">
+                                <div><dt>Adviser</dt><dd data-org-adviser>Not yet listed</dd></div>
+                                <div><dt>President</dt><dd data-org-president>Not yet listed</dd></div>
+                                <div><dt>Vice President</dt><dd data-org-vice-president>Not yet listed</dd></div>
+                                <div><dt>Department</dt><dd data-org-department>Not yet listed</dd></div>
+                            </dl>
                             <div class="organization-card-footer">
-                                <span class="organization-tag">Academic</span>
+                                <span class="organization-tag" data-org-category>Leadership</span>
                                 <a class="organization-link" href="organizations.html#sslg">LEARN MORE <span aria-hidden="true">→</span></a>
                             </div>
                         </div>
                     </article>
 
-                    <article class="organization-card" data-organization-category="interest">
+                    <article class="organization-card" data-organization-id="css" data-organization-category="academic">
                         <div class="organization-art organization-art--interest">
-                            <span class="organization-art-mark" aria-hidden="true">RSO</span>
-                            <p class="organization-art-label">Find your community</p>
+                            <img class="organization-art-mark" src="images/css-logo.png" alt="" aria-hidden="true">
                         </div>
                         <div class="organization-card-content">
-                            <h3>Recognized Student Organizations</h3>
-                            <p class="organization-card-description">Connect through shared interests, develop new skills, and turn your passion into campus activities.</p>
+                            <h3 data-org-name>Computer Science Society</h3>
+                            <p class="organization-card-description" data-org-description>Build computing skills, explore technology, and collaborate with fellow computer science students.</p>
+                            <dl class="organization-card-facts">
+                                <div><dt>Adviser</dt><dd data-org-adviser>Not yet listed</dd></div>
+                                <div><dt>President</dt><dd data-org-president>Not yet listed</dd></div>
+                                <div><dt>Vice President</dt><dd data-org-vice-president>Not yet listed</dd></div>
+                                <div><dt>Department</dt><dd data-org-department>Not yet listed</dd></div>
+                            </dl>
                             <div class="organization-card-footer">
-                                <span class="organization-tag">Special interest</span>
-                                <a class="organization-link" href="organizations.html#rso">LEARN MORE <span aria-hidden="true">→</span></a>
+                                <span class="organization-tag" data-org-category>Academic</span>
+                                <a class="organization-link" href="organizations.html#css">LEARN MORE <span aria-hidden="true">→</span></a>
                             </div>
                         </div>
                     </article>
 
-                    <article class="organization-card" data-organization-category="interest">
+                    <article class="organization-card" data-organization-id="ufcym" data-organization-category="interest">
                         <div class="organization-art organization-art--leadership">
-                            <span class="organization-art-mark" aria-hidden="true">UVC</span>
-                            <p class="organization-art-label">Make an impact</p>
+                            <img class="organization-art-mark" src="images/ufcym-logo.png" alt="" aria-hidden="true">
                         </div>
                         <div class="organization-card-content">
-                            <h3>UVC</h3>
-                            <p class="organization-card-description">Connect with fellow members, take part in campus activities, and contribute your ideas to the community.</p>
+                            <h3 data-org-name>UPang Flames Campus Youth Ministry</h3>
+                            <p class="organization-card-description" data-org-description>Build community through faith, service, and campus activities.</p>
+                            <dl class="organization-card-facts">
+                                <div><dt>Adviser</dt><dd data-org-adviser>Not yet listed</dd></div>
+                                <div><dt>President</dt><dd data-org-president>Not yet listed</dd></div>
+                                <div><dt>Vice President</dt><dd data-org-vice-president>Not yet listed</dd></div>
+                                <div><dt>Department</dt><dd data-org-department>Not yet listed</dd></div>
+                            </dl>
                             <div class="organization-card-footer">
-                                <span class="organization-tag">Special interest</span>
+                                <span class="organization-tag" data-org-category>Special interest</span>
+                                <a class="organization-link" href="organizations.html#ufcym">LEARN MORE <span aria-hidden="true">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="organization-card" data-organization-id="uvc" data-organization-category="interest">
+                        <div class="organization-art organization-art--academic">
+                            <img class="organization-art-mark" src="images/uvc-logo.png" alt="" aria-hidden="true">
+                        </div>
+                        <div class="organization-card-content">
+                            <h3 data-org-name>University Volunteer Corps</h3>
+                            <p class="organization-card-description" data-org-description>Serve the campus community through volunteerism, outreach, and student-led initiatives.</p>
+                            <dl class="organization-card-facts">
+                                <div><dt>Adviser</dt><dd data-org-adviser>Not yet listed</dd></div>
+                                <div><dt>President</dt><dd data-org-president>Not yet listed</dd></div>
+                                <div><dt>Vice President</dt><dd data-org-vice-president>Not yet listed</dd></div>
+                                <div><dt>Department</dt><dd data-org-department>Not yet listed</dd></div>
+                            </dl>
+                            <div class="organization-card-footer">
+                                <span class="organization-tag" data-org-category>Special interest</span>
                                 <a class="organization-link" href="organizations.html#uvc">LEARN MORE <span aria-hidden="true">→</span></a>
                             </div>
                         </div>
                     </article>
+                </div>
+            </div>
+        </section>
 
-                    <article class="organization-card" data-organization-category="interest">
-                        <div class="organization-art organization-art--academic">
-                            <span class="organization-art-mark" aria-hidden="true">TNT</span>
-                            <p class="organization-art-label">Ideas into action</p>
+        <section class="community-section" aria-labelledby="community-title">
+            <div class="community-inner">
+                <div class="community-intro">
+                    <div class="community-copy-column">
+                        <p class="community-kicker">What we do</p>
+                        <h2 class="community-title" id="community-title">We create opportunities for students to grow, lead, connect, and serve.</h2>
+                        <p class="community-copy">Through student organizations, campus activities, and shared experiences, students can find their community, develop their strengths, and help make campus life better.</p>
+                        <div class="community-actions">
+                            <a class="community-action" href="organizations.html">Explore organizations <span aria-hidden="true">→</span></a>
+                            <a class="community-action community-action--secondary" href="advisers.html">Meet the advisers <span aria-hidden="true">↗</span></a>
                         </div>
-                        <div class="organization-card-content">
-                            <h3>TNT</h3>
-                            <p class="organization-card-description">Meet students with shared interests and work together on activities that bring energy to campus life.</p>
-                            <div class="organization-card-footer">
-                                <span class="organization-tag">Special interest</span>
-                                <a class="organization-link" href="organizations.html#tnt">LEARN MORE <span aria-hidden="true">→</span></a>
+                        <div class="community-highlights" aria-label="Ways to get involved">
+                            <div class="community-highlight">
+                                <strong>Find your community</strong>
+                                <p>Explore student groups across leadership, academics, and special interests.</p>
+                            </div>
+                            <div class="community-highlight">
+                                <strong>Grow through leadership</strong>
+                                <p>Build confidence by sharing ideas and taking part in student-led initiatives.</p>
+                            </div>
+                            <div class="community-highlight">
+                                <strong>Make a difference</strong>
+                                <p>Connect with classmates through service, events, and campus activities.</p>
                             </div>
                         </div>
-                    </article>
+                    </div>
+                    <div class="community-visual" role="img" aria-label="University of Pangasinan campus">
+                        <figure class="community-quote">
+                            <p class="community-quote-label">Student voice</p>
+                            <blockquote>“Leadership is not about standing above others; it is about standing with them, listening to their voices, and working together to create a better school community.”</blockquote>
+                            <figcaption>— Erica Mae F., SSC President</figcaption>
+                        </figure>
+                    </div>
+                </div>
 
-                    <article class="organization-card" data-organization-category="interest">
-                        <div class="organization-art organization-art--interest">
-                            <span class="organization-art-mark" aria-hidden="true">DG</span>
-                            <p class="organization-art-label">Together, we grow</p>
-                        </div>
-                        <div class="organization-card-content">
-                            <h3>DANGAT</h3>
-                            <p class="organization-card-description">Build connections, share your perspectives, and get involved in opportunities across the school community.</p>
-                            <div class="organization-card-footer">
-                                <span class="organization-tag">Special interest</span>
-                                <a class="organization-link" href="organizations.html#dangat">LEARN MORE <span aria-hidden="true">→</span></a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <div class="organization-carousel-controls" role="group" aria-label="Organization carousel controls">
-                    <button class="organization-carousel-button" type="button" data-carousel-direction="left" aria-label="Previous organizations" disabled>←</button>
-                    <button class="organization-carousel-button" type="button" data-carousel-direction="right" aria-label="Next organizations">→</button>
-                </div>
+                <section class="student-stories" aria-labelledby="student-stories-title">
+                    <div class="student-stories-heading">
+                        <p class="student-stories-kicker">Student stories</p>
+                        <h2 class="student-stories-title" id="student-stories-title">Real voices from students who found their place</h2>
+                        <p class="student-stories-copy">Hear from students who turned involvement into leadership, friendship, and a stronger sense of belonging.</p>
+                    </div>
+
+                    <div class="community-story-grid">
+                        <article class="community-story-card">
+                            <div class="community-story-avatar" aria-hidden="true">JD</div>
+                            <p class="community-story-stars" aria-label="5 out of 5 stars">★★★★★</p>
+                            <blockquote class="community-story-quote">Joining student events and committees helped me build friendships, find my voice, and feel more connected to our campus.</blockquote>
+                            <p class="community-story-person">Jane Dedeles</p>
+                            <p class="community-story-role">SSC President</p>
+                        </article>
+                        <article class="community-story-card">
+                            <div class="community-story-avatar" aria-hidden="true">CG</div>
+                            <p class="community-story-stars" aria-label="5 out of 5 stars">★★★★★</p>
+                            <blockquote class="community-story-quote">Being part of a student organization helped me grow in confidence, improve my speaking skills, and connect with people who share my interests.</blockquote>
+                            <p class="community-story-person">Camille Gooch</p>
+                            <p class="community-story-role">SSC Vice President</p>
+                        </article>
+                        <article class="community-story-card">
+                            <div class="community-story-avatar" aria-hidden="true">RD</div>
+                            <p class="community-story-stars" aria-label="5 out of 5 stars">★★★★★</p>
+                            <blockquote class="community-story-quote">Transparent processes build trust and make student representation stronger across our councils and learner government.</blockquote>
+                            <p class="community-story-person">Rhayne Dalmacio</p>
+                            <p class="community-story-role">SSLG Vice President</p>
+                        </article>
+                    </div>
+
+                    <div class="community-footer">
+                        <span>5 organizations · One campus community</span>
+                        <a class="community-story-link" href="organizations.html">Explore organizations <span aria-hidden="true">→</span></a>
+                    </div>
+                </section>
             </div>
         </section>
     </main>
 
+    <script src="demo-data.js"></script>
     <script>
         const hero = document.querySelector(".hero");
         const topbar = document.querySelector(".topbar");
@@ -1165,29 +1587,119 @@
 
         const organizationFilters = document.querySelectorAll("[data-organization-filter]");
         const organizationCards = document.querySelectorAll("[data-organization-category]");
-        const organizationCarousel = document.querySelector("#organization-cards");
-        const carouselButtons = document.querySelectorAll("[data-carousel-direction]");
+        const organizationList = document.querySelector("#organization-cards");
+        const organizationsCount = document.querySelector(".organizations-count");
 
-        const updateCarouselButtons = () => {
-            carouselButtons.forEach((button) => {
-                button.disabled = button.dataset.carouselDirection === "left"
-                    ? organizationCarousel.scrollLeft <= 0
-                    : organizationCarousel.scrollLeft + organizationCarousel.clientWidth >= organizationCarousel.scrollWidth - 1;
-            });
+        const isDisplayablePerson = (person) => person?.name
+            && !/^demo\b.*placeholder/i.test(person.name.trim());
+
+        const organizationCategoryFilter = (category) => {
+            const normalizedCategory = String(category || "").toLowerCase();
+            if (normalizedCategory === "leadership") return "leadership";
+            if (normalizedCategory === "academic") return "academic";
+            return "interest";
         };
 
-        carouselButtons.forEach((button) => {
-            button.addEventListener("click", () => {
-                const direction = button.dataset.carouselDirection === "left" ? -1 : 1;
-                organizationCarousel.scrollBy({
-                    left: direction * organizationCarousel.clientWidth,
-                    behavior: "smooth"
+        const defaultOrganizationLogos = {
+            ssc: "images/ssc-logo.png",
+            sslg: "images/sslg-logo.png",
+            css: "images/css-logo.png",
+            ufcym: "images/ufcym-logo.png",
+            uvc: "images/uvc-logo.png"
+        };
+        let sharedCouncilByOrganization = new Map();
+
+        const renderFeaturedOrganizations = () => {
+            const state = window.ISOMSDemoStore.load();
+            const approvedOrganizations = state.organizations.filter((organization) =>
+                (organization.directoryStatus === undefined ? organization.status : organization.directoryStatus) === "approved"
+            );
+
+            organizationCards.forEach((card) => {
+                const organization = approvedOrganizations.find((item) => item.id === card.dataset.organizationId);
+                card.hidden = !organization;
+                card.dataset.directoryApproved = String(Boolean(organization));
+                if (!organization) return;
+
+                const profile = organization.publishedProfile
+                    ? { ...organization, ...organization.publishedProfile }
+                    : organization;
+                const logoUrl = typeof profile.logoUrl === "string" && /^(https:\/\/|images\/)/i.test(profile.logoUrl)
+                    ? profile.logoUrl
+                    : defaultOrganizationLogos[organization.id];
+                if (logoUrl) card.querySelector(".organization-art-mark").src = logoUrl;
+                const people = sharedCouncilByOrganization.get(organization.id)
+                    || (Array.isArray(organization.publishedProfile?.people)
+                        ? organization.publishedProfile.people.filter(isDisplayablePerson)
+                        : []);
+                const officers = people.filter((person) => person.group === "Officer").length
+                    ? people.filter((person) => person.group === "Officer")
+                    : (profile.executiveOfficers || profile.officers || []).filter(isDisplayablePerson);
+                const advisers = people.filter((person) => person.group === "Adviser").length
+                    ? people.filter((person) => person.group === "Adviser")
+                    : (profile.advisers || []).filter(isDisplayablePerson);
+                const president = officers.find((person) =>
+                    /president/i.test(person.role || "") && !/vice|assistant|deputy/i.test(person.role || "")
+                );
+                const vicePresident = officers.find((person) =>
+                    /vice[\s-]*president/i.test(person.role || "")
+                );
+                const adviserName = advisers[0]?.name
+                    || (profile.adviser && !/^names? to be confirmed$/i.test(profile.adviser) ? profile.adviser : "");
+                const category = profile.category || "Special interest";
+
+                card.dataset.organizationCategory = organizationCategoryFilter(category);
+                card.querySelector("[data-org-name]").textContent = profile.name || organization.name;
+                card.querySelector("[data-org-description]").textContent = profile.description || "Organization overview has not been added yet.";
+                card.querySelector("[data-org-category]").textContent = category;
+                card.querySelector("[data-org-adviser]").textContent = adviserName || "Not yet listed";
+                card.querySelector("[data-org-president]").textContent = president?.name || "Not yet listed";
+                card.querySelector("[data-org-vice-president]").textContent = vicePresident?.name || "Not yet listed";
+                card.querySelector("[data-org-department]").textContent = profile.department || "Not yet listed";
+            });
+
+            organizationsCount.textContent = approvedOrganizations.length
+                ? `${approvedOrganizations.length} approved groups · One campus community`
+                : "No organizations are currently approved for the directory.";
+        };
+
+        window.updateSharedOrganizationCouncil = (records) => {
+            sharedCouncilByOrganization = new Map();
+            records.forEach((person) => {
+                if (!sharedCouncilByOrganization.has(person.organization_id)) {
+                    sharedCouncilByOrganization.set(person.organization_id, []);
+                }
+                sharedCouncilByOrganization.get(person.organization_id).push({
+                    name: person.name,
+                    role: person.role,
+                    group: person.person_type
                 });
             });
-        });
+            renderFeaturedOrganizations();
+            applyOrganizationFilter(document.querySelector("[data-organization-filter][aria-pressed='true']").dataset.organizationFilter);
+        };
 
-        organizationCarousel.addEventListener("scroll", updateCarouselButtons);
-        window.addEventListener("resize", updateCarouselButtons);
+        const updateOrganizationListHeight = () => {
+            const visibleCards = [...organizationCards].filter((card) => !card.hidden);
+            const visibleCardsHeight = visibleCards
+                .slice(0, 3)
+                .reduce((height, card) => height + card.getBoundingClientRect().height, 0);
+            const styles = getComputedStyle(organizationList);
+            const verticalPadding = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
+            const rowGap = parseFloat(styles.rowGap);
+            const gapsHeight = Math.max(0, Math.min(visibleCards.length, 3) - 1) * rowGap;
+
+            organizationList.style.maxHeight = `${visibleCardsHeight + gapsHeight + verticalPadding}px`;
+        };
+
+        const applyOrganizationFilter = (category) => {
+            organizationCards.forEach((card) => {
+                card.hidden = card.dataset.directoryApproved !== "true"
+                    || category !== "all" && card.dataset.organizationCategory !== category;
+            });
+            organizationList.scrollTop = 0;
+            updateOrganizationListHeight();
+        };
 
         organizationFilters.forEach((filter) => {
             filter.addEventListener("click", () => {
@@ -1197,15 +1709,47 @@
                     organizationFilter.setAttribute("aria-pressed", String(organizationFilter === filter));
                 });
 
-                organizationCards.forEach((card) => {
-                    card.hidden = category !== "all" && card.dataset.organizationCategory !== category;
-                });
-                organizationCarousel.scrollTo({ left: 0, behavior: "smooth" });
-                updateCarouselButtons();
+                applyOrganizationFilter(category);
             });
         });
 
-        updateCarouselButtons();
+        try {
+            renderFeaturedOrganizations();
+            applyOrganizationFilter(document.querySelector("[data-organization-filter][aria-pressed='true']").dataset.organizationFilter);
+        } catch (error) {
+            console.error("Could not load approved organization profiles for the homepage.", error);
+            organizationsCount.textContent = `Organization details could not be loaded: ${error.message}`;
+        }
+
+        window.addEventListener("resize", updateOrganizationListHeight);
+        window.addEventListener("storage", (event) => {
+            if (event.key !== "isoms-demo-workspace-v1") return;
+            try {
+                renderFeaturedOrganizations();
+                applyOrganizationFilter(document.querySelector("[data-organization-filter][aria-pressed='true']").dataset.organizationFilter);
+            } catch (error) {
+                console.error("Could not refresh approved organization profiles for the homepage.", error);
+                organizationsCount.textContent = `Organization details could not be refreshed: ${error.message}`;
+            }
+        });
+        updateOrganizationListHeight();
+    </script>
+    <script type="module">
+        import { getSupabaseClient } from "./supabase.js";
+
+        try {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_directory_people")
+                .select("organization_id, person_type, sort_order, name, role")
+                .order("organization_id")
+                .order("person_type")
+                .order("sort_order");
+            if (error) throw error;
+            window.updateSharedOrganizationCouncil(data || []);
+        } catch (error) {
+            console.error("Could not load shared organization councils for the homepage.", error);
+            organizationsCount.textContent = `Shared executive councils could not be loaded: ${error.message}. Showing this browser's saved council details.`;
+        }
     </script>
 </body>
 

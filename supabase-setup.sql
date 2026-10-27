@@ -322,6 +322,388 @@ create policy "Assigned officers can remove their uploaded documents"
         )
     );
 
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+    'isoms-organization-media',
+    'isoms-organization-media',
+    true,
+    5242880,
+    array['image/jpeg', 'image/png', 'image/webp']
+)
+on conflict (id) do update
+set public = true,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Public can view organization media" on storage.objects;
+create policy "Public can view organization media"
+    on storage.objects
+    for select
+    to public
+    using (bucket_id = 'isoms-organization-media');
+
+drop policy if exists "Assigned officers can upload organization media" on storage.objects;
+create policy "Assigned officers can upload organization media"
+    on storage.objects
+    for insert
+    to authenticated
+    with check (
+        bucket_id = 'isoms-organization-media'
+        and (storage.foldername(name))[2] = (select auth.uid())::text
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower((storage.foldername(name))[1])
+        )
+    );
+
+drop policy if exists "Assigned officers can remove organization media" on storage.objects;
+create policy "Assigned officers can remove organization media"
+    on storage.objects
+    for delete
+    to authenticated
+    using (
+        bucket_id = 'isoms-organization-media'
+        and (storage.foldername(name))[2] = (select auth.uid())::text
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower((storage.foldername(name))[1])
+        )
+    );
+
+create or replace function public.is_organization_directory_approved(p_organization_id text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+    select exists (
+        select 1
+        from public.organization_reviews
+        where lower(organization_id) = lower(p_organization_id)
+          and status = 'approved'
+    );
+$$;
+
+revoke all on function public.is_organization_directory_approved(text) from public;
+grant execute on function public.is_organization_directory_approved(text) to anon, authenticated;
+
+create table if not exists public.organization_media (
+    id uuid primary key default gen_random_uuid(),
+    organization_id text not null check (length(trim(organization_id)) between 1 and 100),
+    media_type text not null check (media_type in ('logo', 'achievement', 'gallery')),
+    sort_order smallint not null default 0 check (sort_order between 0 and 2),
+    title text not null check (length(trim(title)) between 1 and 120),
+    description text not null default '' check (length(description) <= 300),
+    category text not null default '' check (length(category) <= 80),
+    photo_url text not null check (photo_url like 'https://%'),
+    storage_path text not null unique,
+    file_name text not null check (length(trim(file_name)) between 1 and 255),
+    uploaded_by uuid not null references auth.users(id),
+    updated_at timestamptz not null default now(),
+    unique (organization_id, media_type, sort_order),
+    check (media_type <> 'logo' or sort_order = 0)
+);
+
+create index if not exists organization_media_org_type_order_idx
+    on public.organization_media (organization_id, media_type, sort_order);
+
+alter table public.organization_media enable row level security;
+
+drop policy if exists "Public can view approved organization media" on public.organization_media;
+create policy "Public can view approved organization media"
+    on public.organization_media
+    for select
+    to anon, authenticated
+    using (public.is_organization_directory_approved(organization_id));
+
+drop policy if exists "Organization officers can view their organization media" on public.organization_media;
+create policy "Organization officers can view their organization media"
+    on public.organization_media
+    for select
+    to authenticated
+    using (
+        (select public.is_isoms_admin())
+        or exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_media.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can add organization media metadata" on public.organization_media;
+create policy "Assigned officers can add organization media metadata"
+    on public.organization_media
+    for insert
+    to authenticated
+    with check (
+        uploaded_by = (select auth.uid())
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_media.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can update organization media metadata" on public.organization_media;
+create policy "Assigned officers can update organization media metadata"
+    on public.organization_media
+    for update
+    to authenticated
+    using (
+        exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_media.organization_id)
+        )
+    )
+    with check (
+        uploaded_by = (select auth.uid())
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_media.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can delete organization media metadata" on public.organization_media;
+create policy "Assigned officers can delete organization media metadata"
+    on public.organization_media
+    for delete
+    to authenticated
+    using (
+        exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_media.organization_id)
+        )
+    );
+
+grant select on public.organization_media to anon, authenticated;
+grant insert, update, delete on public.organization_media to authenticated;
+
+create table if not exists public.organization_directory_people (
+    id uuid primary key default gen_random_uuid(),
+    organization_id text not null check (length(trim(organization_id)) between 1 and 100),
+    person_type text not null check (person_type in ('Officer', 'Adviser')),
+    sort_order integer not null check (sort_order >= 0),
+    name text not null check (length(trim(name)) between 1 and 160),
+    role text not null default '' check (length(role) <= 120),
+    photo_url text,
+    photo_storage_path text,
+    photo_file_name text,
+    uploaded_by uuid not null references auth.users(id),
+    updated_at timestamptz not null default now(),
+    unique (organization_id, person_type, sort_order)
+);
+
+alter table public.organization_directory_people
+    add column if not exists photo_url text,
+    add column if not exists photo_storage_path text,
+    add column if not exists photo_file_name text;
+
+alter table public.organization_directory_people
+    drop constraint if exists organization_directory_people_photo_pair_check;
+alter table public.organization_directory_people
+    add constraint organization_directory_people_photo_pair_check
+    check ((photo_url is null) = (photo_storage_path is null));
+
+create index if not exists organization_directory_people_org_type_order_idx
+    on public.organization_directory_people (organization_id, person_type, sort_order);
+
+alter table public.organization_directory_people enable row level security;
+
+drop policy if exists "Public can view approved organization council" on public.organization_directory_people;
+create policy "Public can view approved organization council"
+    on public.organization_directory_people
+    for select
+    to anon, authenticated
+    using (public.is_organization_directory_approved(organization_id));
+
+drop policy if exists "Assigned officers can view their organization council" on public.organization_directory_people;
+create policy "Assigned officers can view their organization council"
+    on public.organization_directory_people
+    for select
+    to authenticated
+    using (
+        (select public.is_isoms_admin())
+        or exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_people.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can add organization council members" on public.organization_directory_people;
+create policy "Assigned officers can add organization council members"
+    on public.organization_directory_people
+    for insert
+    to authenticated
+    with check (
+        uploaded_by = (select auth.uid())
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_people.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can update organization council members" on public.organization_directory_people;
+create policy "Assigned officers can update organization council members"
+    on public.organization_directory_people
+    for update
+    to authenticated
+    using (
+        exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_people.organization_id)
+        )
+    )
+    with check (
+        uploaded_by = (select auth.uid())
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_people.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can delete organization council members" on public.organization_directory_people;
+create policy "Assigned officers can delete organization council members"
+    on public.organization_directory_people
+    for delete
+    to authenticated
+    using (
+        exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_people.organization_id)
+        )
+    );
+
+grant select on public.organization_directory_people to anon, authenticated;
+grant insert, update, delete on public.organization_directory_people to authenticated;
+
+create table if not exists public.organization_directory_profiles (
+    organization_id text primary key check (length(trim(organization_id)) between 1 and 100),
+    mission text not null check (length(trim(mission)) between 1 and 1000),
+    vision text not null check (length(trim(vision)) between 1 and 1000),
+    updated_by uuid not null references auth.users(id),
+    updated_at timestamptz not null default now()
+);
+
+alter table public.organization_directory_profiles enable row level security;
+
+drop policy if exists "Public can view approved organization profiles" on public.organization_directory_profiles;
+create policy "Public can view approved organization profiles"
+    on public.organization_directory_profiles
+    for select
+    to anon, authenticated
+    using (public.is_organization_directory_approved(organization_id));
+
+drop policy if exists "Assigned officers can view their organization profile" on public.organization_directory_profiles;
+create policy "Assigned officers can view their organization profile"
+    on public.organization_directory_profiles
+    for select
+    to authenticated
+    using (
+        (select public.is_isoms_admin())
+        or exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_profiles.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can add their organization profile" on public.organization_directory_profiles;
+create policy "Assigned officers can add their organization profile"
+    on public.organization_directory_profiles
+    for insert
+    to authenticated
+    with check (
+        updated_by = (select auth.uid())
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_profiles.organization_id)
+        )
+    );
+
+drop policy if exists "Assigned officers can update their organization profile" on public.organization_directory_profiles;
+create policy "Assigned officers can update their organization profile"
+    on public.organization_directory_profiles
+    for update
+    to authenticated
+    using (
+        exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_profiles.organization_id)
+        )
+    )
+    with check (
+        updated_by = (select auth.uid())
+        and exists (
+            select 1
+            from public.profiles
+            where id = (select auth.uid())
+              and role = 'officer'
+              and account_status = 'active'
+              and lower(organization_id) = lower(organization_directory_profiles.organization_id)
+        )
+    );
+
+grant select on public.organization_directory_profiles to anon, authenticated;
+grant insert, update on public.organization_directory_profiles to authenticated;
+
 create table if not exists public.organization_document_comments (
     id uuid primary key default gen_random_uuid(),
     document_id uuid not null references public.organization_documents(id) on delete cascade,

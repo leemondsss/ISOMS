@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="site-navigation.js"></script>
     <meta name="theme-color" content="#174d2a">
     <script>document.documentElement.classList.add("access-checking");</script>
     <script type="module" src="access-control.js"></script>
@@ -104,6 +105,7 @@
     <script src="demo-data.js"></script>
     <script type="module">
         import { getSupabaseClient } from "./supabase.js";
+        import { showToast } from "./toast.js";
 
         const errorBox = document.querySelector("#workspace-error");
         const workspace = document.querySelector("#workspace");
@@ -223,6 +225,7 @@
                 ISOMSDemoStore.save(state);
                 render();
                 document.querySelector("#adviser-notice").textContent = "Adviser review marked complete in the shared browser demo. Administrator review is still separate.";
+                showToast("Review marked complete!");
             });
             document.querySelector("#document-list").addEventListener("submit", async (event) => {
                 const commentForm = event.target.closest("[data-document-comment]");
@@ -239,6 +242,7 @@
                     });
                     if (error) throw error;
                     document.querySelector("#document-notice").textContent = "Comment sent to the organization officer.";
+                    showToast("Comment sent successfully!");
                     await loadStoredDocuments();
                 } catch (error) {
                     document.querySelector("#document-notice").textContent = `Could not send the comment: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
@@ -254,6 +258,7 @@
                 ISOMSDemoStore.save(state);
                 render();
                 document.querySelector("#adviser-notice").textContent = "Marked as needing revision in this browser demo. No message was sent to the officer.";
+                showToast("Organization marked as needing revision.");
             });
             document.querySelector("#mark-adviser-notifications-read").addEventListener("click", async () => {
                 const unreadIds = registrationNotifications.filter((item) => !item.read_at).map((item) => item.id);
@@ -271,6 +276,7 @@
                     if (error) throw error;
                     await loadRegistrationNotifications();
                     document.querySelector("#adviser-notification-notice").textContent = "Registration notifications marked as read.";
+                    showToast("Notifications marked as read.");
                 } catch (error) {
                     document.querySelector("#adviser-notification-notice").textContent = `Could not mark notifications as read: ${error.message}. Run the latest supabase-setup.sql in Supabase.`;
                 }

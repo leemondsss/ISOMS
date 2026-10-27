@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./supabase.js";
+import { showToast } from "./toast.js";
 
 const rows = document.querySelector("#account-rows");
 const notice = document.querySelector("#accounts-notice");
@@ -120,6 +121,7 @@ rows.addEventListener("click", async (event) => {
             .eq("id", id);
         if (error) throw error;
         showNotice("Account role, organization assignment, and approval status saved.");
+        showToast("Account access saved successfully!");
         await loadAccounts();
     } catch (error) {
         showNotice(error.message || "Could not update account access.", true);
@@ -177,6 +179,7 @@ passwordForm.addEventListener("submit", async (event) => {
         selectedAccount = null;
         passwordForm.reset();
         showNotice(`Temporary password set for ${accountName}. Share it privately; the account holder must create a new password at their next sign-in.`);
+        showToast("Temporary password set successfully.");
     } catch (error) {
         showNotice(error.message || "Could not set the temporary password. Confirm the Supabase Edge Function is deployed.", true);
     } finally {

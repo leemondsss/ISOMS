@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="site-navigation.js"></script>
     <meta name="theme-color" content="#174d2a">
     <title>Workspace Sign In | ISOMS</title>
     <style>
@@ -482,6 +483,7 @@
     <script type="module">
         import { getSupabaseClient } from "./supabase.js";
         import { completeTemporaryPasswordChange, loginUser, logoutUser, registerUser, sendPasswordReset, updatePassword } from "./auth.js";
+        import { showToast } from "./toast.js";
 
         const workspaceByRole = {
             administrator: "admin.html",
@@ -568,6 +570,7 @@
             try {
                 await sendPasswordReset(email);
                 showMessage("If an account uses that email, Supabase will send a password-reset link. Check your inbox and spam folder.", "success");
+                showToast("Password reset request sent successfully.");
             } catch (error) {
                 showMessage(error.message || "Could not request a password reset.");
             } finally {
@@ -672,6 +675,7 @@
                     authForm.reset();
                     setSignUpMode(false);
                     showMessage("Password updated. Sign in using your new password.", "success");
+                    showToast("Password updated successfully!");
                     return;
                 }
 
@@ -679,6 +683,7 @@
                     const registration = await registerUser(email, password, displayNameInput.value.trim());
                     if (registration.session) await logoutUser();
                     showMessage("Account created. Check your email if confirmation is required. Your workspace access will be available after administrator approval and role assignment.", "success");
+                    showToast("Account created successfully!");
                     authForm.reset();
                     return;
                 }

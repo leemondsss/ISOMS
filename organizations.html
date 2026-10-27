@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="site-navigation.js"></script>
     <meta name="theme-color" content="#174d2a">
     <title>Organization Directory | ISOMS</title>
     <style>
@@ -13,11 +14,11 @@
             --ink: #173d27;
             --muted: #526257;
             --line: #e5eadf;
-            --night: #101a23;
-            --night-card: #17232e;
+            --night: #fff;
+            --night-card: #f7f9f5;
         }
         * { box-sizing: border-box; }
-        body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--night); color: #fff; font-family: Arial, Helvetica, sans-serif; }
+        body { min-width: 320px; min-height: 100vh; margin: 0; background: #fff; color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
         .header { display: flex; min-height: 70px; align-items: center; justify-content: space-between; gap: 20px; padding: 12px clamp(20px, 7vw, 104px); background: var(--green); color: #fff; }
         .brand { display: inline-flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
         .brand-mark { display: grid; width: 46px; height: 46px; place-items: center; border: 1px solid rgba(255,255,255,.5); border-radius: 14px; background: rgba(255,255,255,.12); font-size: 1.1rem; font-weight: 800; }
@@ -28,84 +29,144 @@
         .directory { width: min(100% - 40px, 1120px); margin: 0 auto; }
         .main { padding-top: clamp(28px, 4vw, 48px); }
         .eyebrow { margin: 0 0 10px; color: var(--gold); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-        h1 { margin: 0; color: #fff; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.045em; line-height: 1.08; }
+        h1 { margin: 0; color: var(--ink); font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.045em; line-height: 1.08; }
         .directory { display: grid; gap: 16px; }
-        .org-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; border-bottom: 1px solid #33414b; scrollbar-width: thin; }
-        .org-tab { display: inline-flex; flex: 0 0 auto; min-height: 42px; align-items: center; gap: 9px; padding: 7px 12px 7px 8px; border: 1px solid #3b4a54; border-radius: 9px; background: #17232e; color: #d9e2df; cursor: pointer; font: inherit; font-size: .76rem; font-weight: 800; }
-        .org-tab:hover, .org-tab[aria-selected="true"] { border-color: var(--org-accent); background: #1d3a2a; color: #fff; }
-        .org-tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-        .org-tab-mark { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border: 1px solid color-mix(in srgb, var(--org-accent), white 34%); border-radius: 8px; background: linear-gradient(145deg, var(--org-accent), var(--org-secondary)); color: #fff; font-size: .62rem; font-weight: 900; letter-spacing: -.04em; }
-        .org-panel { min-width: 0; overflow: hidden; border: 1px solid #293741; border-radius: 14px; background: var(--night); box-shadow: 0 16px 40px rgba(0,0,0,.22); }
-        .org-hero { position: relative; display: grid; min-height: clamp(280px, 42vw, 460px); place-items: center; overflow: hidden; padding: 36px 22px; background: #183526 url("images/123.png") center 48% / cover no-repeat; text-align: center; }
-        .org-hero::before { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,19,14,.76), rgba(11,39,23,.75)); content: ""; }
-        .org-hero-content { position: relative; z-index: 1; width: min(100%, 760px); }
-        .org-logo-placeholder { display: grid; width: 112px; height: 112px; place-items: center; gap: 2px; margin: 0 auto 18px; padding: 10px; border: 2px solid color-mix(in srgb, var(--org-accent), white 32%); border-radius: 26px; background: linear-gradient(145deg, color-mix(in srgb, var(--org-accent), transparent 12%), color-mix(in srgb, var(--org-secondary), #101a23 22%)); box-shadow: 0 12px 32px rgba(0,0,0,.32), inset 0 0 0 5px rgba(255,255,255,.1); color: #fff; }
+        .org-picker { display: flex; align-items: center; gap: 12px; }
+        .org-picker label { color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .org-picker select { width: min(100%, 420px); min-height: 46px; padding: 10px 40px 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font: inherit; font-size: .82rem; font-weight: 700; box-shadow: 0 4px 14px rgba(23,77,42,.08); }
+        .org-picker select:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+        .org-panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--night); box-shadow: 0 16px 40px rgba(23,77,42,.08); }
+        .org-hero { display: grid; grid-template-columns: minmax(240px, .85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(24px, 5vw, 64px); min-height: 0; padding: clamp(28px, 5vw, 64px); background: #fff; text-align: left; }
+        .org-hero-content { min-width: 0; }
+        .org-logo { display: grid; width: min(100%, 360px); height: clamp(240px, 30vw, 360px); place-items: center; margin: 0 auto; overflow: hidden; border-radius: 14px; background: #fff; }
+        .org-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+        .org-logo-fallback { display: grid; width: 100%; height: 100%; place-items: center; background: linear-gradient(145deg, var(--org-accent), var(--org-secondary)); color: #fff; font-size: 2rem; font-weight: 900; }
         .org-logo-initials { font-size: 2rem; font-weight: 900; letter-spacing: -.07em; line-height: 1; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
         .org-logo-caption { font-size: .54rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-        .org-hero h2 { margin: 0; color: #fff; font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -.025em; line-height: 1.08; text-transform: uppercase; text-shadow: 0 2px 16px rgba(0,0,0,.35); }
-        .org-hero p { max-width: 650px; margin: 12px auto 0; color: #e0e8e2; font-size: .88rem; line-height: 1.65; }
-        .org-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
-        .tag { padding: 5px 9px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; background: rgba(9,28,18,.45); color: #f5f6ed; font-size: .64rem; font-weight: 800; }
-        .status { padding: 5px 9px; border: 1px solid rgba(242,201,76,.4); border-radius: 999px; background: rgba(242,201,76,.15); color: #ffe58d; font-size: .64rem; font-weight: 800; }
-        .status[data-status="approved"] { border-color: rgba(162,221,167,.45); background: rgba(60,132,69,.32); color: #d9ffcf; }
-        .status[data-status="revision"] { border-color: rgba(250,180,133,.45); background: rgba(146,80,33,.32); color: #ffe1c6; }
+        .org-hero .section-kicker { color: var(--green); }
+        .org-hero h2 { margin: 0; color: var(--ink); font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -.025em; line-height: 1.08; }
+        .org-hero p:not(.section-kicker) { max-width: 650px; margin: 16px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.7; }
+        .org-meta { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; margin-top: 20px; }
+        .tag { padding: 6px 10px; border: 1px solid #dfe9dc; border-radius: 999px; background: #f5f8f3; color: var(--green); font-size: .68rem; font-weight: 800; }
+        .status { padding: 6px 10px; border: 1px solid #e6d79d; border-radius: 999px; background: #fff9e8; color: #695313; font-size: .68rem; font-weight: 800; }
+        .status[data-status="approved"] { border-color: #b8d5b5; background: #eef7ec; color: #245c2f; }
+        .status[data-status="revision"] { border-color: #e8c4ac; background: #fff4eb; color: #8a4826; }
         .profile-section { padding: clamp(24px, 5vw, 48px) clamp(18px, 5vw, 58px); }
         .mission-section { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(220px, .8fr); align-items: center; gap: clamp(20px, 5vw, 58px); background: linear-gradient(115deg, #1d562e, #123a25); }
         .section-kicker { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; color: var(--gold); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
         .section-kicker::before { width: 9px; height: 9px; border-radius: 3px; background: var(--gold); content: ""; transform: rotate(45deg); }
-        .profile-section h3 { margin: 0; color: #fff; font-size: clamp(1.15rem, 2.5vw, 1.55rem); letter-spacing: -.02em; }
+        .profile-section h3 { margin: 0; color: var(--ink); font-size: clamp(1.15rem, 2.5vw, 1.55rem); letter-spacing: -.02em; }
+        .mission-section h3, .achievement-section h3 { color: #fff; }
         .mission-copy { max-width: 620px; margin: 12px 0 0; color: #e2eee2; font-size: .84rem; line-height: 1.75; }
         .vision-copy { margin-top: 14px; padding: 12px 14px; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; background: rgba(10,28,19,.55); color: #f0ead1; font-size: .76rem; line-height: 1.6; }
         .mission-visual { min-height: 185px; border: 1px solid rgba(255,255,255,.25); border-radius: 12px; background: linear-gradient(180deg, rgba(6,21,13,.1), rgba(6,21,13,.2)), url("images/123.png") center / cover; box-shadow: 0 12px 25px rgba(0,0,0,.24); }
-        .team-section { background: var(--night); text-align: center; }
+        .team-section { padding-right: clamp(18px, 2.5vw, 36px); padding-left: clamp(18px, 2.5vw, 36px); background: var(--night); text-align: center; }
         .team-section .section-kicker, .team-section .section-copy, .achievement-section .section-kicker, .gallery-section .section-kicker { justify-content: center; }
-        .section-copy { margin: 8px 0 22px; color: #aeb9bf; font-size: .78rem; line-height: 1.55; }
-        .leadership-chart { display: grid; gap: 0; }
-        .adviser-row { position: relative; display: flex; justify-content: center; padding-bottom: 20px; }
-        .adviser-row::after, .chart-connector { width: 2px; height: 20px; margin: 0 auto; background: #bdd0b9; content: ""; }
-        .adviser-row::after { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); }
-        .adviser-card { width: min(100%, 220px); }
-        .executive-tier { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-content: center; gap: 12px; max-width: 900px; margin: 0 auto; }
-        .executive-tier--lead { grid-template-columns: minmax(150px, 220px); }
-        .executive-tier--support { position: relative; padding-top: 16px; }
-        .executive-tier--support::before { position: absolute; top: 0; right: 10%; left: 10%; height: 2px; background: #40515b; content: ""; }
-        .person-card { display: flex; min-width: 0; flex-direction: column; align-items: stretch; overflow: hidden; border: 1px solid #31414b; border-radius: 10px; background: var(--night-card); text-align: left; }
-        .person-avatar { display: grid; width: 100%; height: 142px; flex: 0 0 auto; overflow: hidden; place-items: center; border: 0; border-radius: 0; background: linear-gradient(145deg, #356648, #182b35 70%); color: #d4e7d6; font-size: 1.55rem; font-weight: 800; }
-        .person-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .person-info { min-width: 0; min-height: 64px; padding: 10px 11px 12px; }
-        .person-info strong { display: block; overflow-wrap: anywhere; color: #fff; font-size: .78rem; }
-        .person-info span { display: block; margin-top: 5px; color: #afbdc3; font-size: .68rem; line-height: 1.4; }
-        .adviser-card .person-avatar { height: 160px; }
-        .team-empty { grid-column: 1 / -1; padding: 20px; border: 1px dashed #40515b; border-radius: 10px; color: #b7c1c7; font-size: .8rem; line-height: 1.55; text-align: center; }
-        .achievement-section { background: linear-gradient(125deg, #174d2a, #10361f); }
+        .section-copy { margin: 8px 0 22px; color: var(--muted); font-size: .78rem; line-height: 1.55; }
+        .leadership-chart { display: grid; justify-items: center; gap: 0; }
+        .org-chart-level { position: relative; display: grid; width: min(100%, 1120px); grid-template-columns: repeat(3, minmax(0, 280px)); justify-content: space-between; gap: 18px; }
+        .org-chart-level--root { grid-template-columns: repeat(3, minmax(0, 280px)); }
+        .org-chart-level--advisers { grid-template-columns: repeat(3, minmax(0, 280px)); }
+        .org-chart-level > .person-card:only-child { grid-column: 2; }
+        .org-chart-level--root > .person-card--president { grid-column: 1; }
+        .org-chart-level--root > .person-card--vice-president { grid-column: 3; }
+        .org-chart-level--branch > .person-card--public-information { grid-column: 3; grid-row: 1; }
+        .org-chart-level--leadership { padding-top: 26px; }
+        .org-chart-level--leadership::before { position: absolute; top: 0; right: 140px; left: 140px; height: 2px; background: #537c60; content: ""; }
+        .org-chart-level--leadership > .person-card--president::before, .org-chart-level--leadership > .person-card--vice-president::before { position: absolute; top: -26px; left: 50%; width: 2px; height: 26px; background: #537c60; content: ""; }
+        .org-chart-level--branch { padding-top: 26px; }
+        .org-chart-level--branch::before { position: absolute; top: 0; right: 140px; left: 140px; height: 2px; background: #537c60; content: ""; }
+        .org-chart-level--branch > .person-card::before { position: absolute; top: -26px; left: 50%; width: 2px; height: 26px; background: #537c60; content: ""; }
+        .org-chart-connector { width: 2px; height: 26px; background: #537c60; }
+        .person-card { position: relative; display: grid; min-width: 0; aspect-ratio: 7 / 4; grid-template-columns: minmax(0, 42%) minmax(0, 1fr); padding: 0; border: 1px solid #d5e2d3; border-radius: 12px; background: #fff; box-shadow: 0 8px 18px rgba(23,77,42,.08); text-align: left; transform: translateY(0); transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease; }
+        .person-card:hover, .person-card:focus-within { z-index: 1; transform: translateY(-4px); border-color: #79a984; background-color: #fbfefb; box-shadow: 0 15px 28px rgba(23,77,42,.2); }
+        .person-card:hover .person-avatar, .person-card:focus-within .person-avatar { box-shadow: inset 0 0 0 3px var(--gold); }
+        .person-card:hover .person-info strong, .person-card:focus-within .person-info strong { color: var(--green); }
+        .org-chart-level--advisers .person-card { border-color: #e6d79d; background: #fffdf6; }
+        .org-chart-level--root .person-card { border-width: 2px; border-color: var(--gold); background: #f8f6e9; }
+        .person-avatar { position: relative; display: grid; min-width: 0; aspect-ratio: 3 / 4; overflow: hidden; place-items: center; border-radius: 10px 0 0 10px; background: linear-gradient(145deg, #202c24, #101713); color: #d4e7d6; font-size: 1.4rem; font-weight: 800; }
+        .person-avatar--photo { min-height: 0; }
+        .person-avatar--placeholder { background: linear-gradient(145deg, #293a2e, #16231b); color: #b7cbb8; font-size: .68rem; font-weight: 700; line-height: 1.4; text-align: center; }
+        .person-avatar { transition: box-shadow 180ms ease; }
+        .person-avatar img { display: block; width: 100%; height: 100%; object-fit: contain; }
+        .person-info { min-width: 0; align-self: center; padding: clamp(12px, 1.5vw, 20px); }
+        .person-info strong { display: block; overflow-wrap: anywhere; color: var(--ink); font-size: clamp(.85rem, 1.2vw, 1rem); }
+        .person-info span { display: block; margin-top: 6px; color: var(--muted); font-size: .7rem; line-height: 1.4; }
+        .team-empty { grid-column: 1 / -1; padding: 20px; border: 1px dashed #cbd9c8; border-radius: 10px; color: var(--muted); font-size: .8rem; line-height: 1.55; text-align: center; }
+        .achievement-section { position: relative; overflow: hidden; background: linear-gradient(125deg, #174d2a, #10361f); }
+        .achievement-section::before { position: absolute; top: -90px; right: -70px; width: 250px; height: 250px; border: 1px solid rgba(242,201,76,.18); border-radius: 50%; box-shadow: 0 0 0 28px rgba(242,201,76,.035), 0 0 0 58px rgba(242,201,76,.025); content: ""; pointer-events: none; }
+        .achievement-section > * { position: relative; }
         .achievement-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-        .achievement-card { min-height: 118px; padding: 16px; border: 1px solid rgba(222,241,217,.2); border-radius: 10px; background: rgba(255,255,255,.07); }
-        .achievement-card strong { display: block; color: #fff; font-size: .78rem; }
-        .achievement-card p { margin: 8px 0 0; color: #d1e0d1; font-size: .7rem; line-height: 1.55; }
-        .gallery-section { background: #111d27; text-align: center; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; text-align: left; }
-        .gallery-card { position: relative; display: flex; min-height: 160px; align-items: flex-end; overflow: hidden; padding: 14px; border: 1px solid #34444e; border-radius: 10px; background: linear-gradient(145deg, #315740, #182c38 65%, #26353b); }
-        .gallery-card:nth-child(2) { background: linear-gradient(145deg, #575238, #253a35 65%, #1b2a35); }
-        .gallery-card:nth-child(3) { background: linear-gradient(145deg, #31505b, #283b34 65%, #503e2e); }
-        .gallery-card strong { position: relative; color: #fff; font-size: .78rem; }
-        .gallery-card span { position: absolute; top: 12px; left: 12px; padding: 5px 8px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; background: rgba(10,20,17,.55); color: #e9e4c9; font-size: .6rem; font-weight: 700; }
-        .profile-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-top: 18px; color: #aeb9bf; font-size: .72rem; }
+        .achievement-card { min-height: 118px; padding: 16px; border: 1px solid rgba(242,201,76,.28); border-radius: 12px; background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06)); box-shadow: 0 8px 18px rgba(4,27,15,.12); transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease; }
+        .achievement-card:hover, .achievement-card:focus-within { transform: translateY(-5px); border-color: var(--gold); background: linear-gradient(145deg, rgba(242,201,76,.2), rgba(255,255,255,.08)); box-shadow: 0 16px 28px rgba(4,27,15,.25); }
+        .achievement-card img { display: block; width: 100%; height: 150px; margin: -16px -16px 14px; width: calc(100% + 32px); border-radius: 9px 9px 0 0; object-fit: cover; }
+        .achievement-card strong { display: block; color: #ffe58d; font-size: .82rem; }
+        .achievement-card p { margin: 8px 0 0; color: #e0eee1; font-size: .72rem; line-height: 1.6; }
+        .gallery-section { background: #fff; text-align: center; }
+        .gallery-grid { display: flex; width: 100%; min-width: 0; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain; padding: 4px 2px 14px; scroll-snap-type: x mandatory; scrollbar-width: none; text-align: left; }
+        .gallery-grid::-webkit-scrollbar { display: none; }
+        .gallery-card { position: relative; display: flex; min-height: 180px; align-items: flex-end; overflow: hidden; padding: 16px; border: 1px solid #d5e2d3; border-radius: 12px; background: linear-gradient(145deg, #edf5e9, #fff 60%, #f5eac0); box-shadow: 0 8px 18px rgba(23,77,42,.08); transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease; }
+        .gallery-card { flex: 0 0 min(78%, 360px); scroll-snap-align: start; }
+        .gallery-card:nth-child(2) { background: linear-gradient(145deg, #f7edc9, #fff 60%, #e8f1e5); }
+        .gallery-card:nth-child(3) { background: linear-gradient(145deg, #e4f0e5, #fff 60%, #f2e7c7); }
+        .gallery-card:hover, .gallery-card:focus-within { transform: translateY(-5px); border-color: #d2ae38; box-shadow: 0 16px 28px rgba(23,77,42,.18); }
+        .gallery-card--photo { border-color: #d5e2d3; background: #173d27; }
+        .gallery-card--photo img { transition: transform 350ms ease; }
+        .gallery-card--photo:hover img, .gallery-card--photo:focus-within img { transform: scale(1.06); }
+        .gallery-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .gallery-controls { display: flex; justify-content: flex-end; gap: 8px; margin: -8px 0 8px; }
+        .gallery-control { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid #d5e2d3; border-radius: 50%; background: #fff; color: var(--green); cursor: pointer; font: inherit; font-size: 1.1rem; font-weight: 800; box-shadow: 0 4px 12px rgba(23,77,42,.1); transition: background-color 160ms ease, color 160ms ease, transform 160ms ease; }
+        .gallery-control:hover:not(:disabled) { transform: translateY(-2px); background: var(--green); color: #fff; }
+        .gallery-control:disabled { cursor: default; opacity: .4; }
+        .gallery-control:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+        .profile-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-top: 18px; color: var(--muted); font-size: .72rem; }
         .not-approved { margin: 18px; padding: 16px; border: 1px solid #625a3a; border-radius: 10px; background: #29291f; color: #ece1bc; font-size: .82rem; line-height: 1.6; }
-        .empty-state { padding: 24px; border: 1px dashed #40515b; border-radius: 10px; color: #c3ccd2; text-align: center; }
+        .empty-state { padding: 24px; border: 1px dashed #cbd9c8; border-radius: 10px; color: var(--muted); text-align: center; }
         .error { padding: 16px; border: 1px solid #9a5949; border-radius: 9px; background: #38231f; color: #ffd7cb; }
-        @media (max-width: 760px) { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .error.directory[hidden] { display: none; }
+        @media (max-width: 760px) {
+            .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .org-hero { grid-template-columns: minmax(180px, .75fr) minmax(0, 1.25fr); gap: 24px; padding: 28px; }
+            .org-logo { height: clamp(190px, 32vw, 260px); }
+            .org-chart-level, .org-chart-level--root, .org-chart-level--advisers { grid-template-columns: repeat(2, minmax(0, 280px)); }
+            .org-chart-level > .person-card:only-child { grid-column: 1 / -1; justify-self: center; width: min(100%, 280px); }
+            .org-chart-level--root > .person-card--president { grid-column: 1; }
+            .org-chart-level--root > .person-card--vice-president,
+            .org-chart-level--branch > .person-card--public-information { grid-column: 2; }
+            .org-chart-level--leadership::before { right: 140px; left: 140px; }
+        }
         @media (max-width: 560px) {
             .header { min-height: 62px; padding: 10px 16px; }
             .brand-mark { width: 40px; height: 40px; }
             .brand-name { font-size: .92rem; }
             .directory { width: min(100% - 32px, 1120px); }
+            .org-picker { align-items: flex-start; flex-direction: column; gap: 7px; }
+            .org-picker select { width: 100%; }
+            .org-hero { grid-template-columns: 1fr; gap: 22px; padding: 24px 18px; text-align: center; }
+            .org-logo { width: min(100%, 260px); height: 230px; }
+            .org-meta { justify-content: center; }
+            .org-hero p:not(.section-kicker) { margin-right: auto; margin-left: auto; }
             .mission-section { grid-template-columns: 1fr; }
             .mission-visual { min-height: 155px; }
-            .achievement-grid, .gallery-grid { grid-template-columns: 1fr; }
+            .achievement-grid { grid-template-columns: 1fr; }
             .gallery-card { min-height: 190px; }
-            .executive-tier { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .executive-tier--lead { grid-template-columns: minmax(150px, 220px); }
-            .person-avatar { height: 125px; }
+            .org-chart-level { width: min(100%, 460px); grid-template-columns: minmax(0, 1fr); gap: 14px; }
+            .org-chart-level--root { grid-template-columns: minmax(0, 1fr); }
+            .org-chart-level > .person-card:only-child { grid-column: auto; width: 100%; }
+            .org-chart-level--root > .person-card--president,
+            .org-chart-level--root > .person-card--vice-president,
+            .org-chart-level--branch > .person-card--public-information { grid-column: 1; grid-row: auto; }
+            .org-chart-level--leadership { padding-top: 0; }
+            .org-chart-level--leadership::before,
+            .org-chart-level--leadership > .person-card--president::before,
+            .org-chart-level--leadership > .person-card--vice-president::before { display: none; }
+            .org-chart-level--branch::before { right: 20%; left: 20%; }
+            .person-card { grid-template-columns: minmax(0, 42%) minmax(0, 1fr); }
+        }
+        @media (max-width: 380px) {
+            .org-chart-level { grid-template-columns: minmax(0, 1fr); }
+            .org-chart-level--root { grid-template-columns: minmax(0, 1fr); }
+            .org-chart-level--branch::before { right: 50%; left: 50%; width: 2px; height: 100%; }
         }
     </style>
 </head>
@@ -118,43 +179,58 @@
         <div id="directory-error" class="error directory" role="alert" hidden></div>
         <div id="directory-app" hidden>
             <section class="directory" aria-label="Organization results">
-                <div class="org-tabs" id="organization-tabs" role="tablist" aria-label="Organizations"></div>
+                <div class="org-picker">
+                    <label id="organization-picker-label" for="organization-picker">Browse organizations</label>
+                    <select id="organization-picker"></select>
+                </div>
                 <div id="organization-panel"></div>
             </section>
         </div>
     </main>
     <script src="demo-data.js"></script>
-    <script>
+    <script type="module">
+        import { getSupabaseClient } from "./supabase.js";
+
         const errorBox = document.querySelector("#directory-error");
         const app = document.querySelector("#directory-app");
-        const tabs = document.querySelector("#organization-tabs");
+        const organizationPicker = document.querySelector("#organization-picker");
         const panel = document.querySelector("#organization-panel");
         const escapeHtml = ISOMSDemoStore.escapeHtml;
         let state;
         let activeOrganizationId = null;
+        let sharedMediaByOrganization = new Map();
+        let sharedPeopleByOrganization = new Map();
+        let sharedProfilesByOrganization = new Map();
 
         const statusLabels = { approved: "Registered organization" };
         const organizationThemes = {
             ssc: { accent: "#c99a27", secondary: "#174d2a" },
             sslg: { accent: "#2877b8", secondary: "#c94747" },
-            rso: { accent: "#8060bb", secondary: "#238477" },
+            css: { accent: "#8060bb", secondary: "#238477" },
+            ufcym: { accent: "#dc762d", secondary: "#26313b" },
             uvc: { accent: "#2375a5", secondary: "#d3a52d" },
-            tnt: { accent: "#dc762d", secondary: "#26313b" },
-            dangat: { accent: "#178b85", secondary: "#d0a738" }
         };
-        const organizationMarks = { ssc: "SSC", sslg: "SSLG", rso: "RSO", uvc: "UVC", tnt: "TNT", dangat: "DA" };
+        const organizationLogos = {
+            ssc: "images/ssc-logo.png",
+            sslg: "images/sslg-logo.png",
+            css: "images/css-logo.png",
+            ufcym: "images/ufcym-logo.png",
+            uvc: "images/uvc-logo.png"
+        };
+
+        const mediaImageUrl = (value) => typeof value === "string" && /^(https:\/\/|images\/)/i.test(value)
+            ? value
+            : "";
 
         const organizationTheme = (organization) => organizationThemes[organization.id] || {
             accent: "#5d9a70",
             secondary: "#244f74"
         };
 
-        const organizationLogo = (organization, compact = false) => {
+        const organizationLogo = (organization) => {
             const name = escapeHtml(organization.name);
-            const shortName = escapeHtml(organizationMarks[organization.id] || initials(organization.name));
-            return compact
-                ? `<span class="org-tab-mark" aria-hidden="true">${shortName}</span>`
-                : `<div class="org-logo-placeholder" role="img" aria-label="${name} logo placeholder: ${shortName} initials in organization colors"><span class="org-logo-initials" aria-hidden="true">${shortName}</span><span class="org-logo-caption">Logo placeholder</span></div>`;
+            const logo = escapeHtml(mediaImageUrl(organization.logoUrl) || organizationLogos[organization.id] || "");
+            return `<div class="org-logo" role="img" aria-label="${name} logo">${logo ? `<img src="${logo}" alt="">` : `<span class="org-logo-fallback" aria-hidden="true">${escapeHtml(initials(organization.name))}</span>`}</div>`;
         };
 
         const organizationStyle = (organization) => {
@@ -172,10 +248,12 @@
             const photoUrl = typeof person.photoUrl === "string" && /^(https?:\/\/|images\/)/i.test(person.photoUrl)
                 ? person.photoUrl
                 : "";
-            const avatar = photoUrl
-                ? `<span class="person-avatar"><img src="${escapeHtml(photoUrl)}" alt=""></span>`
+            const avatar = person.placeholder
+                ? '<span class="person-avatar person-avatar--placeholder" aria-hidden="true">Portrait<br>coming soon</span>'
+                : photoUrl
+                ? `<span class="person-avatar person-avatar--photo"><img src="${escapeHtml(photoUrl)}" alt=""></span>`
                 : `<span class="person-avatar" aria-hidden="true">${escapeHtml(initials(name))}</span>`;
-            return `<article class="person-card ${extraClass}">
+            return `<article class="person-card${person.placeholder ? " person-card--placeholder" : ""} ${extraClass}">
                 ${avatar}
                 <div class="person-info"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(role || person.role || "Organization member")}</span></div>
             </article>`;
@@ -184,41 +262,101 @@
         const renderOrganization = (organization) => {
             const title = escapeHtml(organization.name);
             const label = statusLabels[organization.status] || "Status unavailable";
-            const organizationPeople = organization.publishedProfile?.people
+            const localPeople = organization.publishedProfile?.people
                 || state.people.filter((person) => person.organizationId === organization.id);
-            const executives = organizationPeople.filter((person) => person.group === "Officer");
-            const advisers = organizationPeople.filter((person) => person.group === "Adviser");
-            const members = organizationPeople.filter((person) => person.group === "Member");
-            const fallbackExecutives = executives.length ? executives : organization.executiveOfficers || organization.officers || [];
+            const sharedCouncil = sharedPeopleByOrganization.get(organization.id);
+            const organizationPeople = sharedCouncil
+                ? [
+                    ...localPeople.filter((person) => person.group !== "Officer" && person.group !== "Adviser"),
+                    ...sharedCouncil
+                ]
+                : localPeople;
+            const displayablePeople = organizationPeople.filter((person) =>
+                !/^demo\b.*placeholder/i.test(person.name || "")
+            );
+            const executives = displayablePeople.filter((person) => person.group === "Officer");
+            const advisers = displayablePeople.filter((person) => person.group === "Adviser");
+            const members = displayablePeople.filter((person) => person.group === "Member");
+            const fallbackExecutives = [...(executives.length ? executives : organization.executiveOfficers || organization.officers || [])];
             const fallbackMembers = members.length ? members : organization.members || [];
-            const fallbackAdvisers = advisers.length
+            const fallbackAdvisers = [...(advisers.length
                 ? advisers
                 : organization.advisers?.length
                     ? organization.advisers
                     : organization.adviser && !/^names? to be confirmed$/i.test(organization.adviser)
                         ? [{ name: organization.adviser, role: "Faculty adviser" }]
-                        : [];
+                        : [])];
+            if (organization.id !== "css") {
+                const placeholderRoles = [
+                    "President",
+                    "Vice President",
+                    "Treasurer",
+                    "Secretary",
+                    "Public Information Officer"
+                ];
+                placeholderRoles.forEach((role) => {
+                    if (!fallbackExecutives.some((person) => (person.role || "").toLocaleLowerCase().includes(role.toLocaleLowerCase()))) {
+                        fallbackExecutives.push({ name: "Portrait coming soon", role, placeholder: true });
+                    }
+                });
+                if (!fallbackAdvisers.length) {
+                    fallbackAdvisers.push({ name: "Portrait coming soon", role: "Faculty adviser", placeholder: true });
+                }
+            }
             const hasTeam = fallbackExecutives.length || fallbackAdvisers.length;
-            const presidents = fallbackExecutives.filter((person) => /president/i.test(person.role || ""));
-            const otherExecutives = fallbackExecutives.filter((person) => !/president/i.test(person.role || ""));
+            const presidents = fallbackExecutives.filter((person) =>
+                /\bpresident\b/i.test(person.role || "") && !/\bvice\b|\bassistant\b|\bdeputy\b/i.test(person.role || "")
+            );
+            const vicePresidents = fallbackExecutives.filter((person) =>
+                /\bvice\b|\bassistant\b|\bdeputy\b/i.test(person.role || "") && /\bpresident\b/i.test(person.role || "")
+            );
+            const otherExecutives = fallbackExecutives.filter((person) =>
+                !presidents.includes(person) && !vicePresidents.includes(person)
+            );
             const achievements = Array.isArray(organization.achievements) ? organization.achievements.slice(0, 3) : [];
             const gallery = Array.isArray(organization.gallery) ? organization.gallery.slice(0, 3) : [];
-            const executiveChart = fallbackExecutives.length
-                ? `${presidents.length ? `<div class="executive-tier executive-tier--lead">${presidents.map((person) => personCard(person, person.role || "President")).join("")}</div>` : ""}
-                    ${presidents.length && otherExecutives.length ? '<div class="chart-connector" aria-hidden="true"></div>' : ""}
-                    ${otherExecutives.length || !presidents.length ? `<div class="executive-tier ${presidents.length ? "executive-tier--support" : ""}">${(presidents.length ? otherExecutives : fallbackExecutives).map((person) => personCard(person, person.role || "Executive officer")).join("")}</div>` : ""}`
-                : '<p class="team-empty">Executive officer details have not been added yet.</p>';
+            const executiveTiers = [];
+            const leadershipTier = [...presidents, ...vicePresidents];
+            if (leadershipTier.length) {
+                executiveTiers.push({
+                    className: `org-chart-level--root${presidents.length && vicePresidents.length ? " org-chart-level--leadership" : ""}`,
+                    people: leadershipTier
+                });
+            }
+            if (otherExecutives.length) executiveTiers.push({ className: "org-chart-level--branch", people: otherExecutives });
+            if (!executiveTiers.length && fallbackExecutives.length) {
+                executiveTiers.push({ className: "org-chart-level--root", people: fallbackExecutives });
+            }
+            const executiveCard = (person) => {
+                const role = person.role || "Executive officer";
+                const roleClass = /\bvice\b.*\bpresident\b/i.test(role)
+                    ? "person-card--vice-president"
+                    : /\bpresident\b/i.test(role)
+                        ? "person-card--president"
+                        : /\bpublic information officer\b/i.test(role)
+                            ? "person-card--public-information"
+                            : "";
+                return personCard(person, role, roleClass);
+            };
+            const adviserTier = fallbackAdvisers.length
+                ? `<div class="org-chart-level org-chart-level--advisers">${fallbackAdvisers.map((person) => personCard(person, "Faculty adviser")).join("")}</div>`
+                : "";
+            const executiveChart = executiveTiers.length
+                ? `${adviserTier}
+                    ${adviserTier && executiveTiers.length ? '<div class="org-chart-connector" aria-hidden="true"></div>' : ""}
+                    ${executiveTiers.map((tier, index) => `${index ? '<div class="org-chart-connector" aria-hidden="true"></div>' : ""}<div class="org-chart-level ${tier.className}">${tier.people.map(executiveCard).join("")}</div>`).join("")}`
+                : adviserTier || '<p class="team-empty">Executive officer details have not been added yet.</p>';
 
             if (organization.status !== "approved") {
-                panel.innerHTML = `<section class="org-panel" id="panel-${escapeHtml(organization.id)}" style="${organizationStyle(organization)}" role="tabpanel" aria-labelledby="tab-${escapeHtml(organization.id)}" tabindex="0">
-                    <header class="org-hero"><div class="org-hero-content"><p class="section-kicker">Organization profile</p>${organizationLogo(organization)}<h2>${title}</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p><div class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="${escapeHtml(organization.status)}">${escapeHtml(label)}</span></div></div></header>
+                panel.innerHTML = `<section class="org-panel" id="panel-${escapeHtml(organization.id)}" style="${organizationStyle(organization)}" aria-labelledby="organization-title-${escapeHtml(organization.id)}">
+                    <header class="org-hero"><div>${organizationLogo(organization)}</div><div class="org-hero-content"><p class="section-kicker">Organization profile</p><h2 id="organization-title-${escapeHtml(organization.id)}">${title}</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p><div class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="${escapeHtml(organization.status)}">${escapeHtml(label)}</span></div></div></header>
                     <p class="not-approved">Leadership and organization details will appear here after the profile is approved for the public directory.</p>
                 </section>`;
                 return;
             }
 
-            panel.innerHTML = `<section class="org-panel" id="panel-${escapeHtml(organization.id)}" style="${organizationStyle(organization)}" role="tabpanel" aria-labelledby="tab-${escapeHtml(organization.id)}" tabindex="0">
-                <header class="org-hero"><div class="org-hero-content"><p class="section-kicker">Organization profile</p>${organizationLogo(organization)}<h2>${title}</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p><div class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="approved">${escapeHtml(label)}</span></div></div></header>
+            panel.innerHTML = `<section class="org-panel" id="panel-${escapeHtml(organization.id)}" style="${organizationStyle(organization)}" aria-labelledby="organization-title-${escapeHtml(organization.id)}">
+                <header class="org-hero"><div>${organizationLogo(organization)}</div><div class="org-hero-content"><p class="section-kicker">Organization profile</p><h2 id="organization-title-${escapeHtml(organization.id)}">${title}</h2><p>${escapeHtml(organization.description || "Organization profile details have not been added.")}</p><div class="org-meta"><span class="tag">${escapeHtml(organization.category || "Uncategorized")}</span><span class="tag">${escapeHtml(organization.level || "Level not set")}</span><span class="status" data-status="approved">${escapeHtml(label)}</span></div></div></header>
                 <section class="profile-section mission-section" aria-labelledby="mission-${escapeHtml(organization.id)}">
                     <div><p class="section-kicker">Our purpose</p><h3 id="mission-${escapeHtml(organization.id)}">Our Mission &amp; Vision</h3>
                         <p class="mission-copy"><strong>Mission:</strong> ${escapeHtml(organization.mission || "The organization mission has not been added yet.")}</p>
@@ -229,24 +367,27 @@
                 <section class="profile-section team-section" aria-labelledby="team-${escapeHtml(organization.id)}">
                     <p class="section-kicker">Meet the team</p><h3 id="team-${escapeHtml(organization.id)}">The Executive Council</h3>
                     <p class="section-copy">Meet the officers and adviser serving ${title}. Portraits are shown when provided; initials are placeholders.</p>
-                    ${hasTeam ? `<div class="leadership-chart">
-                        ${fallbackAdvisers.length ? `<div class="adviser-row">${fallbackAdvisers.map((person) => personCard(person, "Faculty adviser", "adviser-card")).join("")}</div>` : ""}
-                        ${executiveChart}
-                    </div>` : '<p class="team-empty">Executive officers and adviser details have not been added yet.</p>'}
+                    ${hasTeam ? `<div class="leadership-chart">${executiveChart}</div>` : '<p class="team-empty">Executive officers and adviser details have not been added yet.</p>'}
                 </section>
                 <section class="profile-section achievement-section" aria-labelledby="achievements-${escapeHtml(organization.id)}">
                     <p class="section-kicker">Making an impact</p><h3 id="achievements-${escapeHtml(organization.id)}">Recent Achievements</h3>
                     <p class="section-copy">Highlights shared by the organization for the current academic year.</p>
-                    <div class="achievement-grid">${achievements.length ? achievements.map((achievement) => `<article class="achievement-card"><strong>${escapeHtml(achievement.title || "Achievement")}</strong><p>${escapeHtml(achievement.description || "More details coming soon.")}</p></article>`).join("") : [1, 2, 3].map(() => '<article class="achievement-card"><strong>Achievement highlight</strong><p>Verified achievements will appear here when the organization adds them.</p></article>').join("")}</div>
+                    <div class="achievement-grid">${achievements.length ? achievements.map((achievement) => {
+                        const photoUrl = mediaImageUrl(achievement.photoUrl);
+                        return `<article class="achievement-card">${photoUrl ? `<img src="${escapeHtml(photoUrl)}" alt="">` : ""}<strong>${escapeHtml(achievement.title || "Achievement")}</strong><p>${escapeHtml(achievement.description || "More details coming soon.")}</p></article>`;
+                    }).join("") : [1, 2, 3].map(() => '<article class="achievement-card"><strong>Achievement highlight</strong><p>Verified achievements will appear here when the organization adds them.</p></article>').join("")}</div>
                 </section>
                 <section class="profile-section gallery-section" aria-labelledby="gallery-${escapeHtml(organization.id)}">
                     <p class="section-kicker">Campus life</p><h3 id="gallery-${escapeHtml(organization.id)}">Featured Event Gallery</h3>
                     <p class="section-copy">Photos and stories from activities organized by this group.</p>
+                    <div class="gallery-controls" aria-label="Gallery controls">
+                        <button class="gallery-control" type="button" data-gallery-scroll="-1" aria-label="Scroll to previous event photo">‹</button>
+                        <button class="gallery-control" type="button" data-gallery-scroll="1" aria-label="Scroll to next event photo">›</button>
+                    </div>
                     <div class="gallery-grid">${gallery.length ? gallery.map((item) => {
-                        const photoUrl = typeof item.photoUrl === "string" && /^(https?:\/\/|images\/)/i.test(item.photoUrl) ? item.photoUrl : "";
-                        const imageStyle = photoUrl ? ` style="background-image:linear-gradient(180deg,rgba(7,16,20,.08),rgba(7,16,20,.82)),url('${escapeHtml(photoUrl)}')"` : "";
-                        return `<article class="gallery-card"${imageStyle}><span>${escapeHtml(item.category || "Organization event")}</span><strong>${escapeHtml(item.title || "Featured event")}</strong></article>`;
-                    }).join("") : [1, 2, 3].map(() => '<article class="gallery-card"><span>Photo placeholder</span><strong>Event photos will appear here</strong></article>').join("")}</div>
+                        const photoUrl = mediaImageUrl(item.photoUrl);
+                        return `<article class="gallery-card${photoUrl ? " gallery-card--photo" : ""}" aria-label="${escapeHtml(item.title || "Featured event")}">${photoUrl ? `<img src="${escapeHtml(photoUrl)}" alt="">` : ""}</article>`;
+                    }).join("") : [1, 2, 3].map(() => '<article class="gallery-card" aria-label="Event photo placeholder"></article>').join("")}</div>
                     <div class="profile-facts"><span><strong>Academic year:</strong> ${escapeHtml(organization.schoolYear || state.academicYear || "Not specified")}</span><span><strong>Members listed:</strong> ${fallbackMembers.length}</span><span><strong>Category:</strong> ${escapeHtml(organization.category || "Not specified")}</span></div>
                 </section>
             </section>`;
@@ -258,6 +399,29 @@
                     avatar.setAttribute("aria-hidden", "true");
                 }, { once: true });
             });
+            const galleryGrid = panel.querySelector(".gallery-grid");
+            const galleryControls = panel.querySelectorAll("[data-gallery-scroll]");
+            const updateGalleryControls = () => {
+                const maxScroll = galleryGrid.scrollWidth - galleryGrid.clientWidth;
+                galleryControls.forEach((button) => {
+                    button.disabled = Number(button.dataset.galleryScroll) < 0
+                        ? galleryGrid.scrollLeft <= 0
+                        : galleryGrid.scrollLeft >= maxScroll - 1;
+                });
+            };
+            galleryControls.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const card = galleryGrid.querySelector(".gallery-card");
+                    if (!card) return;
+                    const gap = Number.parseFloat(getComputedStyle(galleryGrid).columnGap) || 0;
+                    galleryGrid.scrollBy({
+                        left: Number(button.dataset.galleryScroll) * (card.getBoundingClientRect().width + gap),
+                        behavior: "smooth"
+                    });
+                });
+            });
+            galleryGrid.addEventListener("scroll", updateGalleryControls, { passive: true });
+            updateGalleryControls();
         };
 
         const render = (organizations) => {
@@ -265,9 +429,27 @@
                 .filter((organization) => (organization.directoryStatus === undefined ? organization.status : organization.directoryStatus) === "approved")
                 .map((organization) => organization.publishedProfile
                     ? { ...organization, ...organization.publishedProfile, status: "approved" }
-                    : organization);
+                    : organization)
+                .map((organization) => {
+                    const media = sharedMediaByOrganization.get(organization.id);
+                    const profile = sharedProfilesByOrganization.get(organization.id);
+                    if (!media && !profile) return organization;
+                    return {
+                        ...organization,
+                        ...(profile ? { mission: profile.mission, vision: profile.vision } : {}),
+                        ...(media ? {
+                            logoUrl: media.logo?.photo_url || organization.logoUrl,
+                            achievements: media.achievements.length ? media.achievements : organization.achievements,
+                            gallery: media.gallery.length ? media.gallery : organization.gallery
+                        } : {})
+                    };
+                });
+            const requestedOrganizationId = window.location.hash.slice(1);
+            if (matches.some((organization) => organization.id === requestedOrganizationId)) {
+                activeOrganizationId = requestedOrganizationId;
+            }
             if (!matches.length) {
-                tabs.innerHTML = "";
+                organizationPicker.innerHTML = "";
                 panel.innerHTML = '<p class="empty-state">There are no registered organizations to display yet.</p>';
                 return;
             }
@@ -275,43 +457,125 @@
             if (!matches.some((organization) => organization.id === activeOrganizationId)) {
                 activeOrganizationId = matches[0].id;
             }
-            tabs.innerHTML = matches.map((organization, index) => {
-                const selected = organization.id === activeOrganizationId;
-                return `<button class="org-tab" id="tab-${escapeHtml(organization.id)}" type="button" role="tab" aria-selected="${selected}" aria-controls="panel-${escapeHtml(organization.id)}" tabindex="${selected ? "0" : "-1"}" data-organization-tab="${escapeHtml(organization.id)}" style="${organizationStyle(organization)}">${organizationLogo(organization, true)}${escapeHtml(organization.name)}</button>`;
-            }).join("");
+            organizationPicker.innerHTML = matches.map((organization) =>
+                `<option value="${escapeHtml(organization.id)}">${escapeHtml(organization.name)}</option>`
+            ).join("");
+            organizationPicker.value = activeOrganizationId;
             const activeOrganization = matches.find((organization) => organization.id === activeOrganizationId);
             renderOrganization(activeOrganization);
         };
 
-        tabs.addEventListener("click", (event) => {
-            const tab = event.target.closest("[data-organization-tab]");
-            if (!tab) return;
-            activeOrganizationId = tab.dataset.organizationTab;
+        organizationPicker.addEventListener("change", () => {
+            activeOrganizationId = organizationPicker.value;
+            window.location.hash = encodeURIComponent(activeOrganizationId);
             render(state.organizations);
-            tabs.querySelector(`#tab-${CSS.escape(activeOrganizationId)}`)?.focus();
         });
 
-        tabs.addEventListener("keydown", (event) => {
-            const activeTab = event.target.closest("[data-organization-tab]");
-            if (!activeTab) return;
-            const tabButtons = [...tabs.querySelectorAll("[data-organization-tab]")];
-            const currentIndex = tabButtons.indexOf(activeTab);
-            let nextIndex = currentIndex;
-            if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabButtons.length;
-            else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
-            else if (event.key === "Home") nextIndex = 0;
-            else if (event.key === "End") nextIndex = tabButtons.length - 1;
-            else return;
-            event.preventDefault();
-            activeOrganizationId = tabButtons[nextIndex].dataset.organizationTab;
-            render(state.organizations);
-            tabs.querySelector(`#tab-${CSS.escape(activeOrganizationId)}`)?.focus();
+        window.addEventListener("hashchange", () => {
+            if (state) render(state.organizations);
         });
+
+        const loadSharedOrganizationMedia = async () => {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_media")
+                .select("organization_id, media_type, sort_order, title, description, category, photo_url, storage_path, file_name")
+                .order("organization_id")
+                .order("media_type")
+                .order("sort_order");
+            if (error) {
+                throw new Error(`Shared organization media could not be loaded: ${error.message}. Run the latest supabase-setup.sql in Supabase.`);
+            }
+
+            sharedMediaByOrganization = new Map();
+            (data || []).forEach((item) => {
+                if (!sharedMediaByOrganization.has(item.organization_id)) {
+                    sharedMediaByOrganization.set(item.organization_id, { logo: null, achievements: [], gallery: [] });
+                }
+                const organizationMedia = sharedMediaByOrganization.get(item.organization_id);
+                if (item.media_type === "logo") {
+                    organizationMedia.logo = item;
+                } else if (item.media_type === "achievement") {
+                    organizationMedia.achievements.push({
+                        title: item.title,
+                        description: item.description,
+                        photoUrl: item.photo_url,
+                        storagePath: item.storage_path,
+                        fileName: item.file_name
+                    });
+                } else if (item.media_type === "gallery") {
+                    organizationMedia.gallery.push({
+                        title: item.title,
+                        category: item.category,
+                        photoUrl: item.photo_url,
+                        storagePath: item.storage_path,
+                        fileName: item.file_name
+                    });
+                }
+            });
+        };
+
+        const loadSharedOrganizationCouncil = async () => {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_directory_people")
+                .select("organization_id, person_type, sort_order, name, role, photo_url, photo_storage_path, photo_file_name")
+                .order("organization_id")
+                .order("person_type")
+                .order("sort_order");
+            if (error) {
+                throw new Error(`Shared executive councils could not be loaded: ${error.message}. Run the latest supabase-setup.sql in Supabase.`);
+            }
+
+            sharedPeopleByOrganization = new Map();
+            (data || []).forEach((item) => {
+                if (!sharedPeopleByOrganization.has(item.organization_id)) {
+                    sharedPeopleByOrganization.set(item.organization_id, []);
+                }
+                sharedPeopleByOrganization.get(item.organization_id).push({
+                    id: `shared-${item.organization_id}-${item.person_type}-${item.sort_order}`,
+                    name: item.name,
+                    role: item.role,
+                    photoUrl: item.photo_url || "",
+                    photoStoragePath: item.photo_storage_path || "",
+                    photoFileName: item.photo_file_name || "",
+                    group: item.person_type,
+                    organizationId: item.organization_id
+                });
+            });
+        };
+
+        const loadSharedOrganizationProfiles = async () => {
+            const client = await getSupabaseClient();
+            const { data, error } = await client.from("organization_directory_profiles")
+                .select("organization_id, mission, vision");
+            if (error) {
+                throw new Error(`Shared organization missions and visions could not be loaded: ${error.message}. Run the latest supabase-setup.sql in Supabase.`);
+            }
+
+            sharedProfilesByOrganization = new Map((data || []).map((profile) => [
+                profile.organization_id,
+                { mission: profile.mission, vision: profile.vision }
+            ]));
+        };
 
         try {
             state = ISOMSDemoStore.load();
             render(state.organizations);
             app.hidden = false;
+            const sharedDataLoads = await Promise.allSettled([
+                loadSharedOrganizationMedia(),
+                loadSharedOrganizationCouncil(),
+                loadSharedOrganizationProfiles()
+            ]);
+            sharedDataLoads.forEach((result) => {
+                if (result.status === "rejected") {
+                    console.error("Could not load shared organization directory data.", result.reason);
+                    errorBox.textContent += `${errorBox.textContent ? " " : ""}${result.reason.message}`;
+                    errorBox.hidden = false;
+                }
+            });
+            if (sharedDataLoads.some((result) => result.status === "fulfilled")) {
+                render(state.organizations);
+            }
         } catch (error) {
             errorBox.textContent = error.message;
             errorBox.hidden = false;

@@ -10,6 +10,7 @@
                 name: "Supreme Student Council",
                 category: "Leadership",
                 level: "College",
+                department: "",
                 status: "approved",
                 description: "Represent student voices, champion campus initiatives, and help shape a more connected school community.",
                 adviser: "Name to be confirmed",
@@ -20,9 +21,10 @@
             },
             {
                 id: "sslg",
-                name: "Supreme Secondary Learner Government",
+                name: "Supreme Student Learner's Government",
                 category: "Leadership",
                 level: "Senior High School",
+                department: "",
                 status: "approved",
                 description: "Work with fellow learners to plan meaningful activities and bring ideas to the wider school community.",
                 adviser: "Name to be confirmed",
@@ -32,13 +34,28 @@
                 reviewNote: "Demo profile only. Confirm current details with the school."
             },
             {
-                id: "rso",
-                name: "Recognized Student Organizations",
+                id: "css",
+                name: "Computer Science Society",
+                category: "Academic",
+                level: "College",
+                department: "",
+                status: "approved",
+                description: "Build computing skills, explore technology, and collaborate with fellow computer science students.",
+                adviser: "Name to be confirmed",
+                officers: [],
+                members: [],
+                documents: [],
+                reviewNote: "Demo profile only. Confirm current details with the school."
+            },
+            {
+                id: "ufcym",
+                name: "UPang Flames Campus Youth Ministry",
                 category: "Special interest",
                 level: "College",
+                department: "",
                 status: "approved",
-                description: "Connect through shared interests, develop new skills, and turn a passion into campus activities.",
-                adviser: "Names to be confirmed",
+                description: "Build community through faith, service, and campus activities.",
+                adviser: "Name to be confirmed",
                 officers: [],
                 members: [],
                 documents: [],
@@ -46,42 +63,12 @@
             },
             {
                 id: "uvc",
-                name: "UVC",
+                name: "University Volunteer Corps",
                 category: "Special interest",
                 level: "College",
-                status: "pending",
-                description: "Connect with fellow members, take part in campus activities, and contribute ideas to the community.",
-                adviser: "Name to be confirmed",
-                officers: [],
-                members: [],
-                documents: [
-                    { name: "sample-registration.pdf", type: "Organization registration form" },
-                    { name: "sample-endorsement.pdf", type: "Adviser endorsement" }
-                ],
-                reviewNote: "Illustrative sample submission; no actual files are stored."
-            },
-            {
-                id: "tnt",
-                name: "TNT",
-                category: "Special interest",
-                level: "Senior High School",
-                status: "revision",
-                description: "Meet students with shared interests and work together on activities that bring energy to campus life.",
-                adviser: "Name to be confirmed",
-                officers: [],
-                members: [],
-                documents: [
-                    { name: "sample-guidelines.pdf", type: "Organization guidelines" }
-                ],
-                reviewNote: "Illustrative sample returned for revision; no actual files are stored."
-            },
-            {
-                id: "dangat",
-                name: "DANGAT",
-                category: "Special interest",
-                level: "College",
-                status: "pending",
-                description: "Build connections, share perspectives, and get involved in opportunities across the school community.",
+                department: "",
+                status: "approved",
+                description: "Serve the campus community through volunteerism, outreach, and student-led initiatives.",
                 adviser: "Name to be confirmed",
                 officers: [],
                 members: [],
@@ -99,7 +86,7 @@
     const clone = (value) => JSON.parse(JSON.stringify(value));
     const createPublishedProfile = (organization, people = []) => {
         const fields = [
-            "id", "name", "category", "level", "description", "mission", "vision", "adviser", "logo", "logoUrl", "officers",
+            "id", "name", "category", "level", "department", "description", "mission", "vision", "adviser", "logo", "logoUrl", "officers",
             "executiveOfficers", "members", "advisers", "achievements", "gallery",
             "schoolYear", "representative"
         ];
@@ -131,32 +118,39 @@
 
         try {
             const state = JSON.parse(saved);
-            const fallbackById = new Map(initialState.organizations.map((organization) => [organization.id, organization]));
-            state.organizations = (Array.isArray(state.organizations) ? state.organizations : []).map((organization) => {
-                const fallback = fallbackById.get(organization.id);
-                if (!fallback) return organization;
+            const savedOrganizations = new Map(
+                (Array.isArray(state.organizations) ? state.organizations : [])
+                    .map((organization) => [organization.id, organization])
+            );
+            state.organizations = initialState.organizations.map((fallback) => {
+                const organization = savedOrganizations.get(fallback.id);
+                if (!organization) return clone(fallback);
                 const hasDirectoryStatus = Object.prototype.hasOwnProperty.call(organization, "directoryStatus");
                 const directoryStatus = hasDirectoryStatus
                     ? organization.directoryStatus
                     : fallback.status === "approved" && ["pending", "revision"].includes(organization.status)
                         ? "approved"
                         : organization.status === "approved" ? "approved" : null;
+                const currentOrganization = { ...fallback, ...organization, name: fallback.name };
                 const publishedProfile = createPublishedProfile(
-                    organization,
+                    currentOrganization,
                     Array.isArray(state.people) ? state.people : []
                 );
                 return {
-                    ...organization,
+                    ...currentOrganization,
                     directoryStatus,
                     publishedProfile: organization.publishedProfile
                         ? {
-                            ...publishedProfile,
                             ...organization.publishedProfile,
+                            ...publishedProfile,
                             people: organization.publishedProfile.people || publishedProfile.people
                         }
                         : directoryStatus === "approved" ? publishedProfile : null
                 };
             });
+            const organizationIds = new Set(initialState.organizations.map((organization) => organization.id));
+            state.people = (Array.isArray(state.people) ? state.people : [])
+                .filter((person) => organizationIds.has(person.organizationId));
             return state;
         } catch (error) {
             throw new Error(`Saved demo data is invalid and could not be loaded: ${error.message}`);
