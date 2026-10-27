@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" role="img" aria-labelledby="title description">
+  <title id="title">Illustrated adviser portrait placeholder</title>
+  <desc id="description">A neutral illustrated portrait silhouette against a green and gold background.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#eaf2e9"/>
+      <stop offset="1" stop-color="#c9dfce"/>
+    </linearGradient>
+    <linearGradient id="jacket" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#24633a"/>
+      <stop offset="1" stop-color="#10361f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="360" fill="url(#background)"/>
+  <circle cx="130" cy="75" r="45" fill="#f2c94c" opacity=".75"/>
+  <circle cx="690" cy="270" r="95" fill="#b2d0b6" opacity=".7"/>
+  <path d="M0 295c128-35 237-33 349-2s204 26 290-2 126-33 161-19v88H0z" fill="#174d2a" opacity=".11"/>
+  <circle cx="402" cy="131" r="62" fill="#d99d72"/>
+  <path d="M339 126c4-56 29-85 68-85 45 0 73 33 72 89-28-8-53-25-71-49-17 24-40 39-69 45" fill="#263b2e"/>
+  <path d="M276 360v-62c0-68 55-119 123-119h8c68 0 123 51 123 119v62z" fill="url(#jacket)"/>
+  <path d="M393 188l-30 99 40 37 40-37-31-99" fill="#fff"/>
+  <path d="M401 325v35" stroke="#f2c94c" stroke-width="7"/>
+  <path d="M579 114h112m-112 26h75" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".65"/>
+</svg>

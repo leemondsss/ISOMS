@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" role="img" aria-labelledby="title description">
+  <title id="title">Illustrative scholarship placeholder</title>
+  <desc id="description">A student holds a certificate against a green and gold campus-inspired background.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#eaf2e9"/>
+      <stop offset="1" stop-color="#c9dfce"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#24633a"/>
+      <stop offset="1" stop-color="#10361f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="360" fill="url(#background)"/>
+  <circle cx="119" cy="82" r="46" fill="#f2c94c" opacity=".72"/>
+  <circle cx="685" cy="270" r="89" fill="#b2d0b6" opacity=".8"/>
+  <path d="M0 286c115-39 207-32 315 0s200 31 303-2 141-35 182-18v94H0z" fill="#174d2a" opacity=".11"/>
+  <rect x="527" y="119" width="185" height="131" rx="9" fill="#fff" stroke="#d6bf68" stroke-width="7"/>
+  <path d="M560 154h118M560 177h89" stroke="#93b49a" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="654" cy="217" r="18" fill="#f2c94c"/>
+  <path d="M370 160c0-39 29-67 67-67s67 28 67 67v31H370z" fill="#d99d72"/>
+  <path d="M366 151c6-52 31-79 73-79 38 0 63 27 69 79-29-5-48-21-63-40-18 22-43 36-79 40" fill="#263b2e"/>
+  <path d="M332 360v-72c0-53 44-94 98-94h13c54 0 98 41 98 94v72z" fill="url(#shirt)"/>
+  <path d="M443 205l-21 89 31 26 31-26-22-89" fill="#fff"/>
+  <path d="M501 257l42-16 69 21v58l-70-18-41 13z" fill="#fff" stroke="#d6bf68" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M542 261v51" stroke="#d6bf68" stroke-width="4"/>
+  <path d="M590 253v34m0 0 12 11m-12-11-12 11" fill="none" stroke="#b3902c" stroke-width="4" stroke-linecap="round"/>
+  <path d="M371 130l18-18m-19 45 22-5" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+</svg>
